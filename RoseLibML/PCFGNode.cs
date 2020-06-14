@@ -7,21 +7,19 @@ using System.Threading.Tasks;
 
 namespace RoseLib
 {
+    [Serializable]
     public class PCFGNode
     {
         public int Count { get; set; }
         public double Probability { get; set; }
-        public IEnumerable<SyntaxNodeOrToken> Nodes { get; set; }
         public string RHS { get; set; }
 
         public PCFGNode()
         {
-            Nodes = new List<SyntaxNodeOrToken>();
         }
 
-        public PCFGNode(IEnumerable<SyntaxNodeOrToken> nodes, string rhs)
+        public PCFGNode(string rhs)
         {
-            Nodes = nodes;
             RHS = rhs;
         }
 
