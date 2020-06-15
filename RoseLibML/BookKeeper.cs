@@ -97,7 +97,10 @@ namespace RoseLibML
                 TypeNodes.Add(type, new List<LabeledTreeNode>());
             }
 
-            TypeNodes[type].Add(node);
+            var existingType = TypeNodes.Keys.Where(k => k.Equals(type)).FirstOrDefault();
+            node.Type = existingType;
+
+            TypeNodes[existingType].Add(node);
         }
 
         public void RemoveNodeType(LabeledTreeNodeType type, LabeledTreeNode node)
@@ -139,6 +142,13 @@ namespace RoseLibML
                 if (!TypeNodes.ContainsKey(keyValuePair.Key))
                 {
                     TypeNodes.Add(keyValuePair.Key, new List<LabeledTreeNode>());
+                }
+
+                var existingType = TypeNodes.Keys.Where(k => k.Equals(keyValuePair.Key)).FirstOrDefault();
+
+                foreach (var node in keyValuePair.Value)
+                {
+                    node.Type = existingType;
                 }
 
                 TypeNodes[keyValuePair.Key].AddRange(keyValuePair.Value);

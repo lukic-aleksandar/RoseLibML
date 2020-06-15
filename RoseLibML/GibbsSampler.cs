@@ -100,8 +100,7 @@ namespace RoseLibML
 
             if (node.CanHaveType)
             {
-                node.Type = LabeledTreeNode.GetType(node);
-                bookKeeper.AddNodeType(node.Type, node);
+                bookKeeper.AddNodeType(LabeledTreeNode.GetType(node), node);
             }
 
             foreach (var child in node.Children)
@@ -147,34 +146,7 @@ namespace RoseLibML
 
                     var m = SampleM(probabilities);
                     var ones = SampleOnes(typeBlockCardinality, m);
-
-                    for (int j = typeBlock.Count - 1; j >= 0; j--)
-                    {
-                        var node = typeBlock[j];
-                        node.IsFragmentRoot = ones[j] == 1;
-                        var oldType = node.Type;
-                        var newType = LabeledTreeNode.GetType(node);
-
-                        var isFragmentRoot = node.IsFragmentRoot;
-                        node.IsFragmentRoot = false;
-                        var fullFragmentRoot = LabeledTreeNode.FindFragmentRoot(node);
-                        node.IsFragmentRoot = isFragmentRoot;
-
-                        UpdateTypes(fullFragmentRoot, node);
-
-                        if (ones[j] == 1)
-                        {
-                            BookKeeper.IncrementFragmentCount(node.Type.Part1Fragment);
-                            BookKeeper.IncrementFragmentCount(node.Type.Part2Fragment);
-                            BookKeeper.IncrementRootCount(node.ASTNodeType);
-                            BookKeeper.IncrementRootCount(LabeledTreeNode.FindFragmentRoot(node.Parent).ASTNodeType);
-                        }
-                        else
-                        {
-                            BookKeeper.IncrementFragmentCount(node.Type.FullFragment);
-                            BookKeeper.IncrementRootCount(LabeledTreeNode.FindFragmentRoot(node.Parent).ASTNodeType);
-                        }
-                    }
+                    TraverseSites(typeBlock, ones);
                 }
             }
 
@@ -183,6 +155,63 @@ namespace RoseLibML
             Console.WriteLine("END");
 
             Console.WriteLine($"Time between: {end - begin}");
+        }
+
+        private void TraverseSites(List<LabeledTreeNode> typeBlock, List<int> ones)
+        {
+            LabeledTreeNode cutPart1Root = null;
+            LabeledTreeNode noncutFullFragmentRoot = null;
+
+            for (int j = typeBlock.Count - 1; j >= 0; j--)
+            {
+                var node = typeBlock[j];
+                node.IsFragmentRoot = ones[j] == 1;
+
+                var oldType = node.Type; // Only for debug purposes
+                var newType = LabeledTreeNode.GetType(node); // Only for debug purposes
+
+                var fullFragmentRoot = LabeledTreeNode.FindFullFragmentRoot(node);
+
+                if (node.IsFragmentRoot)
+                {
+                    if (cutPart1Root != null)
+                    {
+                        CopyTypes(cutPart1Root, fullFragmentRoot, node);
+                    }
+                    else
+                    {
+                        UpdateTypes(fullFragmentRoot, node);
+                        cutPart1Root = fullFragmentRoot;
+                    }
+                }
+                else
+                {  
+                    if(noncutFullFragmentRoot != null)
+                    {
+                        CopyTypes(noncutFullFragmentRoot, fullFragmentRoot, node);
+                    }
+                    else
+                    {
+                        UpdateTypes(fullFragmentRoot, node);
+                        noncutFullFragmentRoot = fullFragmentRoot;
+                    }
+                }
+
+                
+
+                if (ones[j] == 1)
+                {
+                    BookKeeper.IncrementFragmentCount(node.Type.Part1Fragment);
+                    BookKeeper.IncrementFragmentCount(node.Type.Part2Fragment);
+                    BookKeeper.IncrementRootCount(node.ASTNodeType);
+                    BookKeeper.IncrementRootCount(LabeledTreeNode.FindFragmentRoot(node.Parent).ASTNodeType);
+                }
+                else
+                {
+                    BookKeeper.IncrementFragmentCount(node.Type.FullFragment);
+                    BookKeeper.IncrementRootCount(LabeledTreeNode.FindFragmentRoot(node.Parent).ASTNodeType);
+                }
+            }
         }
 
         private List<LabeledTreeNode> CreateTypeBlockAndAdjustCounts(List<LabeledTreeNode> nodes, short iteration)
@@ -220,40 +249,40 @@ namespace RoseLibML
             return typeBlock;
         }
 
-        private bool CanAddNodeToTypeBlock(short iteration, LabeledTreeNode fragmentRoot)
+        private bool CanAddNodeToTypeBlock(short iteration, LabeledTreeNode pivot)
         {
-            if(CheckForConflicts(iteration, fragmentRoot, fragmentRoot))
+            var fullFragmentRoot = LabeledTreeNode.FindFullFragmentRoot(pivot);
+
+            if(CheckForConflicts(iteration, pivot, fullFragmentRoot))
             {
-                SetLastModified(iteration, fragmentRoot, fragmentRoot);
+                SetLastModified(iteration, pivot, fullFragmentRoot);
                 return false;
             }
 
             return true;
         }
 
-        private void SetLastModified(short iteration, LabeledTreeNode fragmentRoot, LabeledTreeNode node)
+        private void SetLastModified(short iteration, LabeledTreeNode pivot, LabeledTreeNode node)
         {
-            node.LastModified = (typeCode: fragmentRoot.Type.GetHashCode(), iteration: iteration);
+            node.LastModified = (typeCode: pivot.Type.GetHashCode(), iteration);
 
             foreach (var child in node.Children)
             {
-                if (child.IsFragmentRoot)
+                if (child.IsFragmentRoot && child != pivot)
                 {
-                    child.LastModified = (typeCode: fragmentRoot.Type.GetHashCode(), iteration: iteration);
+                    child.LastModified = (typeCode: pivot.Type.GetHashCode(), iteration);
                 }
                 else
                 {
-                    SetLastModified(iteration, fragmentRoot, child);
+                    SetLastModified(iteration, pivot, child);
                 }
             }
         }
 
-        private bool CheckForConflicts(short iteration, LabeledTreeNode fragmentRoot, LabeledTreeNode node)
+        private bool CheckForConflicts(short iteration, LabeledTreeNode pivot, LabeledTreeNode node)
         {
-            var result = true;
 
-            if(fragmentRoot.Type == node.Type && 
-                node.LastModified.typeCode == node.Type.GetHashCode() && 
+            if (node.LastModified.typeCode == pivot.Type.GetHashCode() &&
                 node.LastModified.iteration == iteration)
             {
                 return false;
@@ -261,10 +290,9 @@ namespace RoseLibML
 
             foreach (var child in node.Children)
             {
-                if (child.IsFragmentRoot)
+                if (child.IsFragmentRoot && child != pivot)
                 {
-                    if (fragmentRoot.Type == node.Type &&
-                        node.LastModified.typeCode == node.Type.GetHashCode() &&
+                    if (node.LastModified.typeCode == pivot.Type.GetHashCode() &&
                         node.LastModified.iteration == iteration)
                     {
                         return false;
@@ -272,11 +300,14 @@ namespace RoseLibML
                 }
                 else
                 {
-                    result = CheckForConflicts(iteration, fragmentRoot, child);
+                    if (!CheckForConflicts(iteration, pivot, child))
+                    {
+                        return false;
+                    }
                 }
             }
 
-            return result;
+            return true;
         }
 
         void UpdateTypes(LabeledTreeNode node, LabeledTreeNode pivot)
@@ -285,7 +316,7 @@ namespace RoseLibML
 
             foreach (var child in node.Children)
             {
-                if (node.IsFragmentRoot && child != pivot)
+                if (child.IsFragmentRoot && child != pivot)
                 {
                     TryUpdateType(child);
                 }
@@ -307,6 +338,56 @@ namespace RoseLibML
                 {
                     BookKeeper.TypeNodes[oldType].Remove(node);
                     BookKeeper.AddNodeType(node.Type, node);
+
+                    if (BookKeeper.TypeNodes[oldType].Count == 0)
+                    {
+                        BookKeeper.TypeNodes.Remove(oldType);
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private void CopyTypes(LabeledTreeNode from, LabeledTreeNode to, LabeledTreeNode pivot)
+        {
+            TryCopyType(from, to);
+
+            if(from.Children.Count != to.Children.Count)
+            {
+                throw new Exception("Trying to copy, but two nodes are not identical.");
+            }
+
+            for (int i = 0; i < to.Children.Count; i++)
+            {
+                var toChild = to.Children[i];
+                var fromChild = from.Children[i];
+
+                if (toChild.IsFragmentRoot && toChild != pivot)
+                {
+                    TryCopyType(fromChild, toChild);
+                }
+                else
+                {
+                    CopyTypes(fromChild, toChild, pivot);
+                }
+            }
+
+        }
+
+        private bool TryCopyType(LabeledTreeNode from, LabeledTreeNode to)
+        {
+            if (to.CanHaveType)
+            {
+                var oldType = to.Type;
+                to.Type = from.Type;
+
+                if (oldType != null && BookKeeper.TypeNodes.ContainsKey(oldType))
+                {
+                    BookKeeper.TypeNodes[oldType].Remove(to);
+                    BookKeeper.AddNodeType(to.Type, to);
 
                     if (BookKeeper.TypeNodes[oldType].Count == 0)
                     {
@@ -366,6 +447,8 @@ namespace RoseLibML
             return list;
         }
 
+        // Allemanis paper implementation gives cut probability for one node.
+        // To calculate for x nodes, binomial distribution is used
         List<double> CalculateTypeBlockAl(double p, int typeCardinality)
         {
             var probabilities = new List<double>();
@@ -379,6 +462,7 @@ namespace RoseLibML
             return probabilities;
         }
 
+        // Implementation based on Allemanis paper
         double CalculateCutProbability(LabeledTreeNodeType type)
         {
             var node = BookKeeper.TypeNodes[type].FirstOrDefault();
@@ -388,16 +472,9 @@ namespace RoseLibML
             var part1 = PosteriorAl(fragments.part1, node.Type.Part1Fragment);
             var part2 = PosteriorAl(fragments.part2, node.Type.Part2Fragment);
 
-            var denominator = fragmentJoin + part1 * part2;
+            var denominator = fragmentJoin + part1 * part2 + Math.Pow(0.1, 10);
 
-            if(denominator == 0)
-            {
-                return 0.000001;
-            }
-            else
-            {
-                return 1 - (fragmentJoin / denominator);
-            }
+            return 1 - (fragmentJoin / denominator); 
         }
 
         double PosteriorAl(LabeledTreeNode fragment, string fragmentString)

@@ -162,6 +162,18 @@ namespace RoseLibML
             return ASTNodeType;
         }
 
+        public static LabeledTreeNode FindFullFragmentRoot(LabeledTreeNode labeledNode)
+        {
+            if(labeledNode.Parent != null)
+            {
+                return FindFragmentRoot(labeledNode.Parent);
+            }
+            else
+            {
+                return labeledNode;
+            }
+        }
+
         public static LabeledTreeNode FindFragmentRoot(LabeledTreeNode labeledNode)
         {
             var fragmentRoot = labeledNode;
