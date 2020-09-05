@@ -3,12 +3,14 @@ using MathNet.Numerics.Distributions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using RoseLib;
+using RoseLibML;
 using RoseLibML.Util;
 using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection.Emit;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
@@ -31,63 +33,103 @@ namespace RoseLibML
             BookKeeper = new BookKeeper();
         }
 
+        public void Initialize(LabeledTreePCFGComposer pCFG, LabeledTree[] labeledTrees)
+        {
+            PCFG = pCFG;
+
+            Trees = labeledTrees;
+
+            var bookKeepingResults = new BookKeeper[Trees.Length];
+            Parallel.For(0, Trees.Length, (index) =>
+            {
+                var labeledTree = Trees[index];
+
+                Fragmentation(labeledTree.Root);
+                InitializeBookkeeperForTree(index, bookKeepingResults, labeledTree);
+
+                // labeledTree.Serialize();
+                if (index % 100 == 0)
+                {
+                    Console.WriteLine(index);
+                }
+            });
+
+            foreach (var bookKeepingResult in bookKeepingResults)
+            {
+                BookKeeper.Merge(bookKeepingResult);
+            }
+        }
+
         public void Initialize(string sourcePath, string outDirectory)
         {
             if (Directory.Exists(sourcePath))
             {
-                var directoryInfo = new DirectoryInfo(sourcePath);
-                var files = directoryInfo.GetFiles();
-                var fileList = files.ToList();
-
-                var bookKeepingResults = new BookKeeper[files.Length];
-                Trees = new LabeledTree[files.Length];
-
-                Parallel.For(0, files.Length, (index) =>
-                {
-                    var fileInfo = files[index];
-
-                    var labeledTree = CreateLabeledTree(fileInfo, outDirectory);
-                    Binarize(labeledTree.Root);
-                    var bookKeeper = new BookKeeper();
-
-                    foreach (var child in labeledTree.Root.Children)
-                    {
-                        InitializeBookKeeper(child, bookKeeper);
-                    }
-
-                    bookKeepingResults[index] = bookKeeper;
-                    labeledTree.Serialize();
-                    Trees[index] = labeledTree;
-
-                    if (index % 100 == 0)
-                    {
-                        Console.WriteLine(index);
-                    }
-                });
-
-                foreach (var bookKeepingResult in bookKeepingResults)
-                {
-                    BookKeeper.Merge(bookKeepingResult);
-                }
+                InitializeFromDirectory(sourcePath, outDirectory);
             }
             else
             {
-                Trees = new LabeledTree[1];
-                var fileInfo = new FileInfo(sourcePath);
-                var labeledTree = CreateLabeledTree(fileInfo, outDirectory);
-                Binarize(labeledTree.Root);
-
-                Trees[0] = labeledTree;
-
-                foreach (var child in labeledTree.Root.Children)
-                {
-                    InitializeBookKeeper(child, BookKeeper);
-                }
+                InitializeFromFile(sourcePath, outDirectory);
             }
 
-            var x = Trees.Select(t => t.Root).ToList();
+            var x = Trees.Select(t => t.Root).ToList(); // Only for debug purposes
             PCFG = new LabeledTreePCFGComposer(Trees.ToList());
             PCFG.CalculateProbabilities();
+        }
+
+        private void InitializeFromDirectory(string sourcePath, string outDirectory)
+        {
+            var directoryInfo = new DirectoryInfo(sourcePath);
+            var files = directoryInfo.GetFiles();
+            var fileList = files.ToList();
+
+            var bookKeepingResults = new BookKeeper[files.Length];
+            Trees = new LabeledTree[files.Length];
+
+            Parallel.For(0, files.Length, (index) =>
+            {
+                var fileInfo = files[index];
+
+                var labeledTree = CreateLabeledTree(fileInfo, outDirectory);
+                Trees[index] = labeledTree;
+
+                InitializeBookkeeperForTree(index, bookKeepingResults, labeledTree);
+                // labeledTree.Serialize();
+
+                if (index % 100 == 0)
+                {
+                    Console.WriteLine(index);
+                }
+            });
+
+            foreach (var bookKeepingResult in bookKeepingResults)
+            {
+                BookKeeper.Merge(bookKeepingResult);
+            }
+        }
+
+        private void InitializeFromFile(string sourcePath, string outDirectory)
+        {
+            Trees = new LabeledTree[1];
+            var fileInfo = new FileInfo(sourcePath);
+            var labeledTree = CreateLabeledTree(fileInfo, outDirectory);
+
+            Trees[0] = labeledTree;
+
+            foreach (var child in labeledTree.Root.Children)
+            {
+                InitializeBookKeeper(child, BookKeeper);
+            }
+        }
+
+        private void InitializeBookkeeperForTree(int index, BookKeeper[] bookKeepingResults, LabeledTree labeledTree)
+        {
+            var bookKeeper = new BookKeeper();
+            foreach (var child in labeledTree.Root.Children)
+            {
+                InitializeBookKeeper(child, bookKeeper);
+            }
+
+            bookKeepingResults[index] = bookKeeper;
         }
 
         public void InitializeBookKeeper(LabeledTreeNode node, BookKeeper bookKeeper)
@@ -108,8 +150,7 @@ namespace RoseLibML
                 InitializeBookKeeper(child, bookKeeper);
             }
         }
-
-
+        
         public void Train(int iterations)
         {
             var begin = DateTime.Now;
@@ -483,7 +524,6 @@ namespace RoseLibML
                 (BookKeeper.GetRootCount(fragment.ASTNodeType) + Alpha);
         }
 
-
         List<double> CalculateTypeBlockProbabilities(LabeledTreeNodeType type)
         {
             var typeCardinality = BookKeeper.TypeNodes[type].Count;
@@ -516,94 +556,25 @@ namespace RoseLibML
 
         private LabeledTree CreateLabeledTree(FileInfo sourceInfo, string outDirectory)
         {
-            using (StreamReader sr = new StreamReader(sourceInfo.FullName))
-            {
-                var source = sr.ReadToEnd();
-                var tree = CSharpSyntaxTree.ParseText(source);
-
-                var labeledTree = new LabeledTree();
-                labeledTree.SourceFilePath = sourceInfo.FullName;
-                labeledTree.FilePath = $"{outDirectory}/{sourceInfo.Name}.bin";
-                labeledTree.Root = CreateLabeledNode(tree.GetRoot());
-                labeledTree.Root.IsFragmentRoot = true;
-                labeledTree.Root.CanHaveType = false;
-
-                return labeledTree;
-            }
+            LabeledTree tree = LabeledTree.CreateLabeledTree(sourceInfo, outDirectory);
+            TransformTree(tree);
+            return tree;
         }
 
-        private void Binarize(LabeledTreeNode parent)
+        private void TransformTree(LabeledTree tree)
         {
-            if(parent.Children.Count > 2)
-            {
-                var firstChild = parent.Children.FirstOrDefault();
-                var restOfChildren = parent.Children.ToList();
-                restOfChildren.RemoveAt(0);
-                parent.Children.Clear();
-
-                var tempNode = new LabeledTreeNode()
-                {
-                    ASTNodeType = "BinTempNode",
-                    IsFragmentRoot = new Random().NextDouble() < CutProbability
-                };
-
-                parent.AddChild(firstChild);
-                parent.AddChild(tempNode);
-
-                foreach (var child in restOfChildren)
-                {
-                    tempNode.AddChild(child);
-                }
-
-                Binarize(firstChild);
-                Binarize(tempNode);
-            }
-            else
-            {
-                foreach (var child in parent.Children)
-                {
-                    Binarize(child);
-                }
-            }
-       
+            LabeledTreeTransformations.Binarize(tree.Root);
+            Fragmentation(tree.Root);
         }
 
-        private LabeledTreeNode CreateLabeledNode(SyntaxNode parent)
+        private void Fragmentation(LabeledTreeNode node)
         {
-            var children = parent.ChildNodesAndTokens();
-            var treeNode = new LabeledTreeNode();
-         
-            treeNode.ASTNodeType = parent.Kind().ToString();
-            treeNode.IsFragmentRoot = new Random().NextDouble() < CutProbability;
+            node.IsFragmentRoot = new Random().NextDouble() < CutProbability;
 
-
-            foreach (var child in children)
+            foreach (var child in node.Children)
             {
-                if (child.IsNode)
-                {
-                    treeNode.AddChild(CreateLabeledNode(child.AsNode()));
-                }
-                else if (child.IsToken)
-                {
-                    var tokenNode = new LabeledTreeNode();
-                    tokenNode.ASTNodeType = child.AsToken()
-                                            .Kind()
-                                            .ToString();
-                    tokenNode.CanHaveType = false;
-                    treeNode.AddChild(tokenNode);
-
-                    if (child.AsToken().Kind() == SyntaxKind.IdentifierToken)
-                    {   
-                        var leaf = new LabeledTreeNode();
-                        leaf.ASTNodeType = child.AsToken().ValueText;
-                        leaf.CanHaveType = false;
-                        tokenNode.CanHaveType = true;
-                        tokenNode.AddChild(leaf);
-                    }
-                }
+                Fragmentation(child);
             }
-
-            return treeNode;
         }
     }
 }
