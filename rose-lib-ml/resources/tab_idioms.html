@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src https://*.fontawesome.com; style-src https://*.fontawesome.com https://*.bootstrapcdn.com ${cspSource}; script-src https://ajax.googleapis.com ${cspSource};">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>RoseLibML - Idioms</title>
+
+        <!-- bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+        <!-- font awesome -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <link rel="stylesheet" href="${styleUri}">
+        <script src="${scriptUri}"></script> 
+    </head>
+
+    <body>
+        <div class="row full-scr">
+            <!-- left column -->
+            <div class="col-4 px-4 mt-3 menu-column">
+                <h4 class="text-center">Input idioms</h4>
+                <form id="idiomsForm" class="mt-3">
+                    <div class="form-group mb-4">
+                        <label for="rootNodeType">Root node type</label>
+                        <input id="rootNodeType" class="form-control" type="text" required>
+                    </div>
+                </form>
+            </div>
+
+            <!-- right column -->
+            <div class="col-8 px-4 mt-3">
+                <h4 class="text-center">Output snippets</h4>
+                <button id="generateButton" type="button" class="btn btn-default vscbtn-lg">Generate</button>
+            </div>
+        </div>
+        <div>
+            
+        </div>
+    </body>
+</html>

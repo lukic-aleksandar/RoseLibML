@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="Content-Security-Policy" content="default-src 'none'; font-src https://*.fontawesome.com; style-src https://*.fontawesome.com https://*.bootstrapcdn.com ${cspSource}; script-src https://ajax.googleapis.com ${cspSource};">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>RoseLibML - MCMC</title>
+
+        <!-- bootstrap -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+
+        <!-- font awesome -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <link rel="stylesheet" href="${styleUri}">
+        <script src="${scriptUri}"></script> 
+    </head>
+
+    <body>
+        <div class="row full-scr">
+            <!-- left column -->
+            <div class="col-5 px-4 mt-3 menu-column">
+                <form id="MCMCForm" class="mt-5">
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group mb-4">
+                                <label for="inputFolder">Input folder</label>
+                                <input id="inputFolder" class="form-control" type="text" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group mb-4">
+                                <label for="pCFGFile">pCFG file</label>
+                                <input id="pCFGFile" class="form-control" type="text" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group mb-4">
+                                <label for="iterations">Iterations</label>
+                                <input id="iterations" class="form-control" type="number" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group mb-4">
+                                <label for="burnInIterations">Burn-in iterations</label>
+                                <input id="burnInIterations" class="form-control" type="number" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group mb-4">
+                                <label for="initialCutProbability">Initial cut probability</label>
+                                <input id="initialCutProbability" class="form-control" type="number" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="form-group mb-4">
+                                <label for="alpha">Alpha</label>
+                                <input id="alpha" class="form-control" type="number" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="form-group mb-4">
+                                <label for="outputFolder">Output folder</label>
+                                <input id="outputFolder" class="form-control" type="text">
+                            </div>
+                        </div>
+                        <div class="col">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-default vscbtn-sm">
+                        <i class="fas fa-play fa-2x"></i>
+                    </button>
+                </form>
+            </div>
+
+            <!-- right column -->
+            <div class="col-7 px-4 mt-3">
+                <h4 class="text-center">Idioms per iteration visualization</h4>
+            </div>
+        </div>
+    </body>
+</html>

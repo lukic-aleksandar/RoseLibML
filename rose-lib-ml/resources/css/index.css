@@ -1,0 +1,66 @@
+body {
+  background-color: var(--vscode-editor-background);
+  color: var(--vscode-foreground);
+  height: 100%;
+  min-height: 100%;
+}
+
+html,
+div.full-scr {
+  height: 100%;
+  min-height: 100%;
+}
+
+div.menu-column {
+  border-right: 1px solid var(--vscode-foreground);
+  height: 100%;
+}
+
+div.right-column {
+  position: relative;
+}
+
+button.vscbtn-sm {
+  color: var(--vscode-button-background);
+  float: right;
+}
+
+button.vscbtn-sm:hover {
+  color: var(--vscode-button-hoverBackground);
+}
+
+button.vscbtn-lg {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-radius: 0px !important;
+  position: absolute;
+  right: 10px;
+  bottom: 30px;
+}
+
+button.vscbtn-lg:hover {
+  background-color: var(--vscode-button-hoverBackground);
+  color: var(--vscode-button-foreground);
+  border-radius: 0px !important;
+}
+
+button.vscbtn-sm:focus,
+button.vscbtn-lg:focus {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+
+input {
+  background-color: var(--vscode-input-background) !important;
+  color: var(--vscode-input-foreground) !important;
+  border-color: var(--vscode-sideBar-background) !important;
+  border-width: 1px !important;
+  border-radius: 0px !important;
+}
+
+input:focus {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border-color: var(--vscode-button-background) !important;
+  border-width: 1px !important;
+}
