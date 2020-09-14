@@ -104,16 +104,16 @@
   <ItemGroup>
     <Compile Include="BookKeeper.cs" />
     <Compile Include="GibbsSampler.cs" />
-    <Compile Include="IPCFGComposer.cs" />
+    <Compile Include="PCFG\IPCFGComposer.cs" />
     <Compile Include="LabeledTrees\LabeledTree.cs" />
     <Compile Include="LabeledTrees\LabeledTreeNode.cs" />
     <Compile Include="LabeledTreeNodeType.cs" />
-    <Compile Include="LabeledTreePCFGComposer.cs" />
+    <Compile Include="PCFG\LabeledTreePCFGComposer.cs" />
     <Compile Include="LabeledTrees\LabeledTreeTransformations.cs" />
-    <Compile Include="RoslynPCFGComposer.cs">
+    <Compile Include="PCFG\RoslynPCFGComposer.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="PCFGNode.cs" />
+    <Compile Include="PCFG\PCFGNode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestFile.cs">
