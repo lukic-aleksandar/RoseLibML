@@ -123,7 +123,7 @@ namespace RoseLibML
 
         public static string GetFragmentString(LabeledTreeNode labeledNode)
         {
-            var fragmentString = labeledNode.ASTNodeType;
+            var fragmentString = $"({labeledNode.ASTNodeType})";
 
             if(labeledNode.Children.Count > 0)
             {
@@ -133,7 +133,7 @@ namespace RoseLibML
                 {
                     if (child.IsFragmentRoot || !child.CanHaveType)
                     {
-                        childrenString += $" {child.ASTNodeType} ";
+                        childrenString += $"({child.ASTNodeType}) ";
                     }
                     else
                     {
@@ -141,7 +141,7 @@ namespace RoseLibML
                     }
                 }
 
-                fragmentString += $" ( {childrenString} ) ";
+                fragmentString = $"({labeledNode.ASTNodeType} {childrenString} ) ";
             }
 
             return fragmentString;

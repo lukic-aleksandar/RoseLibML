@@ -15,7 +15,10 @@ namespace RoseLibML
     { 
         public Dictionary<string, Dictionary<string, PCFGNode>> Rules { get; set; }
 
-        List<LabeledTree> Trees { get; set; }
+        [NonSerialized]
+        private List<LabeledTree> trees;
+
+        public List<LabeledTree> Trees { get => trees; set => trees = value; }
 
         public double P { get; set; } = 0.0001;
 

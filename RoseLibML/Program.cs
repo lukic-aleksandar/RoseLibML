@@ -36,12 +36,14 @@ namespace RoseLib
 
             // Create Labeled Trees
             // Perform Needed transformations
-            var labeledTrees = CreateLabeledTrees(@"C:\Users\nenad\Desktop\Nnd\doktorske\training1");
+            var labeledTrees = CreateLabeledTrees(@"C:\Users\nenad\Desktop\Nnd\doktorske\training1", @"C:\Users\nenad\Desktop\Nnd\doktorske\out1000");
 
             // Calculate and save PCFG to file
             var pCFGComposer = new LabeledTreePCFGComposer(labeledTrees.ToList());
             pCFGComposer.CalculateProbabilities();
-            // TODO: Print from Composer to file
+            // TODO: Save from Composer to file
+            pCFGComposer.Serialize("LabeledTreeNodePCFGComposer.bin");
+          
 
             // TODO: Use existing PCFG, if it exists, and trees 
             var sampler = new GibbsSampler();
@@ -57,20 +59,36 @@ namespace RoseLib
             Console.ReadKey();
         }
 
-        static LabeledTree[] CreateLabeledTrees(string sourceDirectory)
+        static LabeledTree[] CreateLabeledTrees(string sourceDirectory, string outputDirectory)
         {
             var directoryInfo = new DirectoryInfo(sourceDirectory);
             var files = directoryInfo.GetFiles();
 
             LabeledTree[] labeledTrees = new LabeledTree[files.Length];
-
-            for (int i = 0; i < files.Length; i++)
+            
+            Parallel.For(0, files.Length, (index) =>
             {
-                var labeledTree = LabeledTree.CreateLabeledTree(files[i], @"C:\Users\nenad\Desktop\Nnd\doktorske\out1000");
-                LabeledTreeTransformations.Binarize(labeledTree.Root);
-                labeledTrees[i] = labeledTree;
-            }
 
+                var labeledTree = LabeledTree.CreateLabeledTree(files[index], outputDirectory);
+                LabeledTreeTransformations.Binarize(labeledTree.Root);
+                labeledTrees[index] = labeledTree;
+
+                if (index % 100 == 0)
+                {
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine($"File: {index}");
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine();
+                    Console.WriteLine();
+                }
+            });
+           
             return labeledTrees;
         }*/
     }
