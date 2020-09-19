@@ -2,11 +2,15 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 
+import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient';
+
 const tabs = {
 	'pCFG': 'tab_PCFG.html',
 	'MCMC': 'tab_MCMC.html',
 	'Idioms': 'tab_idioms.html'
 };
+
+let client: LanguageClient;
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -14,122 +18,198 @@ export function activate(context: vscode.ExtensionContext) {
 	let MCMCPanel: vscode.WebviewPanel | undefined = undefined;
 	let idiomsPanel: vscode.WebviewPanel | undefined = undefined;
 
-	context.subscriptions.push(
-		// open pCFG tab 
-		vscode.commands.registerCommand('rose-lib-ml.openPCFG', () => {
-			if (pCFGPanel) {
-				pCFGPanel.reveal(vscode.ViewColumn.Active);
-			} else {
-				pCFGPanel = vscode.window.createWebviewPanel('pCFGTab', 'RoseLibML - pCFG', vscode.ViewColumn.Active,
-					{
-						localResourceRoots: [
-							vscode.Uri.file(path.join(context.extensionPath, 'resources', 'css')),
-							vscode.Uri.file(path.join(context.extensionPath, 'resources', 'js'))
-						],
-						enableScripts: true
-					});
+	let serverModule = context.asAbsolutePath(path.join('..', 'RoseLibML', 'bin', 'Debug', 'RoseLibML.exe'));
 
-				setUpWebviewPanel(context.extensionPath, pCFGPanel, 'pCFG');
+	let serverOptions: ServerOptions = {
+		run: { command: serverModule },
+		debug: { command: serverModule }
+	};
 
-				pCFGPanel.webview.onDidReceiveMessage(
-					message => {
-						switch (message.command) {
-							case 'submit':
-								// vscode.commands.executeCommand('rose-lib-ml.runPCFG');
-								vscode.window.showInformationMessage('Run pCFG!');
-								return;
-						}
-					},
-					undefined,
-					context.subscriptions
-				);
+	let clientOptions: LanguageClientOptions = {
+		documentSelector: ['*'],
+		synchronize: {},
+		outputChannelName: 'RoseLibML'
+	};
 
-				pCFGPanel.onDidDispose(
-					() => {
-						pCFGPanel = undefined;
-					},
-					null,
-					context.subscriptions
-				);
-			}
-		}),
-		vscode.commands.registerCommand('rose-lib-ml.openMCMC', () => {
-			// open MCMC tab
-			if (MCMCPanel) {
-				MCMCPanel.reveal(vscode.ViewColumn.Active);
-			} else {
-				MCMCPanel = vscode.window.createWebviewPanel('MCMCTab', 'RoseLibML - MCMC', vscode.ViewColumn.Active,
-					{
-						localResourceRoots: [
-							vscode.Uri.file(path.join(context.extensionPath, 'resources', 'css')),
-							vscode.Uri.file(path.join(context.extensionPath, 'resources', 'js'))
-						],
-						enableScripts: true
-					});
-
-				setUpWebviewPanel(context.extensionPath, MCMCPanel, 'MCMC');
-
-				MCMCPanel.webview.onDidReceiveMessage(
-					message => {
-						switch (message.command) {
-							case 'submit':
-								// vscode.commands.executeCommand('rose-lib-ml.runMCMC');
-								vscode.window.showInformationMessage('Run MCMC!');
-								return;
-						}
-					},
-					undefined,
-					context.subscriptions
-				);
-
-				MCMCPanel.onDidDispose(
-					() => {
-						MCMCPanel = undefined;
-					},
-					null,
-					context.subscriptions
-				);
-			}
-		}),
-		vscode.commands.registerCommand('rose-lib-ml.openIdioms', () => {
-			// open idioms tab
-			if (idiomsPanel) {
-				idiomsPanel.reveal(vscode.ViewColumn.Active);
-			} else {
-				idiomsPanel = vscode.window.createWebviewPanel('IdiomsTab', 'RoseLibML - Idioms', vscode.ViewColumn.Active,
-					{
-						localResourceRoots: [
-							vscode.Uri.file(path.join(context.extensionPath, 'resources', 'css')),
-							vscode.Uri.file(path.join(context.extensionPath, 'resources', 'js'))
-						],
-						enableScripts: true
-					});
-
-				setUpWebviewPanel(context.extensionPath, idiomsPanel, 'Idioms');
-
-				idiomsPanel.webview.onDidReceiveMessage(
-					message => {
-						switch (message.command) {
-							case 'generate':
-								// vscode.commands.executeCommand('rose-lib-ml.generate');
-								vscode.window.showInformationMessage('Generate!');
-								return;
-						}
-					},
-					undefined,
-					context.subscriptions
-				);
-
-				idiomsPanel.onDidDispose(
-					() => {
-						idiomsPanel = undefined;
-					},
-					null,
-					context.subscriptions
-				);
-			}
-		})
+	// create and start the language client
+	client = new LanguageClient(
+		'roseLibMLClient',
+		'RoseLibML Client',
+		serverOptions,
+		clientOptions
 	);
+
+	let clientDisposable = client.start();
+
+	// open pCFG tab command
+	let pCFGTabCommand = vscode.commands.registerCommand('rose-lib-ml.openPCFG', () => {
+		if (pCFGPanel) {
+			pCFGPanel.reveal(vscode.ViewColumn.Active);
+		} else {
+			pCFGPanel = vscode.window.createWebviewPanel('pCFGTab', 'RoseLibML - pCFG', vscode.ViewColumn.Active,
+				{
+					localResourceRoots: [
+						vscode.Uri.file(path.join(context.extensionPath, 'resources', 'css')),
+						vscode.Uri.file(path.join(context.extensionPath, 'resources', 'js'))
+					],
+					enableScripts: true
+				});
+
+			setUpWebviewPanel(context.extensionPath, pCFGPanel, 'pCFG');
+
+			pCFGPanel.webview.onDidReceiveMessage(
+				message => {
+					if (message.command === 'submit') {
+						runPCFG(message.parameters);
+					}
+				},
+				undefined,
+				context.subscriptions
+			);
+
+			pCFGPanel.onDidDispose(
+				() => {
+					pCFGPanel = undefined;
+				},
+				null,
+				context.subscriptions
+			);
+		}
+	});
+
+	// open MCMC tab command
+	let MCMCTabCommand = vscode.commands.registerCommand('rose-lib-ml.openMCMC', () => {
+		if (MCMCPanel) {
+			MCMCPanel.reveal(vscode.ViewColumn.Active);
+		} else {
+			MCMCPanel = vscode.window.createWebviewPanel('MCMCTab', 'RoseLibML - MCMC', vscode.ViewColumn.Active,
+				{
+					localResourceRoots: [
+						vscode.Uri.file(path.join(context.extensionPath, 'resources', 'css')),
+						vscode.Uri.file(path.join(context.extensionPath, 'resources', 'js'))
+					],
+					enableScripts: true
+				});
+
+			setUpWebviewPanel(context.extensionPath, MCMCPanel, 'MCMC');
+
+			MCMCPanel.webview.onDidReceiveMessage(
+				async message => {
+					if (message.command === 'submit') {
+						runMCMC(message.parameters);
+					}
+				},
+				undefined,
+				context.subscriptions
+			);
+
+			MCMCPanel.onDidDispose(
+				() => {
+					MCMCPanel = undefined;
+				},
+				null,
+				context.subscriptions
+			);
+		}
+	});
+
+	// open idioms tab command
+	let idiomsTabCommand = vscode.commands.registerCommand('rose-lib-ml.openIdioms', () => {
+		if (idiomsPanel) {
+			idiomsPanel.reveal(vscode.ViewColumn.Active);
+		} else {
+			idiomsPanel = vscode.window.createWebviewPanel('IdiomsTab', 'RoseLibML - Idioms', vscode.ViewColumn.Active,
+				{
+					localResourceRoots: [
+						vscode.Uri.file(path.join(context.extensionPath, 'resources', 'css')),
+						vscode.Uri.file(path.join(context.extensionPath, 'resources', 'js'))
+					],
+					enableScripts: true
+				});
+
+			setUpWebviewPanel(context.extensionPath, idiomsPanel, 'Idioms');
+
+			idiomsPanel.webview.onDidReceiveMessage(
+				message => {
+					if (message.command === 'generate') {
+						// vscode.commands.executeCommand('rose-lib-ml.generate');
+						vscode.window.showInformationMessage('Generate!');
+						return;
+					}
+				},
+				undefined,
+				context.subscriptions
+			);
+
+			idiomsPanel.onDidDispose(
+				() => {
+					idiomsPanel = undefined;
+				},
+				null,
+				context.subscriptions
+			);
+		}
+	});
+
+	context.subscriptions.push(clientDisposable, pCFGTabCommand, MCMCTabCommand, idiomsTabCommand);
+}
+
+function runPCFG(parameters: any) {
+	vscode.window.withProgress({
+		location: vscode.ProgressLocation.Window,
+		title: 'RoseLibML'
+	}, async progress => {
+
+		progress.report({ message: 'calculating probabilities', increment: 0 });
+
+		try {
+			await vscode.commands.executeCommand('rose-lib-ml.runPCFG',
+				{
+					'ProbabilityCoefficient': parameters.probabilityCoefficient,
+					'InputFolder': parameters.inputFolder,
+					'OutputFile': parameters.outputFile
+				}
+			);
+
+			progress.report({ increment: 100 });
+			vscode.window.showInformationMessage('Successfully done.');
+		}
+		catch (_) {
+			progress.report({ increment: 100 });
+			vscode.window.showErrorMessage('An error occurred. Please try again.');
+		}
+	});
+}
+
+function runMCMC(parameters: any) {
+	vscode.window.withProgress({
+		location: vscode.ProgressLocation.Window,
+		title: 'RoseLibML'
+	}, async progress => {
+
+		progress.report({ message: 'running MCMC', increment: 0 });
+
+		try {
+			await vscode.commands.executeCommand('rose-lib-ml.runMCMC',
+				{
+					'InputFolder': parameters.inputFolder,
+					'PCFGFile': parameters.pCFGFile,
+					'Iterations': parameters.iterations,
+					'BurnInIterations': parameters.burnInIterations,
+					'InitialCutProbability': parameters.initialCutProbability,
+					'Alpha': parameters.alpha,
+					'OutputFolder': parameters.outputFolder,
+				}
+			);
+
+			progress.report({ increment: 100 });
+			vscode.window.showInformationMessage('Successfully done.');
+		}
+		catch (_) {
+			progress.report({ increment: 100 });
+			vscode.window.showErrorMessage('An error occurred. Please try again.');
+		}
+	});
 }
 
 function setUpWebviewPanel(extensionPath: string, panel: vscode.WebviewPanel, tab: keyof typeof tabs) {
@@ -145,4 +225,10 @@ function setUpWebviewPanel(extensionPath: string, panel: vscode.WebviewPanel, ta
 	panel.webview.html = html.replace('${styleUri}', cssWebviewUri.toString()).replace('${scriptUri}', jsWebviewUri.toString()).replace(/\$\{cspSource\}/g, panel.webview.cspSource);
 }
 
-export function deactivate() { }
+export function deactivate() {
+	if (!client) {
+		return undefined;
+	}
+
+	return client.stop();
+}

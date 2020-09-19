@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace RoseLibML
 {
+    [Serializable]
     public class LabeledTree
     {
         public LabeledTreeNode Root { get; set; }

@@ -136,7 +136,7 @@ namespace RoseLib
 
                     if (cnt % 100 == 0)
                     {
-                        Console.WriteLine(cnt);
+                        //Console.WriteLine(cnt);
                     }
                 }
 

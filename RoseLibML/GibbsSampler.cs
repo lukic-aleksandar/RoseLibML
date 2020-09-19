@@ -50,7 +50,7 @@ namespace RoseLibML
                 // labeledTree.Serialize();
                 if (index % 100 == 0)
                 {
-                    Console.WriteLine(index);
+                    //Console.WriteLine(index);
                 }
             });
 
@@ -97,7 +97,7 @@ namespace RoseLibML
 
                 if (index % 100 == 0)
                 {
-                    Console.WriteLine(index);
+                    //Console.WriteLine(index);
                 }
             });
 
@@ -153,13 +153,13 @@ namespace RoseLibML
         
         public void Train(int iterations)
         {
-            var begin = DateTime.Now;
+            /*var begin = DateTime.Now;
             Console.WriteLine("START");
-            Console.WriteLine(begin);
+            Console.WriteLine(begin);*/
 
             for (int i = 0; i < iterations; i++)
             { 
-                Console.WriteLine($"Iteration: {i}");
+                //Console.WriteLine($"Iteration: {i}");
 
                 var typeNodes = BookKeeper.TypeNodes.ToList();
                 typeNodes.Shuffle();
@@ -171,7 +171,7 @@ namespace RoseLibML
 
                     if (cnt % 100 == 0)
                     {
-                        Console.WriteLine($"Processing type {cnt} of {typeNodes.Count}");
+                        //Console.WriteLine($"Processing type {cnt} of {typeNodes.Count}");
                     }
 
                     if (!BookKeeper.TypeNodes.ContainsKey(typeKV.Key))
@@ -191,11 +191,11 @@ namespace RoseLibML
                 }
             }
 
-            var end = DateTime.Now;
+            /*var end = DateTime.Now;
             Console.WriteLine(end);
             Console.WriteLine("END");
 
-            Console.WriteLine($"Time between: {end - begin}");
+            Console.WriteLine($"Time between: {end - begin}");*/
         }
 
         private void TraverseSites(List<LabeledTreeNode> typeBlock, List<int> ones)

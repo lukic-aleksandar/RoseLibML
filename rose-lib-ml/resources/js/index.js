@@ -16,7 +16,7 @@ function submitPCFGForm() {
                 probabilityCoefficient: $("#probabilityCoefficient").val(),
                 inputFolder: $("#inputFolder").val(),
                 outputFile: $("#outputFile").val(),
-            },
+            }
         });
 
         $("form#pCFGForm").trigger("reset");
@@ -37,7 +37,7 @@ function submitMCMCForm() {
                 initialCutProbability: $("#initialCutProbability").val(),
                 alpha: $("#alpha").val(),
                 outputFolder: $("#outputFolder").val()
-            },
+            }
         });
 
         $("form#MCMCForm").trigger("reset");

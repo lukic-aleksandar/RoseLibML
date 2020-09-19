@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ namespace RoseLibML
     public class LabeledTreePCFGComposer 
     { 
         public Dictionary<string, Dictionary<string, PCFGNode>> Rules { get; set; }
+
         List<LabeledTree> Trees { get; set; }
 
         public double P { get; set; } = 0.0001;
@@ -152,6 +154,32 @@ namespace RoseLibML
             }
 
             Rules[kind][rhs].Increment();
+        }
+
+        public void Serialize(string filePath)
+        {
+            BinaryFormatter b = new BinaryFormatter();
+            var fileStream = File.Create(filePath);
+            b.Serialize(fileStream, this);
+            fileStream.Close();
+        }
+
+        public static LabeledTreePCFGComposer Deserialize(string filePath)
+        {
+            try
+            {
+                BinaryFormatter b = new BinaryFormatter();
+                var fileStream = File.OpenRead(filePath);
+                var pCFGComposer = (LabeledTreePCFGComposer)b.Deserialize(fileStream);
+                fileStream.Close();
+                return pCFGComposer;
+            }
+            catch
+            {
+
+            }
+
+            return null;
         }
     }
 }

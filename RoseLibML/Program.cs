@@ -1,7 +1,10 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.Extensions.Logging;
+using OmniSharp.Extensions.LanguageServer.Server;
 using RoseLibML;
+using RoseLibML.LanguageServer;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +16,21 @@ namespace RoseLib
 {
     class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
+        {
+            var server = await LanguageServer.From(options =>
+                options
+                    .WithInput(Console.OpenStandardInput())
+                    .WithOutput(Console.OpenStandardOutput())
+                    .WithLoggerFactory(new LoggerFactory())
+                    .AddDefaultLoggingProvider()
+                    .WithHandler<CommandHandler>()
+                 );
+
+            await server.WaitForExit;
+        }
+
+        /*static void Main(string[] args)
         {
             //ApplicationCommands.cs
 
@@ -55,6 +72,6 @@ namespace RoseLib
             }
 
             return labeledTrees;
-        }
+        }*/
     }
 }
