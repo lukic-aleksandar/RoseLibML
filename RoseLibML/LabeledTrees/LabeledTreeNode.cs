@@ -8,6 +8,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace RoseLibML
 {
@@ -15,18 +16,52 @@ namespace RoseLibML
     public class LabeledTreeNode
     {
         public bool CanHaveType { get; set; } = true;
-        public bool IsFragmentRoot { get; set; }
+
+        private bool isFragmentRoot;
+        public bool IsFragmentRoot
+        {
+            get
+            {
+                if (!CanHaveType)
+                {
+                    return false;
+                }
+                return isFragmentRoot;
+            }
+            set => isFragmentRoot = value;
+        }
         public string ASTNodeType { get; set; }
         public LabeledTreeNode Parent { get; set; }
         public List<LabeledTreeNode> Children { get; set; } = new List<LabeledTreeNode>();
 
         [NonSerialized]
-        private (int typeCode, short iteration) lastModified = (typeCode: -1, iteration: -1);
-        public (int typeCode, short iteration) LastModified { get => lastModified; set { lastModified = value; } }
+        private (string typeCode, short iteration) lastModified = (typeCode: "", iteration: -1);
+        public (string typeCode, short iteration) LastModified { get => lastModified; set { lastModified = value; } }
 
         [NonSerialized]
         private LabeledTreeNodeType type;
-        public LabeledTreeNodeType Type { get => type; set { type = value; } }
+        public LabeledTreeNodeType Type
+        {
+            get => type;
+            set
+            {
+                type = value;
+
+                var trueType = GetType(this);
+                if (!trueType.Equals(type))
+                {
+                    throw new Exception("Given type is wrong!");
+                }
+
+                // typeHistory.Add(value);
+                // var stackTrace = new StackTrace();
+                // var callerName = stackTrace.GetFrame(1).GetMethod().Name;
+                // setTypeCallHistory.Add(callerName);
+            }
+        }
+
+        // private List<LabeledTreeNodeType> typeHistory = new List<LabeledTreeNodeType>();
+        // private List<string> setTypeCallHistory = new List<string>();
 
         public void Serialize(string filePath)
         {
@@ -121,23 +156,24 @@ namespace RoseLibML
             return node;
         }
 
-        public static string GetFragmentString(LabeledTreeNode labeledNode)
+        public static string GetFragmentString(LabeledTreeNode labeledNode, int levelsUntilStop = 0)
         {
             var fragmentString = $"({labeledNode.ASTNodeType})";
 
-            if(labeledNode.Children.Count > 0)
+            if (labeledNode.Children.Count > 0)
             {
                 var childrenString = "";
 
+                var nextLevelsUntilStop = levelsUntilStop - 1;
                 foreach (var child in labeledNode.Children)
                 {
-                    if (child.IsFragmentRoot || !child.CanHaveType)
+                    if ((child.IsFragmentRoot && levelsUntilStop < 1) || !child.CanHaveType)
                     {
                         childrenString += $"({child.ASTNodeType}) ";
                     }
                     else
                     {
-                        childrenString += GetFragmentString(child);
+                        childrenString += GetFragmentString(child, nextLevelsUntilStop);
                     }
                 }
 
@@ -147,9 +183,24 @@ namespace RoseLibML
             return fragmentString;
         }
 
+        public static string GetFragmentAndSurroundingsString(LabeledTreeNode fragmentRoot, int levelsAboveRoot, int levelsBelowRoot)
+        {
+            var ancestorSearchIterator = levelsAboveRoot;
+            var ancestorNode = fragmentRoot;
+            while (ancestorNode.Parent != null && ancestorSearchIterator > 0)
+            {
+                ancestorSearchIterator--;
+                ancestorNode = ancestorNode.Parent;
+            }
+
+            var levelsTotal = levelsAboveRoot + levelsBelowRoot;
+
+            return GetFragmentString(ancestorNode, levelsTotal);
+        }
+
         public void CopySimpleProperties(LabeledTreeNode labeledNode)
         {
-            if(labeledNode != null)
+            if (labeledNode != null)
             {
                 ASTNodeType = labeledNode.ASTNodeType;
                 CanHaveType = labeledNode.CanHaveType;
@@ -164,7 +215,7 @@ namespace RoseLibML
 
         public static LabeledTreeNode FindFullFragmentRoot(LabeledTreeNode labeledNode)
         {
-            if(labeledNode.Parent != null)
+            if (labeledNode.Parent != null)
             {
                 return FindFragmentRoot(labeledNode.Parent);
             }
@@ -178,13 +229,13 @@ namespace RoseLibML
         {
             var fragmentRoot = labeledNode;
 
-            if(fragmentRoot.ASTNodeType == "CompilationUnit")
-            {
-                return fragmentRoot;
-            }
-
             while (!fragmentRoot.IsFragmentRoot)
             {
+                if (fragmentRoot.ASTNodeType == "CompilationUnit")
+                {
+                    return fragmentRoot;
+                }
+
                 fragmentRoot = fragmentRoot.Parent;
             }
 

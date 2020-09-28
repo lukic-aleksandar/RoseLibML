@@ -36,5 +36,12 @@ namespace RoseLibML
             var hashed = md5Hasher.ComputeHash(Encoding.UTF8.GetBytes(FullFragment + Part1Fragment + Part2Fragment));
             return BitConverter.ToInt32(hashed, 0);
         }
+
+        public string GetMD5HashCode()
+        {
+            MD5 md5Hasher = MD5.Create();
+            var hashed = md5Hasher.ComputeHash(Encoding.UTF8.GetBytes(FullFragment + Part1Fragment + Part2Fragment));
+            return System.Convert.ToBase64String(hashed);
+        }
     }
 }

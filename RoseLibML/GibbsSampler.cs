@@ -198,8 +198,32 @@ namespace RoseLibML
             Console.WriteLine($"Time between: {end - begin}");
         }
 
+        Dictionary<LabeledTreeNode, int> traversedSites;
+        private void AddToTraversedSites(LabeledTreeNode node)
+        {
+            
+            bool valuefound = traversedSites.TryGetValue(node, out int outValue);
+            if (valuefound)
+            {
+                //throw new Exception("Verovatno je do konflikata.");
+                traversedSites[node] = outValue + 1;
+            }
+            else
+            {
+                traversedSites[node] = 1;
+            }
+        }
+
+        int conflicted = 0;
         private void TraverseSites(List<LabeledTreeNode> typeBlock, List<int> ones)
         {
+            if(traversedSites != null && traversedSites.Values.Where(v => v > 1).Count() > 0)
+            {
+                conflicted++;
+                Console.WriteLine("Conflicted: " + conflicted);
+            }
+            traversedSites = new Dictionary<LabeledTreeNode, int>();
+
             LabeledTreeNode cutPart1Root = null;
             LabeledTreeNode noncutFullFragmentRoot = null;
 
@@ -217,7 +241,7 @@ namespace RoseLibML
                 {
                     if (cutPart1Root != null)
                     {
-                        CopyTypes(cutPart1Root, fullFragmentRoot, node);
+                        OptimizedTypeUpdate(cutPart1Root, fullFragmentRoot, node);
                     }
                     else
                     {
@@ -229,7 +253,7 @@ namespace RoseLibML
                 {  
                     if(noncutFullFragmentRoot != null)
                     {
-                        CopyTypes(noncutFullFragmentRoot, fullFragmentRoot, node);
+                        OptimizedTypeUpdate(noncutFullFragmentRoot, fullFragmentRoot, node);
                     }
                     else
                     {
@@ -294,24 +318,24 @@ namespace RoseLibML
         {
             var fullFragmentRoot = LabeledTreeNode.FindFullFragmentRoot(pivot);
 
-            if(CheckForConflicts(iteration, pivot, fullFragmentRoot))
+            if(IsNotConflicting(iteration, pivot, fullFragmentRoot))
             {
                 SetLastModified(iteration, pivot, fullFragmentRoot);
-                return false;
+                return true;
             }
 
-            return true;
+            return false;
         }
 
         private void SetLastModified(short iteration, LabeledTreeNode pivot, LabeledTreeNode node)
         {
-            node.LastModified = (typeCode: pivot.Type.GetHashCode(), iteration);
+            node.LastModified = (typeCode: pivot.Type.GetMD5HashCode(), iteration);
 
             foreach (var child in node.Children)
             {
                 if (child.IsFragmentRoot && child != pivot)
                 {
-                    child.LastModified = (typeCode: pivot.Type.GetHashCode(), iteration);
+                    child.LastModified = (typeCode: pivot.Type.GetMD5HashCode(), iteration);
                 }
                 else
                 {
@@ -320,10 +344,10 @@ namespace RoseLibML
             }
         }
 
-        private bool CheckForConflicts(short iteration, LabeledTreeNode pivot, LabeledTreeNode node)
+        private bool IsNotConflicting(short iteration, LabeledTreeNode pivot, LabeledTreeNode node)
         {
 
-            if (node.LastModified.typeCode == pivot.Type.GetHashCode() &&
+            if (node.LastModified.typeCode == pivot.Type.GetMD5HashCode() &&
                 node.LastModified.iteration == iteration)
             {
                 return false;
@@ -333,15 +357,15 @@ namespace RoseLibML
             {
                 if (child.IsFragmentRoot && child != pivot)
                 {
-                    if (node.LastModified.typeCode == pivot.Type.GetHashCode() &&
-                        node.LastModified.iteration == iteration)
+                    if (child.LastModified.typeCode == pivot.Type.GetMD5HashCode() &&
+                        child.LastModified.iteration == iteration)
                     {
                         return false;
                     }
                 }
                 else
                 {
-                    if (!CheckForConflicts(iteration, pivot, child))
+                    if (!IsNotConflicting(iteration, pivot, child))
                     {
                         return false;
                     }
@@ -372,6 +396,7 @@ namespace RoseLibML
         {
             if (node.CanHaveType)
             {
+                AddToTraversedSites(node);
                 var oldType = node.Type;
                 node.Type = LabeledTreeNode.GetType(node);
 
@@ -392,13 +417,30 @@ namespace RoseLibML
             return false;
         }
 
-        private void CopyTypes(LabeledTreeNode from, LabeledTreeNode to, LabeledTreeNode pivot)
+        private void OptimizedTypeUpdate(LabeledTreeNode from, LabeledTreeNode to, LabeledTreeNode pivot)
         {
-            TryCopyType(from, to);
 
-            if(from.Children.Count != to.Children.Count)
+            if(from.ASTNodeType != to.ASTNodeType || from.Children.Count != to.Children.Count)
             {
                 throw new Exception("Trying to copy, but two nodes are not identical.");
+            }
+
+            // If it's not a pivot, and can have a type
+            // it should get a new type
+            if(to != pivot && to.CanHaveType)
+            {
+                // If it's a root (being a root of the current fragment, or a leaf)
+                // Update it by calculating the new type (because it can't be copied from existing)
+                if (to.IsFragmentRoot)
+                {
+                    TryUpdateType(to);
+                }
+                // If it's not a root, then it's inside of the current fragment, and
+                // the type of corresponding can be copied
+                else
+                {
+                    TryCopyType(from, to);
+                }
             }
 
             for (int i = 0; i < to.Children.Count; i++)
@@ -406,22 +448,29 @@ namespace RoseLibML
                 var toChild = to.Children[i];
                 var fromChild = from.Children[i];
 
-                if (toChild.IsFragmentRoot && toChild != pivot)
+                // If a child can have type, the update process should continue
+                if(toChild.CanHaveType)
                 {
-                    TryCopyType(fromChild, toChild);
-                }
-                else
-                {
-                    CopyTypes(fromChild, toChild, pivot);
+                    // If a child is fragment root (but not a pivot, because the pivot should be skipped),
+                    // Update it by calculating the new type (because it can't be copied from existing)
+                    if (toChild.IsFragmentRoot && toChild != pivot)
+                    {
+                        TryUpdateType(toChild);
+                    }
+                    // Else, recursion
+                    else
+                    {
+                        OptimizedTypeUpdate(fromChild, toChild, pivot);
+                    }
                 }
             }
-
         }
 
         private bool TryCopyType(LabeledTreeNode from, LabeledTreeNode to)
         {
             if (to.CanHaveType)
             {
+                AddToTraversedSites(to);
                 var oldType = to.Type;
                 to.Type = from.Type;
 
