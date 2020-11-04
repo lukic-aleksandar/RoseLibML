@@ -34,6 +34,13 @@ namespace RoseLib
         {
             //ApplicationCommands.cs
 
+            //SyntaxTree atree = null;
+            //using (StreamReader sr = new StreamReader(@"C:\Users\nenad\Desktop\Nnd\doktorske\training1\ApplicationCommands.cs"))
+            //{
+            //    var source = sr.ReadToEnd();
+            //    atree = CSharpSyntaxTree.ParseText(source);
+            //}
+            //var root = atree.GetRoot();
             // Create Labeled Trees
             // Perform Needed transformations
             var labeledTrees = CreateLabeledTrees(@"C:\Users\nenad\Desktop\Nnd\doktorske\training1", @"C:\Users\nenad\Desktop\Nnd\doktorske\out1000");
