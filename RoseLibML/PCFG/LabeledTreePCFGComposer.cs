@@ -74,7 +74,7 @@ namespace RoseLibML
 
         private double GetNodeProbability(LabeledTreeNode node, out int fragmentSize)
         {
-            var kind = node.ASTNodeType;
+            var kind = node.LTType;
             var children = node.Children;
             fragmentSize = children.Count;
 
@@ -83,13 +83,13 @@ namespace RoseLibML
 
             if(children.Count == 0)
             {
-                var tokenKind = node.Parent.ASTNodeType;
+                var tokenKind = node.Parent.LTType;
                 
                 if(tokenKind == "IdentifierToken")
                 {
-                    if (Rules.ContainsKey(tokenKind) && Rules[tokenKind].ContainsKey(node.ASTNodeType))
+                    if (Rules.ContainsKey(tokenKind) && Rules[tokenKind].ContainsKey(node.LTType))
                     {
-                        return Rules[tokenKind][node.ASTNodeType].Probability;
+                        return Rules[tokenKind][node.LTType].Probability;
                     }
 
                     return 0.0000001;
@@ -101,7 +101,7 @@ namespace RoseLibML
             foreach (var child in children)
             {
                 var childFragmentSize = 0;
-                rhs += $"{child.ASTNodeType} ";
+                rhs += $"{child.LTType} ";
                 probability *= GetNodeProbability(child, out childFragmentSize);
                 fragmentSize += childFragmentSize;
             }
@@ -124,14 +124,14 @@ namespace RoseLibML
 
         private void Count(LabeledTreeNode parent)
         {
-            var kind = parent.ASTNodeType;
+            var kind = parent.LTType;
             var children = parent.Children;
 
             var rhs = "";
 
             foreach (var child in children)
             {
-                rhs += $"{child.ASTNodeType} ";
+                rhs += $"{child.LTType} ";
                 Count(child);
             }
 

@@ -30,7 +30,10 @@ namespace RoseLibML
             }
             set => isFragmentRoot = value;
         }
-        public string ASTNodeType { get; set; }
+        public string LTType { get; set; } // Labeled Tree Type - serves to hold Roslyn Syntax type, some concrete value, or custom type.
+        public bool UseRoslynMatchToWrite { get; set; }
+        public int RoslynSpanStart { get; set; }
+        public int RoslynSpanEnd { get; set; }
         public LabeledTreeNode Parent { get; set; }
         public List<LabeledTreeNode> Children { get; set; } = new List<LabeledTreeNode>();
 
@@ -47,11 +50,11 @@ namespace RoseLibML
             {
                 type = value;
 
-                var trueType = GetType(this);
-                if (!trueType.Equals(type))
-                {
-                    throw new Exception("Given type is wrong!");
-                }
+                // var trueType = GetType(this);
+                // if (!trueType.Equals(type))
+                // {
+                //     throw new Exception("Given type is wrong!");
+                // }
 
                 // typeHistory.Add(value);
                 // var stackTrace = new StackTrace();
@@ -62,6 +65,29 @@ namespace RoseLibML
 
         // private List<LabeledTreeNodeType> typeHistory = new List<LabeledTreeNodeType>();
         // private List<string> setTypeCallHistory = new List<string>();
+
+        public bool IsExistingRoslynNode
+        {
+            get { return ushort.TryParse(this.LTType, out ushort result); }
+        }
+
+        public bool CouldBeWritten
+        {
+            get
+            {
+                // A small hack!. 
+                // To avoid adding new fields, I used this state to
+                // denote that it shouldn't even be written.
+                if (!IsExistingRoslynNode && UseRoslynMatchToWrite) 
+                {
+                    return false;
+                }
+                else
+                {
+                    return true;
+                }
+            }
+        }
 
         public void Serialize(string filePath)
         {
@@ -86,10 +112,8 @@ namespace RoseLibML
 
             }
 
-
             return null;
         }
-
         public void AddChild(LabeledTreeNode child)
         {
             child.Parent = this;
@@ -158,7 +182,7 @@ namespace RoseLibML
 
         public static string GetFragmentString(LabeledTreeNode labeledNode, int levelsUntilStop = 0)
         {
-            var fragmentString = $"({labeledNode.ASTNodeType})";
+            var fragmentString = $"({labeledNode.LTType})";
 
             if (labeledNode.Children.Count > 0)
             {
@@ -169,7 +193,7 @@ namespace RoseLibML
                 {
                     if ((child.IsFragmentRoot && levelsUntilStop < 1) || !child.CanHaveType)
                     {
-                        childrenString += $"({child.ASTNodeType}) ";
+                        childrenString += $"({child.LTType}) ";
                     }
                     else
                     {
@@ -177,7 +201,7 @@ namespace RoseLibML
                     }
                 }
 
-                fragmentString = $"({labeledNode.ASTNodeType} {childrenString} ) ";
+                fragmentString = $"({labeledNode.LTType} {childrenString} ) ";
             }
 
             return fragmentString;
@@ -202,7 +226,7 @@ namespace RoseLibML
         {
             if (labeledNode != null)
             {
-                ASTNodeType = labeledNode.ASTNodeType;
+                LTType = labeledNode.LTType;
                 CanHaveType = labeledNode.CanHaveType;
                 IsFragmentRoot = labeledNode.IsFragmentRoot;
             }
@@ -210,7 +234,7 @@ namespace RoseLibML
 
         public override string ToString()
         {
-            return ASTNodeType;
+            return LTType;
         }
 
         public static LabeledTreeNode FindFullFragmentRoot(LabeledTreeNode labeledNode)
@@ -231,7 +255,7 @@ namespace RoseLibML
 
             while (!fragmentRoot.IsFragmentRoot)
             {
-                if (fragmentRoot.ASTNodeType == "CompilationUnit")
+                if (fragmentRoot.LTType == "8840") // 8840 == CompilationUnit
                 {
                     return fragmentRoot;
                 }

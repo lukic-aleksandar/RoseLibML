@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,7 +24,6 @@ namespace RoseLibML
         public BookKeeper BookKeeper { get; set; }
         public LabeledTreePCFGComposer PCFG { get; set; }
         public LabeledTree[] Trees { get; set; }
-
         public double Alpha { get; set; } = 2;
 
         public double CutProbability { get; set; } = 0.8;
@@ -36,7 +36,6 @@ namespace RoseLibML
         public void Initialize(LabeledTreePCFGComposer pCFG, LabeledTree[] labeledTrees)
         {
             PCFG = pCFG;
-
             Trees = labeledTrees;
 
             var bookKeepingResults = new BookKeeper[Trees.Length];
@@ -47,7 +46,6 @@ namespace RoseLibML
                 Fragmentation(labeledTree.Root);
                 InitializeBookkeeperForTree(index, bookKeepingResults, labeledTree);
 
-                // labeledTree.Serialize();
                 if (index % 100 == 0)
                 {
                     Console.WriteLine(index);
@@ -136,7 +134,7 @@ namespace RoseLibML
         {
             if (node.IsFragmentRoot)
             {
-                bookKeeper.IncrementRootCount(node.ASTNodeType);
+                bookKeeper.IncrementRootCount(node.LTType);
                 bookKeeper.IncrementFragmentCount(LabeledTreeNode.GetFragmentString(node));
             }
 
@@ -151,8 +149,10 @@ namespace RoseLibML
             }
         }
         
-        public void Train(int iterations)
+        public void Train(int iterations, int burnInIterations, int fragmentCountTreshold)
         {
+            ToCSharpTranslator fragmentToRoslynTranslator = new ToCSharpTranslator(BookKeeper, Trees);
+
             var begin = DateTime.Now;
             Console.WriteLine("START");
             Console.WriteLine(begin);
@@ -189,8 +189,14 @@ namespace RoseLibML
                     var ones = SampleOnes(typeBlockCardinality, m);
                     TraverseSites(typeBlock, ones);
                 }
+
+                if(burnInIterations - 1 < i)
+                {
+                    WriteFragmentsInCSharp(fragmentToRoslynTranslator, fragmentCountTreshold);
+                }
             }
 
+            Console.WriteLine();
             var end = DateTime.Now;
             Console.WriteLine(end);
             Console.WriteLine("END");
@@ -198,31 +204,46 @@ namespace RoseLibML
             Console.WriteLine($"Time between: {end - begin}");
         }
 
-        Dictionary<LabeledTreeNode, int> traversedSites;
-        private void AddToTraversedSites(LabeledTreeNode node)
+
+        // Think about running this functionality in a separate thread. 
+        // Concurrent access to the BookKeeper could be a problem.
+        private void WriteFragmentsInCSharp(ToCSharpTranslator translator, int treshold)
         {
-            
-            bool valuefound = traversedSites.TryGetValue(node, out int outValue);
-            if (valuefound)
+            var commonFragments = BookKeeper.FragmentCounts.Where(kvp => kvp.Value > treshold);
+            foreach (var fragmentKV in commonFragments)
             {
-                //throw new Exception("Verovatno je do konflikata.");
-                traversedSites[node] = outValue + 1;
-            }
-            else
-            {
-                traversedSites[node] = 1;
+                var fragmentString = fragmentKV.Key;
+                
+                translator.WriteSingleFragment(fragmentString);
+
             }
         }
 
-        int conflicted = 0;
+        // Dictionary<LabeledTreeNode, int> traversedSites; // for validation purposes
+        // private void AddToTraversedSites(LabeledTreeNode node)
+        //{
+
+        //    bool valuefound = traversedSites.TryGetValue(node, out int outValue);
+        //    if (valuefound)
+        //    {
+        //        throw new Exception("A conflict problem, probably");
+        //        //traversedSites[node] = outValue + 1;
+        //    }
+        //    else
+        //    {
+        //        traversedSites[node] = 1;
+        //    }
+        //}
+
+        // int conflicted = 0; 
         private void TraverseSites(List<LabeledTreeNode> typeBlock, List<int> ones)
         {
-            if(traversedSites != null && traversedSites.Values.Where(v => v > 1).Count() > 0)
-            {
-                conflicted++;
-                Console.WriteLine("Conflicted: " + conflicted);
-            }
-            traversedSites = new Dictionary<LabeledTreeNode, int>();
+            // if(traversedSites != null && traversedSites.Values.Where(v => v > 1).Count() > 0) // for validation purposes
+            // {
+               // conflicted++;
+                // Console.WriteLine("Conflicted: " + conflicted);
+            // }
+            // traversedSites = new Dictionary<LabeledTreeNode, int>();
 
             LabeledTreeNode cutPart1Root = null;
             LabeledTreeNode noncutFullFragmentRoot = null;
@@ -268,13 +289,13 @@ namespace RoseLibML
                 {
                     BookKeeper.IncrementFragmentCount(node.Type.Part1Fragment);
                     BookKeeper.IncrementFragmentCount(node.Type.Part2Fragment);
-                    BookKeeper.IncrementRootCount(node.ASTNodeType);
-                    BookKeeper.IncrementRootCount(LabeledTreeNode.FindFragmentRoot(node.Parent).ASTNodeType);
+                    BookKeeper.IncrementRootCount(node.LTType);
+                    BookKeeper.IncrementRootCount(LabeledTreeNode.FindFragmentRoot(node.Parent).LTType);
                 }
                 else
                 {
                     BookKeeper.IncrementFragmentCount(node.Type.FullFragment);
-                    BookKeeper.IncrementRootCount(LabeledTreeNode.FindFragmentRoot(node.Parent).ASTNodeType);
+                    BookKeeper.IncrementRootCount(LabeledTreeNode.FindFragmentRoot(node.Parent).LTType);
                 }
             }
         }
@@ -294,17 +315,17 @@ namespace RoseLibML
                     {
                         BookKeeper.DecrementFragmentCount(node.Type.Part1Fragment);
                         BookKeeper.DecrementFragmentCount(node.Type.Part2Fragment);
-                        BookKeeper.DecrementRootCount(node.ASTNodeType);
+                        BookKeeper.DecrementRootCount(node.LTType);
 
                         var part1Root = LabeledTreeNode.FindFragmentRoot(node.Parent);
-                        BookKeeper.DecrementRootCount(part1Root.ASTNodeType);
+                        BookKeeper.DecrementRootCount(part1Root.LTType);
                     }
                     else
                     {
                         BookKeeper.DecrementFragmentCount(node.Type.FullFragment);
 
                         var part1Root = LabeledTreeNode.FindFragmentRoot(node.Parent);
-                        BookKeeper.DecrementRootCount(part1Root.ASTNodeType);
+                        BookKeeper.DecrementRootCount(part1Root.LTType);
                     }
 
                     typeBlock.Add(node);
@@ -396,7 +417,7 @@ namespace RoseLibML
         {
             if (node.CanHaveType)
             {
-                AddToTraversedSites(node);
+                // AddToTraversedSites(node); For debug purposes
                 var oldType = node.Type;
                 node.Type = LabeledTreeNode.GetType(node);
 
@@ -420,7 +441,7 @@ namespace RoseLibML
         private void OptimizedTypeUpdate(LabeledTreeNode from, LabeledTreeNode to, LabeledTreeNode pivot)
         {
 
-            if(from.ASTNodeType != to.ASTNodeType || from.Children.Count != to.Children.Count)
+            if(from.LTType != to.LTType || from.Children.Count != to.Children.Count)
             {
                 throw new Exception("Trying to copy, but two nodes are not identical.");
             }
@@ -470,7 +491,7 @@ namespace RoseLibML
         {
             if (to.CanHaveType)
             {
-                AddToTraversedSites(to);
+                // AddToTraversedSites(to); For debug purposes
                 var oldType = to.Type;
                 to.Type = from.Type;
 
@@ -570,7 +591,7 @@ namespace RoseLibML
         double PosteriorAl(LabeledTreeNode fragment, string fragmentString)
         {
             return (BookKeeper.GetFragmentCount(fragmentString) + Alpha * PCFG.CalculateFragmentProbability(fragment))/
-                (BookKeeper.GetRootCount(fragment.ASTNodeType) + Alpha);
+                (BookKeeper.GetRootCount(fragment.LTType) + Alpha);
         }
 
         List<double> CalculateTypeBlockProbabilities(LabeledTreeNodeType type)
@@ -588,9 +609,9 @@ namespace RoseLibML
                 var part2Proba = PCFG.CalculateFragmentProbability(fragmets.part2) + BookKeeper.GetFragmentCount(node.Type.Part2Fragment);
 
                 var product = RisingFactorial(fullProba, typeCardinality - m) *
-                    RisingFactorial(part1Proba, m) / (Alpha + RisingFactorial(BookKeeper.GetRootCount(fragmets.full.ASTNodeType), typeCardinality));
+                    RisingFactorial(part1Proba, m) / (Alpha + RisingFactorial(BookKeeper.GetRootCount(fragmets.full.LTType), typeCardinality));
 
-                var product1 = RisingFactorial(part2Proba, m) / (Alpha + RisingFactorial(BookKeeper.GetRootCount(fragmets.part2.ASTNodeType), m));
+                var product1 = RisingFactorial(part2Proba, m) / (Alpha + RisingFactorial(BookKeeper.GetRootCount(fragmets.part2.LTType), m));
 
                 gms.Insert(m, product * product1 * Math.Pow(1 / Alpha, (BookKeeper.RootCounts.Count - 2)));
             }

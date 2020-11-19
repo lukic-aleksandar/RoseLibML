@@ -19,8 +19,8 @@ namespace RoseLibML
 
                 var tempNode = new LabeledTreeNode()
                 {
-                    ASTNodeType = "BinTempNode",
-                    // IsFragmentRoot = new Random().NextDouble() < CutProbability // Must be done where needed
+                    LTType = "BinTempNode",
+                    UseRoslynMatchToWrite = true // This is on purpose, so it wouldn't get written
                 };
 
                 parent.AddChild(firstChild);

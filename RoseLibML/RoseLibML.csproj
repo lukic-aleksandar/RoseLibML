@@ -103,6 +103,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BookKeeper.cs" />
+    <Compile Include="ToCSharpTranslator.cs" />
     <Compile Include="GibbsSampler.cs" />
     <Compile Include="PCFG\IPCFGComposer.cs" />
     <Compile Include="LabeledTrees\LabeledTree.cs" />

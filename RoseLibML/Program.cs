@@ -15,15 +15,8 @@ namespace RoseLib
     {
         static void Main(string[] args)
         {
-            //ApplicationCommands.cs
+            //ApplicationCommands.cs for debug purposess
 
-            //SyntaxTree atree = null;
-            //using (StreamReader sr = new StreamReader(@"C:\Users\nenad\Desktop\Nnd\doktorske\training1\ApplicationCommands.cs"))
-            //{
-            //    var source = sr.ReadToEnd();
-            //    atree = CSharpSyntaxTree.ParseText(source);
-            //}
-            //var root = atree.GetRoot();
             // Create Labeled Trees
             // Perform Needed transformations
             var labeledTrees = CreateLabeledTrees(@"C:\Users\nenad\Desktop\Nnd\doktorske\training1", @"C:\Users\nenad\Desktop\Nnd\doktorske\out1000");
@@ -39,7 +32,7 @@ namespace RoseLib
             var sampler = new GibbsSampler();
             //sampler.Initialize(@"C:\Users\93luk\Desktop\RoseLibMLTraining\training1000", @"C:\Users\93luk\Desktop\RoseLibMLTraining\output1000");
             sampler.Initialize(pCFGComposer, labeledTrees);
-            sampler.Train(3);
+            sampler.Train(3, 1, 5);
 
             foreach (var tree in sampler.Trees)
             {
@@ -63,20 +56,6 @@ namespace RoseLib
                 LabeledTreeTransformations.Binarize(labeledTree.Root);
                 labeledTrees[index] = labeledTree;
 
-                if (index % 100 == 0)
-                {
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine($"File: {index}");
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine();
-                    Console.WriteLine();
-                }
             });
            
             return labeledTrees;

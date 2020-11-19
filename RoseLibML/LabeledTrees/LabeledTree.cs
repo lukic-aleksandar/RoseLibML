@@ -48,9 +48,10 @@ namespace RoseLibML
             var children = parent.ChildNodesAndTokens();
             var treeNode = new LabeledTreeNode();
 
-            treeNode.ASTNodeType = parent.Kind().ToString();
-            // treeNode.IsFragmentRoot = new Random().NextDouble() < CutProbability; // Must be done where needed
-
+            treeNode.LTType = ((ushort)parent.Kind()).ToString();
+            treeNode.UseRoslynMatchToWrite = false;
+            treeNode.RoslynSpanStart = parent.Span.Start;
+            treeNode.RoslynSpanEnd = parent.Span.End;
 
             foreach (var child in children)
             {
@@ -61,20 +62,35 @@ namespace RoseLibML
                 else if (child.IsToken)
                 {
                     var tokenNode = new LabeledTreeNode();
-                    tokenNode.ASTNodeType = child.AsToken()
+
+                    if(child.AsToken().Kind() != SyntaxKind.IdentifierToken)
+                    {
+                        tokenNode.LTType = ((ushort)child.AsToken()
+                                            .Kind())
+                                            .ToString();
+                        tokenNode.RoslynSpanStart = child.Span.Start;
+                        tokenNode.RoslynSpanEnd = child.Span.End;
+                        tokenNode.UseRoslynMatchToWrite = true;
+
+                        tokenNode.CanHaveType = false;
+                    }
+                    else
+                    {
+                        tokenNode.LTType = child.AsToken()
                                             .Kind()
                                             .ToString();
-                    tokenNode.CanHaveType = false;
-                    treeNode.AddChild(tokenNode);
-
-                    if (child.AsToken().Kind() == SyntaxKind.IdentifierToken)
-                    {
-                        var leaf = new LabeledTreeNode();
-                        leaf.ASTNodeType = child.AsToken().ValueText;
-                        leaf.CanHaveType = false;
+                        tokenNode.UseRoslynMatchToWrite = false;
                         tokenNode.CanHaveType = true;
+
+                        var leaf = new LabeledTreeNode();
+                        leaf.LTType = child.AsToken().ValueText;
+                        leaf.UseRoslynMatchToWrite = false;
+                        leaf.CanHaveType = false;
+                        
                         tokenNode.AddChild(leaf);
                     }
+
+                    treeNode.AddChild(tokenNode);
                 }
             }
 
