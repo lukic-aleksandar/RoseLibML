@@ -10,13 +10,13 @@ namespace RoseLibML
     {
         public Dictionary<string, int> FragmentCounts { get; set; }
         public Dictionary<string, int> RootCounts { get; set; }
-        public Dictionary<LabeledTreeNodeType, List<LabeledNode>> TypeNodes { get; set; }
+        public Dictionary<LabeledNodeType, List<LabeledNode>> TypeNodes { get; set; }
 
         public BookKeeper()
         {
             FragmentCounts = new Dictionary<string, int>();
             RootCounts = new Dictionary<string, int>();
-            TypeNodes = new Dictionary<LabeledTreeNodeType, List<LabeledNode>>();
+            TypeNodes = new Dictionary<LabeledNodeType, List<LabeledNode>>();
         }
 
 
@@ -90,7 +90,7 @@ namespace RoseLibML
             }
         }
 
-        public void AddNodeType(LabeledTreeNodeType type, LabeledNode node)
+        public void AddNodeType(LabeledNodeType type, LabeledNode node)
         {
             if (!TypeNodes.ContainsKey(type))
             {
@@ -103,7 +103,7 @@ namespace RoseLibML
             TypeNodes[existingType].Add(node);
         }
 
-        public void RemoveNodeType(LabeledTreeNodeType type, LabeledNode node)
+        public void RemoveNodeType(LabeledNodeType type, LabeledNode node)
         {
             if (!TypeNodes.ContainsKey(type))
             {
@@ -135,7 +135,7 @@ namespace RoseLibML
             }
         }
 
-        private void MergeTypeNodes(Dictionary<LabeledTreeNodeType, List<LabeledNode>> second)
+        private void MergeTypeNodes(Dictionary<LabeledNodeType, List<LabeledNode>> second)
         {
             foreach (var keyValuePair in second)
             {

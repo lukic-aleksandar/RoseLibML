@@ -17,6 +17,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 using RoseLibML.Core.LabeledTrees;
+using RoseLibML.Core;
 
 namespace RoseLibML
 {
@@ -26,11 +27,13 @@ namespace RoseLibML
         public LabeledTreePCFGComposer PCFG { get; set; }
         public LabeledTree[] Trees { get; set; }
         public double Alpha { get; set; } = 2;
-
         public double CutProbability { get; set; } = 0.8;
 
-        public GibbsSampler()
+        Translator Translator { get; set; }
+
+        public GibbsSampler(Translator translator)
         {
+            Translator = translator;
             BookKeeper = new BookKeeper();
         }
 
@@ -57,68 +60,10 @@ namespace RoseLibML
             {
                 BookKeeper.Merge(bookKeepingResult);
             }
+
+            Translator.Initialize(BookKeeper, Trees);
         }
 
-        public void Initialize(string sourcePath, string outDirectory)
-        {
-            if (Directory.Exists(sourcePath))
-            {
-                InitializeFromDirectory(sourcePath, outDirectory);
-            }
-            else
-            {
-                InitializeFromFile(sourcePath, outDirectory);
-            }
-
-            var x = Trees.Select(t => t.Root).ToList(); // Only for debug purposes
-            PCFG = new LabeledTreePCFGComposer(Trees.ToList());
-            PCFG.CalculateProbabilities();
-        }
-
-        private void InitializeFromDirectory(string sourcePath, string outDirectory)
-        {
-            var directoryInfo = new DirectoryInfo(sourcePath);
-            var files = directoryInfo.GetFiles();
-            var fileList = files.ToList();
-
-            var bookKeepingResults = new BookKeeper[files.Length];
-            Trees = new LabeledTree[files.Length];
-
-            Parallel.For(0, files.Length, (index) =>
-            {
-                var fileInfo = files[index];
-
-                var labeledTree = CreateLabeledTree(fileInfo, outDirectory);
-                Trees[index] = labeledTree;
-
-                InitializeBookkeeperForTree(index, bookKeepingResults, labeledTree);
-                // labeledTree.Serialize();
-
-                if (index % 100 == 0)
-                {
-                    Console.WriteLine(index);
-                }
-            });
-
-            foreach (var bookKeepingResult in bookKeepingResults)
-            {
-                BookKeeper.Merge(bookKeepingResult);
-            }
-        }
-
-        private void InitializeFromFile(string sourcePath, string outDirectory)
-        {
-            Trees = new LabeledTree[1];
-            var fileInfo = new FileInfo(sourcePath);
-            var labeledTree = CreateLabeledTree(fileInfo, outDirectory);
-
-            Trees[0] = labeledTree;
-
-            foreach (var child in labeledTree.Root.Children)
-            {
-                InitializeBookKeeper(child, BookKeeper);
-            }
-        }
 
         private void InitializeBookkeeperForTree(int index, BookKeeper[] bookKeepingResults, LabeledTree labeledTree)
         {
@@ -136,7 +81,6 @@ namespace RoseLibML
             if (node.IsFragmentRoot)
             {
                 bookKeeper.IncrementRootCount(node.STInfo);
-                // bookKeeper.IncrementFragmentCount(LabeledNode.GetFragmentString(node));
                 bookKeeper.IncrementFragmentCount(node.GetFragmentString());
             }
 
@@ -153,7 +97,6 @@ namespace RoseLibML
         
         public void Train(int iterations, int burnInIterations, int fragmentCountTreshold)
         {
-            ToCSharpTranslator fragmentToRoslynTranslator = new ToCSharpTranslator(BookKeeper, Trees);
 
             var begin = DateTime.Now;
             Console.WriteLine("START");
@@ -194,7 +137,7 @@ namespace RoseLibML
 
                 if(burnInIterations - 1 < i)
                 {
-                    WriteFragmentsInCSharp(fragmentToRoslynTranslator, fragmentCountTreshold);
+                    WriteFragments(fragmentCountTreshold);
                 }
             }
 
@@ -209,14 +152,14 @@ namespace RoseLibML
 
         // Think about running this functionality in a separate thread. 
         // Concurrent access to the BookKeeper could be a problem.
-        private void WriteFragmentsInCSharp(ToCSharpTranslator translator, int treshold)
+        private void WriteFragments(int treshold)
         {
             var commonFragments = BookKeeper.FragmentCounts.Where(kvp => kvp.Value > treshold);
             foreach (var fragmentKV in commonFragments)
             {
                 var fragmentString = fragmentKV.Key;
                 
-                translator.WriteSingleFragment(fragmentString);
+                Translator.WriteSingleFragment(fragmentString);
 
             }
         }
@@ -255,10 +198,6 @@ namespace RoseLibML
                 var node = typeBlock[j];
                 node.IsFragmentRoot = ones[j] == 1;
 
-                var oldType = node.Type; // Only for debug purposes
-                var newType = LabeledNode.GetType(node); // Only for debug purposes
-
-                //var fullFragmentRoot = LabeledNode.FindFullFragmentRoot(node);
                 var fullFragmentRoot = node.FindFullFragmentRoot();
                 if (node.IsFragmentRoot)
                 {
@@ -292,13 +231,11 @@ namespace RoseLibML
                     BookKeeper.IncrementFragmentCount(node.Type.Part1Fragment);
                     BookKeeper.IncrementFragmentCount(node.Type.Part2Fragment);
                     BookKeeper.IncrementRootCount(node.STInfo);
-                    //BookKeeper.IncrementRootCount(LabeledNode.FindFragmentRoot(node.Parent).LTType);
                     BookKeeper.IncrementRootCount(node.Parent.FindFragmentRoot().STInfo);
                 }
                 else
                 {
                     BookKeeper.IncrementFragmentCount(node.Type.FullFragment);
-                    //BookKeeper.IncrementRootCount(LabeledNode.FindFragmentRoot(node.Parent).LTType);
                     BookKeeper.IncrementRootCount(node.Parent.FindFragmentRoot().STInfo);
                 }
             }
@@ -321,7 +258,6 @@ namespace RoseLibML
                         BookKeeper.DecrementFragmentCount(node.Type.Part2Fragment);
                         BookKeeper.DecrementRootCount(node.STInfo);
 
-                        //var part1Root = LabeledNode.FindFragmentRoot(node.Parent);
                         var part1Root = node.Parent.FindFragmentRoot();
                         BookKeeper.DecrementRootCount(part1Root.STInfo);
                     }
@@ -329,7 +265,6 @@ namespace RoseLibML
                     {
                         BookKeeper.DecrementFragmentCount(node.Type.FullFragment);
 
-                        //var part1Root = LabeledNode.FindFragmentRoot(node.Parent);
                         var part1Root = node.Parent.FindFragmentRoot();
                         BookKeeper.DecrementRootCount(part1Root.STInfo);
                     }
@@ -343,7 +278,6 @@ namespace RoseLibML
 
         private bool CanAddNodeToTypeBlock(short iteration, LabeledNode pivot)
         {
-            // var fullFragmentRoot = LabeledNode.FindFullFragmentRoot(pivot);
             var fullFragmentRoot = pivot.FindFullFragmentRoot();
 
             if (IsNotConflicting(iteration, pivot, fullFragmentRoot))
@@ -581,7 +515,7 @@ namespace RoseLibML
         }
 
         // Implementation based on Allemanis paper
-        double CalculateCutProbability(LabeledTreeNodeType type)
+        double CalculateCutProbability(LabeledNodeType type)
         {
             var node = BookKeeper.TypeNodes[type].FirstOrDefault();
             var fragments = node.GetFragments();
@@ -601,7 +535,7 @@ namespace RoseLibML
                 (BookKeeper.GetRootCount(fragment.STInfo) + Alpha);
         }
 
-        List<double> CalculateTypeBlockProbabilities(LabeledTreeNodeType type)
+        List<double> CalculateTypeBlockProbabilities(LabeledNodeType type)
         {
             var typeCardinality = BookKeeper.TypeNodes[type].Count;
             var gms = new List<double>(typeCardinality);
@@ -631,18 +565,6 @@ namespace RoseLibML
             return SpecialFunctions.Gamma(x + n)/ SpecialFunctions.Gamma(x);
         }
 
-        private LabeledTree CreateLabeledTree(FileInfo sourceInfo, string outDirectory)
-        {
-            LabeledTree tree = LabeledTree.CreateLabeledTree(sourceInfo, outDirectory);
-            TransformTree(tree);
-            return tree;
-        }
-
-        private void TransformTree(LabeledTree tree)
-        {
-            LabeledTreeTransformations.Binarize(tree.Root);
-            Fragmentation(tree.Root);
-        }
 
         private void Fragmentation(LabeledNode node)
         {

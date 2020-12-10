@@ -41,8 +41,8 @@ namespace RoseLibML
         public (string typeCode, short iteration) LastModified { get => lastModified; set { lastModified = value; } }
 
         [NonSerialized]
-        private LabeledTreeNodeType type;
-        public LabeledTreeNodeType Type
+        private LabeledNodeType type;
+        public LabeledNodeType Type
         {
             get => type;
             set
@@ -81,7 +81,7 @@ namespace RoseLibML
             Children.Add(child);
         }
 
-        public static LabeledTreeNodeType GetType(LabeledNode labeledNode)
+        public static LabeledNodeType GetType(LabeledNode labeledNode)
         {
             var oldIsFragmentRoot = labeledNode.IsFragmentRoot;
             labeledNode.IsFragmentRoot = false;
@@ -92,7 +92,7 @@ namespace RoseLibML
             var part2 = labeledNode.GetFragmentString();
             labeledNode.IsFragmentRoot = oldIsFragmentRoot;
 
-            return new LabeledTreeNodeType()
+            return new LabeledNodeType()
             {
                 FullFragment = full,
                 Part1Fragment = part1,
@@ -134,32 +134,7 @@ namespace RoseLibML
 
 
 
-        public bool UseRoslynMatchToWrite { get; set; }
-        public int RoslynSpanStart { get; set; }
-        public int RoslynSpanEnd { get; set; }
-
-        public bool IsExistingRoslynNode
-        {
-            get { return ushort.TryParse(this.STInfo, out ushort result); }
-        }
-
-        public bool CouldBeWritten
-        {
-            get
-            {
-                // A small hack!. 
-                // To avoid adding new fields, I used this state to
-                // denote that it shouldn't even be written.
-                if (!IsExistingRoslynNode && UseRoslynMatchToWrite) 
-                {
-                    return false;
-                }
-                else
-                {
-                    return true;
-                }
-            }
-        }
+        
 
         
         

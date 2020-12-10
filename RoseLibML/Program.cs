@@ -2,6 +2,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoseLibML;
+using RoseLibML.CS.CSTrees;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -26,10 +27,11 @@ namespace RoseLib
             pCFGComposer.CalculateProbabilities();
             // TODO: Save from Composer to file
             pCFGComposer.Serialize("LabeledTreeNodePCFGComposer.bin");
-          
+
 
             // TODO: Use existing PCFG, if it exists, and trees 
-            var sampler = new GibbsSampler();
+            ToCSTranslator translator = new ToCSTranslator();
+            var sampler = new GibbsSampler(translator);
             //sampler.Initialize(@"C:\Users\93luk\Desktop\RoseLibMLTraining\training1000", @"C:\Users\93luk\Desktop\RoseLibMLTraining\output1000");
             sampler.Initialize(pCFGComposer, labeledTrees);
             sampler.Train(3, 1, 5);
@@ -52,8 +54,8 @@ namespace RoseLib
             Parallel.For(0, files.Length, (index) =>
             {
 
-                var labeledTree = LabeledTree.CreateLabeledTree(files[index], outputDirectory);
-                LabeledTreeTransformations.Binarize(labeledTree.Root);
+                var labeledTree = CSTreeCreator.CreateTree(files[index], outputDirectory);
+                LabeledTreeTransformations.Binarize(labeledTree.Root, new CSNodeCreator());
                 labeledTrees[index] = labeledTree;
 
             });

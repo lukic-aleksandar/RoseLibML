@@ -104,7 +104,14 @@
   <ItemGroup>
     <Compile Include="Core\BookKeeper.cs" />
     <Compile Include="Core\LabeledTrees\FragmentExtensions.cs" />
-    <Compile Include="ToCSharpTranslator.cs" />
+    <Compile Include="Core\LabeledTrees\NodeCreator.cs" />
+    <Compile Include="Core\LabeledTrees\TreeCreator.cs" />
+    <Compile Include="Core\Translator.cs" />
+    <Compile Include="CS\CSTrees\CSNode.cs" />
+    <Compile Include="CS\CSTrees\CSNodeCreator.cs" />
+    <Compile Include="CS\CSTrees\CSTree.cs" />
+    <Compile Include="CS\CSTrees\CSTreeCreator.cs" />
+    <Compile Include="CS\ToCSTranslator.cs" />
     <Compile Include="Core\GibbsSampler.cs" />
     <Compile Include="Core\PCFG\IPCFGComposer.cs" />
     <Compile Include="Core\LabeledTrees\LabeledTree.cs" />
@@ -132,9 +139,7 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CS\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

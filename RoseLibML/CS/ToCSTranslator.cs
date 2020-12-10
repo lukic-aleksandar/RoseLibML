@@ -1,5 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using RoseLibML.Core;
+using RoseLibML.CS.CSTrees;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,11 +11,16 @@ using System.Threading.Tasks;
 
 namespace RoseLibML
 {
-    public class ToCSharpTranslator
+    public class ToCSTranslator : Translator
     {
         public BookKeeper BookKeeper { get; set; }
         public LabeledTree[] Trees { get; set; }
-        public ToCSharpTranslator(BookKeeper bookKeeper, LabeledTree[] trees)
+        
+        public ToCSTranslator()
+        {
+        }
+
+        public void Initialize(BookKeeper bookKeeper, LabeledTree[] trees)
         {
             BookKeeper = bookKeeper;
             Trees = trees;
@@ -32,13 +39,13 @@ namespace RoseLibML
             }
         }
 
-        private LabeledNode RetrieveFragmentRootNode(string fragmentInTreebankNotation)
+        private CSNode RetrieveFragmentRootNode(string fragmentInTreebankNotation)
         {
             var typeKVPart2 = BookKeeper.TypeNodes.Where(kvp => kvp.Key.Part2Fragment == fragmentInTreebankNotation
                                                             && kvp.Value.Count > 0).FirstOrDefault();
             if (typeKVPart2.Value != null)
             {
-                return typeKVPart2.Value.First();
+                return typeKVPart2.Value.First() as CSNode;
             }
             else
             {
@@ -50,16 +57,16 @@ namespace RoseLibML
                                                     || (node.Parent == null && node.IsFragmentRoot == true)).FirstOrDefault();
                     if (nodeFull != null && nodeFull.IsFragmentRoot == false)
                     {
-                        var ancestor = nodeFull.Parent;
+                        var ancestor = nodeFull.Parent as CSNode;
                         while (ancestor != null && !ancestor.IsFragmentRoot)
                         {
-                            ancestor = ancestor.Parent;
+                            ancestor = ancestor.Parent as CSNode;
                         }
                         return ancestor;
                     }
                     else
                     {
-                        return nodeFull;
+                        return nodeFull as CSNode;
                     }
                 }
             }
@@ -67,11 +74,11 @@ namespace RoseLibML
             return null;
         }
 
-        private List<LabeledNode> RetrieveFragmentLeaves(LabeledNode rootNode)
+        private List<CSNode> RetrieveFragmentLeaves(CSNode rootNode)
         {
-            Queue<LabeledNode> nodeQueue = new Queue<LabeledNode>(rootNode.Children);
+            Queue<CSNode> nodeQueue = new Queue<CSNode>(rootNode.Children.Cast<CSNode>());
 
-            var leaves = new List<LabeledNode>();
+            var leaves = new List<CSNode>();
             while (nodeQueue.Count > 0)
             {
                 var node = nodeQueue.Dequeue();
@@ -81,7 +88,7 @@ namespace RoseLibML
                 }
                 else if (!node.IsFragmentRoot)
                 {
-                    using (var en = node.Children.GetEnumerator())
+                    using (var en = node.Children.Cast<CSNode>().GetEnumerator())
                     {
                         while (en.MoveNext())
                         {
@@ -94,7 +101,7 @@ namespace RoseLibML
             return leaves;
         }
 
-        private void FindRootMatchAndWriteFragment(LabeledNode fragmentRootNode, IEnumerable<LabeledNode> fragmentLeaves)
+        private void FindRootMatchAndWriteFragment(CSNode fragmentRootNode, IEnumerable<CSNode> fragmentLeaves)
         {
             var withCorrespondingNode = RetrieveOneWithCoressponding(fragmentRootNode);
             var roslynTree = RetrieveRoslynTree(withCorrespondingNode);
@@ -111,7 +118,7 @@ namespace RoseLibML
             }
         }
 
-        private void WriteLeaves(IEnumerable<LabeledNode> fragmentLeaves, SyntaxNodeOrToken roslynFragmentRoot)
+        private void WriteLeaves(IEnumerable<CSNode> fragmentLeaves, SyntaxNodeOrToken roslynFragmentRoot)
         {
             Console.WriteLine();
             Console.WriteLine();
@@ -146,12 +153,12 @@ namespace RoseLibML
             }
         }
 
-        private SyntaxTree RetrieveRoslynTree(LabeledNode fragmentRootNode)
+        private SyntaxTree RetrieveRoslynTree(CSNode fragmentRootNode)
         {
             var treeRoot = fragmentRootNode;
             while (treeRoot.Parent != null)
             {
-                treeRoot = treeRoot.Parent;
+                treeRoot = treeRoot.Parent as CSNode;
             }
 
             var fragmentTree = Trees.Where(tree => tree.Root == treeRoot).FirstOrDefault();
@@ -163,7 +170,7 @@ namespace RoseLibML
         }
 
         // TODO: Consider transforming to binary search
-        private SyntaxNodeOrToken FindCorrespondingRoslynNodeOrToken(IEnumerable<SyntaxNodeOrToken> syntaxNodesAndTokens, LabeledNode forNode)
+        private SyntaxNodeOrToken FindCorrespondingRoslynNodeOrToken(IEnumerable<SyntaxNodeOrToken> syntaxNodesAndTokens, CSNode forNode)
         {
             foreach (var nodeOrToken in syntaxNodesAndTokens)
             {
@@ -181,17 +188,14 @@ namespace RoseLibML
         }
 
 
-        private LabeledNode RetrieveOneWithCoressponding(LabeledNode node)
+        private CSNode RetrieveOneWithCoressponding(CSNode node)
         {
             while (!node.IsExistingRoslynNode)
             {
-                node = node.Parent;
+                node = node.Parent as CSNode;
             }
 
             return node;
         }
-        
-
-        
     }
 }

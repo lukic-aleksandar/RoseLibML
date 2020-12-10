@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoseLibML.Core.LabeledTrees;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,7 @@ namespace RoseLibML
 {
     public class LabeledTreeTransformations
     {
-        public static void Binarize(LabeledNode parent)
+        public static void Binarize(LabeledNode parent, NodeCreator nodeCreator)
         {
             if (parent.Children.Count > 2)
             {
@@ -17,11 +18,8 @@ namespace RoseLibML
                 restOfChildren.RemoveAt(0);
                 parent.Children.Clear();
 
-                var tempNode = new LabeledNode()
-                {
-                    STInfo = "BinTempNode",
-                    UseRoslynMatchToWrite = true // This is on purpose, so it wouldn't get written
-                };
+                var tempNode = nodeCreator.CreateNode();
+                tempNode.STInfo = "BinTempNode";
 
                 parent.AddChild(firstChild);
                 parent.AddChild(tempNode);
@@ -31,14 +29,14 @@ namespace RoseLibML
                     tempNode.AddChild(child);
                 }
 
-                Binarize(firstChild);
-                Binarize(tempNode);
+                Binarize(firstChild, nodeCreator);
+                Binarize(tempNode, nodeCreator);
             }
             else
             {
                 foreach (var child in parent.Children)
                 {
-                    Binarize(child);
+                    Binarize(child, nodeCreator);
                 }
             }
 

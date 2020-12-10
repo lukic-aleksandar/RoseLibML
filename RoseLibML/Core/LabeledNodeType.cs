@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RoseLibML
 {
-    public class LabeledTreeNodeType
+    public class LabeledNodeType
     {
         public string FullFragment { get; set; }
         public string Part1Fragment { get; set; }
@@ -15,7 +15,7 @@ namespace RoseLibML
 
         public override bool Equals(object obj)
         {
-            var other = obj as LabeledTreeNodeType;
+            var other = obj as LabeledNodeType;
             
             if(other != null)
             {
