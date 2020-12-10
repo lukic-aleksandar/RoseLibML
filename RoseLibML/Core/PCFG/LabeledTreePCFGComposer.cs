@@ -48,7 +48,7 @@ namespace RoseLibML
             }
         }
 
-        public double CalculateFragmentProbability(LabeledTreeNode root)
+        public double CalculateFragmentProbability(LabeledNode root)
         {
             var fragmentSize = 0;
             var fragmentProbability = GetNodeProbability(root, out fragmentSize);
@@ -72,9 +72,9 @@ namespace RoseLibML
             stream.Close();
         }
 
-        private double GetNodeProbability(LabeledTreeNode node, out int fragmentSize)
+        private double GetNodeProbability(LabeledNode node, out int fragmentSize)
         {
-            var kind = node.LTType;
+            var kind = node.STInfo;
             var children = node.Children;
             fragmentSize = children.Count;
 
@@ -83,13 +83,13 @@ namespace RoseLibML
 
             if(children.Count == 0)
             {
-                var tokenKind = node.Parent.LTType;
+                var tokenKind = node.Parent.STInfo;
                 
                 if(tokenKind == "IdentifierToken")
                 {
-                    if (Rules.ContainsKey(tokenKind) && Rules[tokenKind].ContainsKey(node.LTType))
+                    if (Rules.ContainsKey(tokenKind) && Rules[tokenKind].ContainsKey(node.STInfo))
                     {
-                        return Rules[tokenKind][node.LTType].Probability;
+                        return Rules[tokenKind][node.STInfo].Probability;
                     }
 
                     return 0.0000001;
@@ -101,7 +101,7 @@ namespace RoseLibML
             foreach (var child in children)
             {
                 var childFragmentSize = 0;
-                rhs += $"{child.LTType} ";
+                rhs += $"{child.STInfo} ";
                 probability *= GetNodeProbability(child, out childFragmentSize);
                 fragmentSize += childFragmentSize;
             }
@@ -122,16 +122,16 @@ namespace RoseLibML
             }
         }
 
-        private void Count(LabeledTreeNode parent)
+        private void Count(LabeledNode parent)
         {
-            var kind = parent.LTType;
+            var kind = parent.STInfo;
             var children = parent.Children;
 
             var rhs = "";
 
             foreach (var child in children)
             {
-                rhs += $"{child.LTType} ";
+                rhs += $"{child.STInfo} ";
                 Count(child);
             }
 

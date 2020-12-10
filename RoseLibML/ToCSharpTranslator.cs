@@ -32,7 +32,7 @@ namespace RoseLibML
             }
         }
 
-        private LabeledTreeNode RetrieveFragmentRootNode(string fragmentInTreebankNotation)
+        private LabeledNode RetrieveFragmentRootNode(string fragmentInTreebankNotation)
         {
             var typeKVPart2 = BookKeeper.TypeNodes.Where(kvp => kvp.Key.Part2Fragment == fragmentInTreebankNotation
                                                             && kvp.Value.Count > 0).FirstOrDefault();
@@ -67,11 +67,11 @@ namespace RoseLibML
             return null;
         }
 
-        private List<LabeledTreeNode> RetrieveFragmentLeaves(LabeledTreeNode rootNode)
+        private List<LabeledNode> RetrieveFragmentLeaves(LabeledNode rootNode)
         {
-            Queue<LabeledTreeNode> nodeQueue = new Queue<LabeledTreeNode>(rootNode.Children);
+            Queue<LabeledNode> nodeQueue = new Queue<LabeledNode>(rootNode.Children);
 
-            var leaves = new List<LabeledTreeNode>();
+            var leaves = new List<LabeledNode>();
             while (nodeQueue.Count > 0)
             {
                 var node = nodeQueue.Dequeue();
@@ -94,7 +94,7 @@ namespace RoseLibML
             return leaves;
         }
 
-        private void FindRootMatchAndWriteFragment(LabeledTreeNode fragmentRootNode, IEnumerable<LabeledTreeNode> fragmentLeaves)
+        private void FindRootMatchAndWriteFragment(LabeledNode fragmentRootNode, IEnumerable<LabeledNode> fragmentLeaves)
         {
             var withCorrespondingNode = RetrieveOneWithCoressponding(fragmentRootNode);
             var roslynTree = RetrieveRoslynTree(withCorrespondingNode);
@@ -111,7 +111,7 @@ namespace RoseLibML
             }
         }
 
-        private void WriteLeaves(IEnumerable<LabeledTreeNode> fragmentLeaves, SyntaxNodeOrToken roslynFragmentRoot)
+        private void WriteLeaves(IEnumerable<LabeledNode> fragmentLeaves, SyntaxNodeOrToken roslynFragmentRoot)
         {
             Console.WriteLine();
             Console.WriteLine();
@@ -133,7 +133,7 @@ namespace RoseLibML
                     }
                     else if (leaf.IsExistingRoslynNode)
                     {
-                        var uShortSyntaxKind = ushort.Parse(leaf.LTType);
+                        var uShortSyntaxKind = ushort.Parse(leaf.STInfo);
                         strWriter.Write((SyntaxKind)uShortSyntaxKind);
                     }
                     else {
@@ -146,7 +146,7 @@ namespace RoseLibML
             }
         }
 
-        private SyntaxTree RetrieveRoslynTree(LabeledTreeNode fragmentRootNode)
+        private SyntaxTree RetrieveRoslynTree(LabeledNode fragmentRootNode)
         {
             var treeRoot = fragmentRootNode;
             while (treeRoot.Parent != null)
@@ -163,7 +163,7 @@ namespace RoseLibML
         }
 
         // TODO: Consider transforming to binary search
-        private SyntaxNodeOrToken FindCorrespondingRoslynNodeOrToken(IEnumerable<SyntaxNodeOrToken> syntaxNodesAndTokens, LabeledTreeNode forNode)
+        private SyntaxNodeOrToken FindCorrespondingRoslynNodeOrToken(IEnumerable<SyntaxNodeOrToken> syntaxNodesAndTokens, LabeledNode forNode)
         {
             foreach (var nodeOrToken in syntaxNodesAndTokens)
             {
@@ -181,7 +181,7 @@ namespace RoseLibML
         }
 
 
-        private LabeledTreeNode RetrieveOneWithCoressponding(LabeledTreeNode node)
+        private LabeledNode RetrieveOneWithCoressponding(LabeledNode node)
         {
             while (!node.IsExistingRoslynNode)
             {

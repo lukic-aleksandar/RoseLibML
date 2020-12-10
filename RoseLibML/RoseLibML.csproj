@@ -102,19 +102,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BookKeeper.cs" />
+    <Compile Include="Core\BookKeeper.cs" />
+    <Compile Include="Core\LabeledTrees\FragmentExtensions.cs" />
     <Compile Include="ToCSharpTranslator.cs" />
-    <Compile Include="GibbsSampler.cs" />
-    <Compile Include="PCFG\IPCFGComposer.cs" />
-    <Compile Include="LabeledTrees\LabeledTree.cs" />
-    <Compile Include="LabeledTrees\LabeledTreeNode.cs" />
-    <Compile Include="LabeledTreeNodeType.cs" />
-    <Compile Include="PCFG\LabeledTreePCFGComposer.cs" />
-    <Compile Include="LabeledTrees\LabeledTreeTransformations.cs" />
-    <Compile Include="PCFG\RoslynPCFGComposer.cs">
+    <Compile Include="Core\GibbsSampler.cs" />
+    <Compile Include="Core\PCFG\IPCFGComposer.cs" />
+    <Compile Include="Core\LabeledTrees\LabeledTree.cs" />
+    <Compile Include="Core\LabeledTrees\LabeledNode.cs" />
+    <Compile Include="Core\LabeledNodeType.cs" />
+    <Compile Include="Core\PCFG\LabeledTreePCFGComposer.cs" />
+    <Compile Include="Core\LabeledTrees\LabeledTreeTransformations.cs" />
+    <Compile Include="Core\PCFG\RoslynPCFGComposer.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Compile>
-    <Compile Include="PCFG\PCFGNode.cs" />
+    <Compile Include="Core\PCFG\PCFGNode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestFile.cs">
@@ -131,7 +132,9 @@
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="CS\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

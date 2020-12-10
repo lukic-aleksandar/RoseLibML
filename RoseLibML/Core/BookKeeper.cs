@@ -10,13 +10,13 @@ namespace RoseLibML
     {
         public Dictionary<string, int> FragmentCounts { get; set; }
         public Dictionary<string, int> RootCounts { get; set; }
-        public Dictionary<LabeledTreeNodeType, List<LabeledTreeNode>> TypeNodes { get; set; }
+        public Dictionary<LabeledTreeNodeType, List<LabeledNode>> TypeNodes { get; set; }
 
         public BookKeeper()
         {
             FragmentCounts = new Dictionary<string, int>();
             RootCounts = new Dictionary<string, int>();
-            TypeNodes = new Dictionary<LabeledTreeNodeType, List<LabeledTreeNode>>();
+            TypeNodes = new Dictionary<LabeledTreeNodeType, List<LabeledNode>>();
         }
 
 
@@ -90,11 +90,11 @@ namespace RoseLibML
             }
         }
 
-        public void AddNodeType(LabeledTreeNodeType type, LabeledTreeNode node)
+        public void AddNodeType(LabeledTreeNodeType type, LabeledNode node)
         {
             if (!TypeNodes.ContainsKey(type))
             {
-                TypeNodes.Add(type, new List<LabeledTreeNode>());
+                TypeNodes.Add(type, new List<LabeledNode>());
             }
 
             var existingType = TypeNodes.Keys.Where(k => k.Equals(type)).FirstOrDefault();
@@ -103,11 +103,11 @@ namespace RoseLibML
             TypeNodes[existingType].Add(node);
         }
 
-        public void RemoveNodeType(LabeledTreeNodeType type, LabeledTreeNode node)
+        public void RemoveNodeType(LabeledTreeNodeType type, LabeledNode node)
         {
             if (!TypeNodes.ContainsKey(type))
             {
-                TypeNodes.Add(type, new List<LabeledTreeNode>());
+                TypeNodes.Add(type, new List<LabeledNode>());
             }
             else
             {
@@ -135,13 +135,13 @@ namespace RoseLibML
             }
         }
 
-        private void MergeTypeNodes(Dictionary<LabeledTreeNodeType, List<LabeledTreeNode>> second)
+        private void MergeTypeNodes(Dictionary<LabeledTreeNodeType, List<LabeledNode>> second)
         {
             foreach (var keyValuePair in second)
             {
                 if (!TypeNodes.ContainsKey(keyValuePair.Key))
                 {
-                    TypeNodes.Add(keyValuePair.Key, new List<LabeledTreeNode>());
+                    TypeNodes.Add(keyValuePair.Key, new List<LabeledNode>());
                 }
 
                 var existingType = TypeNodes.Keys.Where(k => k.Equals(keyValuePair.Key)).FirstOrDefault();

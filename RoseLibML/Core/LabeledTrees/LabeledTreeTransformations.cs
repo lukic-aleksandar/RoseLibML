@@ -8,7 +8,7 @@ namespace RoseLibML
 {
     public class LabeledTreeTransformations
     {
-        public static void Binarize(LabeledTreeNode parent)
+        public static void Binarize(LabeledNode parent)
         {
             if (parent.Children.Count > 2)
             {
@@ -17,9 +17,9 @@ namespace RoseLibML
                 restOfChildren.RemoveAt(0);
                 parent.Children.Clear();
 
-                var tempNode = new LabeledTreeNode()
+                var tempNode = new LabeledNode()
                 {
-                    LTType = "BinTempNode",
+                    STInfo = "BinTempNode",
                     UseRoslynMatchToWrite = true // This is on purpose, so it wouldn't get written
                 };
 
