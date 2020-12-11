@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace RoseLibML.Core.LabeledTrees
 {
-    public class NodeCreator
+    public abstract class NodeCreator
     {
-        public virtual LabeledNode CreateNode()
-        {
-            return new LabeledNode();
-        }
+        public abstract LabeledNode CreateTempNode();
     }
 }

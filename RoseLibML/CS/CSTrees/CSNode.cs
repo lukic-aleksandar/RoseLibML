@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoseLibML.CS.CSTrees
 {
+    [Serializable]
     public class CSNode : LabeledNode
     {
         public bool UseRoslynMatchToWrite { get; set; }
@@ -33,6 +34,25 @@ namespace RoseLibML.CS.CSTrees
                     return true;
                 }
             }
+        }
+        public override bool IsTreeRoot()
+        {
+            if (STInfo == "8840") // 8840 == CompilationUnit
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public override LabeledNode CreateSimpleDuplicate()
+        {
+            var simpleDuplicate = new CSNode();
+            simpleDuplicate.STInfo = STInfo;
+            simpleDuplicate.CanHaveType = CanHaveType;
+            simpleDuplicate.IsFragmentRoot = IsFragmentRoot;
+
+            return simpleDuplicate;
         }
     }
 }

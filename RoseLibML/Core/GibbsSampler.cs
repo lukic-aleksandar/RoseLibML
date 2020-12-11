@@ -29,11 +29,11 @@ namespace RoseLibML
         public double Alpha { get; set; } = 2;
         public double CutProbability { get; set; } = 0.8;
 
-        Translator Translator { get; set; }
+        Writer Writer { get; set; }
 
-        public GibbsSampler(Translator translator)
+        public GibbsSampler(Writer writer)
         {
-            Translator = translator;
+            Writer = writer;
             BookKeeper = new BookKeeper();
         }
 
@@ -42,41 +42,30 @@ namespace RoseLibML
             PCFG = pCFG;
             Trees = labeledTrees;
 
-            var bookKeepingResults = new BookKeeper[Trees.Length];
-            Parallel.For(0, Trees.Length, (index) =>
+            foreach (var item in Trees.Select((tree, index) => new { index, tree }))
             {
-                var labeledTree = Trees[index];
+                Fragmentation(item.tree.Root);
+                AddToBookKeeper(BookKeeper, item.tree);
 
-                Fragmentation(labeledTree.Root);
-                InitializeBookkeeperForTree(index, bookKeepingResults, labeledTree);
-
-                if (index % 100 == 0)
+                if(item.index % 100 == 0)
                 {
-                    Console.WriteLine(index);
+                    Console.WriteLine($"Initialization passed index {item.index}.");
                 }
-            });
-
-            foreach (var bookKeepingResult in bookKeepingResults)
-            {
-                BookKeeper.Merge(bookKeepingResult);
             }
 
-            Translator.Initialize(BookKeeper, Trees);
+            Writer.Initialize(BookKeeper, Trees);
         }
 
 
-        private void InitializeBookkeeperForTree(int index, BookKeeper[] bookKeepingResults, LabeledTree labeledTree)
+        private void AddToBookKeeper(BookKeeper bookKeeper, LabeledTree labeledTree)
         {
-            var bookKeeper = new BookKeeper();
-            foreach (var child in labeledTree.Root.Children)
+            foreach (var child in labeledTree.Root.Children) // Skips the root
             {
-                InitializeBookKeeper(child, bookKeeper);
+                AddToBookKeeper(bookKeeper, child);
             }
-
-            bookKeepingResults[index] = bookKeeper;
         }
 
-        public void InitializeBookKeeper(LabeledNode node, BookKeeper bookKeeper)
+        public void AddToBookKeeper(BookKeeper bookKeeper, LabeledNode node)
         {
             if (node.IsFragmentRoot)
             {
@@ -91,7 +80,7 @@ namespace RoseLibML
 
             foreach (var child in node.Children)
             {
-                InitializeBookKeeper(child, bookKeeper);
+                AddToBookKeeper(bookKeeper, child);
             }
         }
         
@@ -159,7 +148,7 @@ namespace RoseLibML
             {
                 var fragmentString = fragmentKV.Key;
                 
-                Translator.WriteSingleFragment(fragmentString);
+                Writer.WriteSingleFragment(fragmentString);
 
             }
         }

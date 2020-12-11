@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RoseLibML.Core
 {
-    public interface Translator
+    public interface Writer
     {
         void Initialize(BookKeeper bookKeeper, LabeledTree[] trees);
         void WriteSingleFragment(string fragmentInTreebankNotation);

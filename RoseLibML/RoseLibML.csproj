@@ -106,12 +106,12 @@
     <Compile Include="Core\LabeledTrees\FragmentExtensions.cs" />
     <Compile Include="Core\LabeledTrees\NodeCreator.cs" />
     <Compile Include="Core\LabeledTrees\TreeCreator.cs" />
-    <Compile Include="Core\Translator.cs" />
+    <Compile Include="Core\Writer.cs" />
     <Compile Include="CS\CSTrees\CSNode.cs" />
     <Compile Include="CS\CSTrees\CSNodeCreator.cs" />
     <Compile Include="CS\CSTrees\CSTree.cs" />
     <Compile Include="CS\CSTrees\CSTreeCreator.cs" />
-    <Compile Include="CS\ToCSTranslator.cs" />
+    <Compile Include="CS\ToCSWriter.cs" />
     <Compile Include="Core\GibbsSampler.cs" />
     <Compile Include="Core\PCFG\IPCFGComposer.cs" />
     <Compile Include="Core\LabeledTrees\LabeledTree.cs" />

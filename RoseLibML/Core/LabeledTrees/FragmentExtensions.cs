@@ -14,7 +14,7 @@ namespace RoseLibML.Core.LabeledTrees
 
             while (!fragmentRoot.IsFragmentRoot)
             {
-                if (fragmentRoot.STInfo == "8840") // 8840 == CompilationUnit
+                if (fragmentRoot.IsTreeRoot())
                 {
                     return fragmentRoot;
                 }
@@ -53,6 +53,10 @@ namespace RoseLibML.Core.LabeledTrees
                     {
                         childrenString += $"({child.STInfo}) ";
                     }
+                    else
+                    {
+                        childrenString += GetFragmentString(child);
+                    }
                 }
 
                 fragmentString = $"({labeledNode.STInfo} {childrenString} ) ";
@@ -66,41 +70,40 @@ namespace RoseLibML.Core.LabeledTrees
             var oldIsFragmentRoot = labeledNode.IsFragmentRoot;
             labeledNode.IsFragmentRoot = false;
             var fragmentRoot = labeledNode.FindFragmentRoot();
-            var full = fragmentRoot.GetFragment();
+            var full = fragmentRoot.DuplicateFragment();
             labeledNode.IsFragmentRoot = true;
-            var part1 = fragmentRoot.GetFragment();
-            var part2 = labeledNode.GetFragment();
+            var part1 = fragmentRoot.DuplicateFragment();
+            var part2 = labeledNode.DuplicateFragment();
             labeledNode.IsFragmentRoot = oldIsFragmentRoot;
 
             return (full: full, part1: part1, part2: part2);
         }
 
-        // Kreira kopiju fragmenta! Dakle, svih čvorova u fragmentu!
-        public static LabeledNode GetFragment(this LabeledNode labeledNode)
+        // Kreira duplikat fragmenta! Dakle, svih čvorova u fragmentu!
+        public static LabeledNode DuplicateFragment(this LabeledNode labeledNode)
         {
-            var node = new LabeledNode();
-            node.CopySimpleProperties(labeledNode);
-
-            var parent = new LabeledNode();
-            parent.CopySimpleProperties(node.Parent);
-
-            node.Parent = parent;
+            var nodeDuplicate = labeledNode.CreateSimpleDuplicate();
+            
+            if(labeledNode.Parent != null)
+            {
+                var parentDuplicate = labeledNode.Parent.CreateSimpleDuplicate();
+                nodeDuplicate.Parent = parentDuplicate;
+            }
 
             foreach (var child in labeledNode.Children)
             {
                 if (!child.IsFragmentRoot)
                 {
-                    node.AddChild(GetFragment(child));
+                    nodeDuplicate.AddChild(DuplicateFragment(child));
                 }
                 else
                 {
-                    var childCopy = new LabeledNode();
-                    childCopy.CopySimpleProperties(child);
-                    node.AddChild(childCopy);
+                    var childDuplicate = child.CreateSimpleDuplicate();
+                    nodeDuplicate.AddChild(childDuplicate);
                 }
             }
 
-            return node;
+            return nodeDuplicate;
         }
     }
 }

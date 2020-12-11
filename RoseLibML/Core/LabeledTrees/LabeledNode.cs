@@ -14,7 +14,7 @@ using RoseLibML.Core.LabeledTrees;
 namespace RoseLibML
 {
     [Serializable]
-    public class LabeledNode
+    public abstract class LabeledNode
     {
         public bool CanHaveType { get; set; } = true;
 
@@ -75,6 +75,8 @@ namespace RoseLibML
             }
         }
 
+        public abstract LabeledNode CreateSimpleDuplicate();
+
         public void AddChild(LabeledNode child)
         {
             child.Parent = this;
@@ -133,10 +135,6 @@ namespace RoseLibML
         }
 
 
-
-        
-
-        
-        
+        public abstract bool IsTreeRoot();
     }
 }

@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace RoseLibML
 {
-    public class ToCSTranslator : Translator
+    public class ToCSWriter : Writer
     {
         public BookKeeper BookKeeper { get; set; }
         public LabeledTree[] Trees { get; set; }
         
-        public ToCSTranslator()
+        public ToCSWriter()
         {
         }
 

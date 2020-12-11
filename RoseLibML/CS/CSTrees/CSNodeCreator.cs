@@ -11,7 +11,7 @@ namespace RoseLibML.CS.CSTrees
 {
     public class CSNodeCreator: NodeCreator
     {
-        public override LabeledNode CreateNode()
+        public override LabeledNode CreateTempNode()
         {
             var node = new CSNode()
             {
@@ -22,18 +22,18 @@ namespace RoseLibML.CS.CSTrees
         public static CSNode CreateNode(SyntaxNode parent)
         {
             var children = parent.ChildNodesAndTokens();
-            var treeNode = new CSNode();
+            var node = new CSNode();
 
-            treeNode.STInfo = ((ushort)parent.Kind()).ToString();
-            treeNode.UseRoslynMatchToWrite = false;
-            treeNode.RoslynSpanStart = parent.Span.Start;
-            treeNode.RoslynSpanEnd = parent.Span.End;
+            node.STInfo = ((ushort)parent.Kind()).ToString();
+            node.UseRoslynMatchToWrite = false;
+            node.RoslynSpanStart = parent.Span.Start;
+            node.RoslynSpanEnd = parent.Span.End;
 
             foreach (var child in children)
             {
                 if (child.IsNode)
                 {
-                    treeNode.AddChild(CreateNode(child.AsNode()));
+                    node.AddChild(CreateNode(child.AsNode()));
                 }
                 else if (child.IsToken)
                 {
@@ -66,11 +66,11 @@ namespace RoseLibML.CS.CSTrees
                         tokenNode.AddChild(leaf);
                     }
 
-                    treeNode.AddChild(tokenNode);
+                    node.AddChild(tokenNode);
                 }
             }
 
-            return treeNode;
+            return node;
         }
     }
 }
