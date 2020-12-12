@@ -58,7 +58,7 @@ namespace RoseLibML
                     if (nodeFull != null && nodeFull.IsFragmentRoot == false)
                     {
                         var ancestor = nodeFull.Parent as CSNode;
-                        while (ancestor != null && !ancestor.IsFragmentRoot)
+                        while (ancestor != null && (!ancestor.IsFragmentRoot && !ancestor.IsTreeRoot()))
                         {
                             ancestor = ancestor.Parent as CSNode;
                         }
@@ -69,6 +69,13 @@ namespace RoseLibML
                         return nodeFull as CSNode;
                     }
                 }
+            }
+
+            var typeKVPart1 = BookKeeper.TypeNodes.Where(kvp => kvp.Key.Part1Fragment == fragmentInTreebankNotation
+                                                            && kvp.Value.Count > 0).FirstOrDefault();
+            if (typeKVPart1.Value != null)
+            {
+                return typeKVPart1.Value.First() as CSNode;
             }
 
             return null;
@@ -106,7 +113,7 @@ namespace RoseLibML
             var withCorrespondingNode = RetrieveOneWithCoressponding(fragmentRootNode);
             var roslynTree = RetrieveRoslynTree(withCorrespondingNode);
             var root = roslynTree.GetRoot();
-            var roslynFragmentRootNode = FindCorrespondingRoslynNodeOrToken(root.ChildNodesAndTokens(), withCorrespondingNode);
+            var roslynFragmentRootNode = FindCorrespondingRoslynNodeOrToken(new List<SyntaxNodeOrToken>() { root }, withCorrespondingNode);
 
             if (roslynFragmentRootNode != null)
             {
@@ -180,7 +187,10 @@ namespace RoseLibML
                 }
                 else if (nodeOrToken.Span.Start <= forNode.RoslynSpanStart && forNode.RoslynSpanEnd <= nodeOrToken.Span.End)
                 {
-                    return FindCorrespondingRoslynNodeOrToken(nodeOrToken.ChildNodesAndTokens(), forNode);
+                    if(nodeOrToken.ChildNodesAndTokens().Count != 0)
+                    {
+                        return FindCorrespondingRoslynNodeOrToken(nodeOrToken.ChildNodesAndTokens(), forNode);
+                    }                    
                 }
             }
 

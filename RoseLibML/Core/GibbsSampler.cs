@@ -18,6 +18,7 @@ using System.Text;
 using System.Threading.Tasks;
 using RoseLibML.Core.LabeledTrees;
 using RoseLibML.Core;
+using MersenneTwister;
 
 namespace RoseLibML
 {
@@ -557,7 +558,7 @@ namespace RoseLibML
 
         private void Fragmentation(LabeledNode node)
         {
-            node.IsFragmentRoot = new Random().NextDouble() < CutProbability;
+            node.IsFragmentRoot = Randoms.WellBalanced.NextDouble() < CutProbability;
 
             foreach (var child in node.Children)
             {

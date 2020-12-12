@@ -94,7 +94,7 @@ namespace RoseLibML
         {
             if (!TypeNodes.ContainsKey(type))
             {
-                TypeNodes.Add(type, new List<LabeledNode>());
+                TypeNodes.Add(type, new List<LabeledNode>(40));
             }
 
             var existingType = TypeNodes.Keys.Where(k => k.Equals(type)).FirstOrDefault();
