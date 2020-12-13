@@ -96,23 +96,26 @@ namespace RoseLibML
 
         private List<CSNode> RetrieveFragmentLeaves(CSNode rootNode)
         {
-            Queue<CSNode> nodeQueue = new Queue<CSNode>(rootNode.Children.Cast<CSNode>());
+            Stack<CSNode> nodeQueue = new Stack<CSNode>(rootNode.Children.Cast<CSNode>());
+
 
             var leaves = new List<CSNode>();
             while (nodeQueue.Count > 0)
             {
-                var node = nodeQueue.Dequeue();
+                var node = nodeQueue.Pop();
                 if(node.IsFragmentRoot || node.Children.Count == 0)
                 {
                     leaves.Add(node);
                 }
                 else if (!node.IsFragmentRoot)
                 {
-                    using (var en = node.Children.Cast<CSNode>().GetEnumerator())
+                    var children = node.Children;
+                    children.Reverse();
+                    using (var en = children.Cast<CSNode>().GetEnumerator())
                     {
                         while (en.MoveNext())
                         {
-                            nodeQueue.Enqueue(en.Current);
+                            nodeQueue.Push(en.Current);
                         }
                     }
                 }
