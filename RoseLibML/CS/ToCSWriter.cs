@@ -15,19 +15,32 @@ namespace RoseLibML
     {
         public BookKeeper BookKeeper { get; set; }
         public LabeledTree[] Trees { get; set; }
-        
-        public ToCSWriter()
+        public string OutputFile { get; set; }
+        private StreamWriter StreamWriter{ get; set; }
+        private int CurrentIteration { get; set; } = -1;
+
+        public ToCSWriter(string outputFile)
         {
+            OutputFile = outputFile;
         }
 
         public void Initialize(BookKeeper bookKeeper, LabeledTree[] trees)
         {
             BookKeeper = bookKeeper;
             Trees = trees;
+
+            (new FileInfo(OutputFile)).Directory.Create();
+            StreamWriter = new StreamWriter(OutputFile, true);
         }
 
-        public void WriteSingleFragment(string fragmentInTreebankNotation)
+        public void WriteSingleFragment(string fragmentInTreebankNotation, int iteration)
         {
+            if(iteration != CurrentIteration)
+            {
+                CurrentIteration = iteration;
+                AnnounceNewIteration();
+            }
+
             var rootNode = RetrieveFragmentRootNode(fragmentInTreebankNotation);
             var leaves = RetrieveFragmentLeaves(rootNode);
 
@@ -127,11 +140,6 @@ namespace RoseLibML
 
         private void WriteLeaves(IEnumerable<CSNode> fragmentLeaves, SyntaxNodeOrToken roslynFragmentRoot)
         {
-            Console.WriteLine();
-            Console.WriteLine();
-            Console.WriteLine("--------------- Fragment Start ---------------");
-            Console.WriteLine();
-
             var writableLeaves = fragmentLeaves.Where(l => l.CouldBeWritten);
             using (StringWriter strWriter = new StringWriter())
             {
@@ -156,7 +164,7 @@ namespace RoseLibML
                     
                 }
 
-                Console.Write(strWriter.ToString());
+                AnnounceNewFragment(strWriter.ToString());
             }
         }
 
@@ -206,6 +214,52 @@ namespace RoseLibML
             }
 
             return node;
+        }
+
+        private void AnnounceNewIteration()
+        {
+            using (StringWriter strWriter = new StringWriter())
+            {
+                strWriter.WriteLine();
+                strWriter.WriteLine();
+                strWriter.WriteLine();
+                strWriter.WriteLine();
+                strWriter.WriteLine();
+
+                strWriter.WriteLine($"----------> Iteration {CurrentIteration} <----------");
+
+                strWriter.WriteLine();
+
+                StreamWriter.Write(strWriter.ToString());
+                StreamWriter.FlushAsync();
+
+
+                Console.Write(strWriter.ToString());
+            }
+        }
+
+        private void AnnounceNewFragment(string fragment)
+        {
+            using (StringWriter strWriter = new StringWriter())
+            {
+                strWriter.WriteLine();
+                strWriter.WriteLine();
+                strWriter.WriteLine($"~~~ Fragment in iteration {CurrentIteration} ~~~");
+                strWriter.WriteLine();
+
+                StreamWriter.Write(strWriter.ToString());
+                StreamWriter.Write(fragment);
+                StreamWriter.FlushAsync();
+
+                Console.Write(strWriter.ToString());
+                Console.Write(fragment);
+
+            }
+        }
+
+        public void Close()
+        {
+            StreamWriter.Close();
         }
     }
 }

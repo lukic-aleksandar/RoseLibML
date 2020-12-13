@@ -104,7 +104,7 @@ namespace RoseLibML
                 {
                     cnt++;
 
-                    if (cnt % 100 == 0)
+                    if (cnt % 1000 == 0)
                     {
                         Console.WriteLine($"Processing type {cnt} of {typeNodes.Count}");
                     }
@@ -127,7 +127,7 @@ namespace RoseLibML
 
                 if(burnInIterations - 1 < i)
                 {
-                    WriteFragments(fragmentCountTreshold);
+                    WriteFragments(fragmentCountTreshold, i);
                 }
             }
 
@@ -137,19 +137,21 @@ namespace RoseLibML
             Console.WriteLine("END");
 
             Console.WriteLine($"Time between: {end - begin}");
+
+            Writer.Close();
         }
 
 
         // Think about running this functionality in a separate thread. 
         // Concurrent access to the BookKeeper could be a problem.
-        private void WriteFragments(int treshold)
+        private void WriteFragments(int treshold, int iteration)
         {
             var commonFragments = BookKeeper.FragmentCounts.Where(kvp => kvp.Value > treshold);
             foreach (var fragmentKV in commonFragments)
             {
                 var fragmentString = fragmentKV.Key;
                 
-                Writer.WriteSingleFragment(fragmentString);
+                Writer.WriteSingleFragment(fragmentString, iteration);
 
             }
         }

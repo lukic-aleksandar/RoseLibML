@@ -83,18 +83,6 @@ namespace RoseLibML
 
             if(children.Count == 0)
             {
-                var tokenKind = node.Parent.STInfo;
-                
-                if(tokenKind == "IdentifierToken")
-                {
-                    if (Rules.ContainsKey(tokenKind) && Rules[tokenKind].ContainsKey(node.STInfo))
-                    {
-                        return Rules[tokenKind][node.STInfo].Probability;
-                    }
-
-                    return 0.0000001;
-                }
-
                 return 1.0;
             }
 
