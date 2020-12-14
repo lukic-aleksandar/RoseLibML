@@ -11,12 +11,14 @@ namespace RoseLibML
         public Dictionary<string, int> FragmentCounts { get; set; }
         public Dictionary<string, int> RootCounts { get; set; }
         public Dictionary<LabeledNodeType, List<LabeledNode>> TypeNodes { get; set; }
+        public Dictionary<string, LabeledNodeType> UsedTypes { get; set; }
 
         public BookKeeper()
         {
             FragmentCounts = new Dictionary<string, int>();
             RootCounts = new Dictionary<string, int>();
             TypeNodes = new Dictionary<LabeledNodeType, List<LabeledNode>>();
+            UsedTypes = new Dictionary<string, LabeledNodeType>();
         }
 
 
@@ -92,28 +94,42 @@ namespace RoseLibML
 
         public void AddNodeType(LabeledNodeType type, LabeledNode node)
         {
-            if (!TypeNodes.ContainsKey(type))
+
+            if (!UsedTypes.ContainsKey(type.GetMD5HashCodeStr()))
             {
-                TypeNodes.Add(type, new List<LabeledNode>(40));
+                TypeNodes.Add(type, new List<LabeledNode>(10));
+                UsedTypes.Add(type.GetMD5HashCodeStr(), type);
+                node.Type = type;
+            }
+            else
+            {
+                node.Type = UsedTypes[type.GetMD5HashCodeStr()];
             }
 
-            var existingType = TypeNodes.Keys.Where(k => k.Equals(type)).FirstOrDefault();
-            node.Type = existingType;
-
-            TypeNodes[existingType].Add(node);
+            TypeNodes[node.Type].Add(node);
         }
 
         public void RemoveNodeType(LabeledNodeType type, LabeledNode node)
         {
-            if (!TypeNodes.ContainsKey(type))
-            {
-                TypeNodes.Add(type, new List<LabeledNode>());
-            }
-            else
+            if (TypeNodes.ContainsKey(type))
             {
                 TypeNodes[type].Remove(node);
             }
         }
+
+        public void RemoveZeroNodeTypes()
+        {
+            var zeroNodeTypes = TypeNodes.Keys.Where(k => TypeNodes[k].Count == 0).ToList();
+
+            for(var i = zeroNodeTypes.Count() - 1; i >= 0; i--)
+            {
+                var currentType = zeroNodeTypes[i];
+                TypeNodes.Remove(currentType);
+                UsedTypes.Remove(currentType.GetMD5HashCodeStr());
+            }
+        }
+
+        /*
 
         public void Merge(BookKeeper bookKeeper)
         {
@@ -154,5 +170,7 @@ namespace RoseLibML
                 TypeNodes[keyValuePair.Key].AddRange(keyValuePair.Value);
             }
         }
+
+        */
     }
 }

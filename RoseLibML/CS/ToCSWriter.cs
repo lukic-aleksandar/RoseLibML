@@ -94,15 +94,17 @@ namespace RoseLibML
             return null;
         }
 
-        private List<CSNode> RetrieveFragmentLeaves(CSNode rootNode)
+        public List<CSNode> RetrieveFragmentLeaves(CSNode rootNode)
         {
-            Stack<CSNode> nodeQueue = new Stack<CSNode>(rootNode.Children.Cast<CSNode>());
+            var rootChildren = rootNode.Children.Cast<CSNode>().ToList();
+            rootChildren.Reverse();
+            Stack<CSNode> nodeStack = new Stack<CSNode>(rootChildren);
 
 
             var leaves = new List<CSNode>();
-            while (nodeQueue.Count > 0)
+            while (nodeStack.Count > 0)
             {
-                var node = nodeQueue.Pop();
+                var node = nodeStack.Pop();
                 if(node.IsFragmentRoot || node.Children.Count == 0)
                 {
                     leaves.Add(node);
@@ -115,7 +117,7 @@ namespace RoseLibML
                     {
                         while (en.MoveNext())
                         {
-                            nodeQueue.Push(en.Current);
+                            nodeStack.Push(en.Current);
                         }
                     }
                 }
@@ -124,7 +126,7 @@ namespace RoseLibML
             return leaves;
         }
 
-        private void FindRootMatchAndWriteFragment(CSNode fragmentRootNode, IEnumerable<CSNode> fragmentLeaves)
+        public void FindRootMatchAndWriteFragment(CSNode fragmentRootNode, IEnumerable<CSNode> fragmentLeaves)
         {
             var withCorrespondingNode = RetrieveOneWithCoressponding(fragmentRootNode);
             var roslynTree = RetrieveRoslynTree(withCorrespondingNode);
@@ -234,7 +236,7 @@ namespace RoseLibML
                 strWriter.WriteLine();
 
                 StreamWriter.Write(strWriter.ToString());
-                StreamWriter.FlushAsync();
+                StreamWriter.Flush();
 
 
                 Console.Write(strWriter.ToString());
@@ -252,7 +254,7 @@ namespace RoseLibML
 
                 StreamWriter.Write(strWriter.ToString());
                 StreamWriter.Write(fragment);
-                StreamWriter.FlushAsync();
+                StreamWriter.Flush();
 
                 Console.Write(strWriter.ToString());
                 Console.Write(fragment);

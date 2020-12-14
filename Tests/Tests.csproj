@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
@@ -14,6 +14,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RoseLibML\RoseLibML.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="TestFiles\TestFile.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Compile>
   </ItemGroup>
 
 </Project>

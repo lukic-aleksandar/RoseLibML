@@ -122,15 +122,9 @@
     <Compile Include="Core\LabeledNodeType.cs" />
     <Compile Include="Core\PCFG\LabeledTreePCFGComposer.cs" />
     <Compile Include="Core\LabeledTrees\LabeledTreeTransformations.cs" />
-    <Compile Include="Core\PCFG\RoslynPCFGComposer.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Compile>
     <Compile Include="Core\PCFG\PCFGNode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestFile.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Compile>
     <Compile Include="Util\ListExtension.cs" />
   </ItemGroup>
   <ItemGroup>

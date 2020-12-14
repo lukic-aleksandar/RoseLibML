@@ -109,7 +109,7 @@ namespace RoseLibML
                         Console.WriteLine($"Processing type {cnt} of {typeNodes.Count}");
                     }
 
-                    if (!BookKeeper.TypeNodes.ContainsKey(typeKV.Key))
+                    if (!BookKeeper.TypeNodes.ContainsKey(typeKV.Key) || BookKeeper.TypeNodes[typeKV.Key].Count == 0)
                     {
                         continue;
                     }
@@ -124,6 +124,8 @@ namespace RoseLibML
                     var ones = SampleOnes(typeBlockCardinality, m);
                     TraverseSites(typeBlock, ones);
                 }
+
+                BookKeeper.RemoveZeroNodeTypes();
 
                 if(burnInIterations - 1 < i)
                 {
@@ -283,13 +285,13 @@ namespace RoseLibML
 
         private void SetLastModified(short iteration, LabeledNode pivot, LabeledNode node)
         {
-            node.LastModified = (typeCode: pivot.Type.GetMD5HashCode(), iteration);
+            node.LastModified = (typeCode: pivot.Type.GetMD5HashCodeStr(), iteration);
 
             foreach (var child in node.Children)
             {
                 if (child.IsFragmentRoot && child != pivot)
                 {
-                    child.LastModified = (typeCode: pivot.Type.GetMD5HashCode(), iteration);
+                    child.LastModified = (typeCode: pivot.Type.GetMD5HashCodeStr(), iteration);
                 }
                 else
                 {
@@ -301,7 +303,7 @@ namespace RoseLibML
         private bool IsNotConflicting(short iteration, LabeledNode pivot, LabeledNode node)
         {
 
-            if (node.LastModified.typeCode == pivot.Type.GetMD5HashCode() &&
+            if (node.LastModified.typeCode == pivot.Type.GetMD5HashCodeStr() &&
                 node.LastModified.iteration == iteration)
             {
                 return false;
@@ -311,7 +313,7 @@ namespace RoseLibML
             {
                 if (child.IsFragmentRoot && child != pivot)
                 {
-                    if (child.LastModified.typeCode == pivot.Type.GetMD5HashCode() &&
+                    if (child.LastModified.typeCode == pivot.Type.GetMD5HashCodeStr() &&
                         child.LastModified.iteration == iteration)
                     {
                         return false;
@@ -356,13 +358,8 @@ namespace RoseLibML
 
                 if (oldType != null && BookKeeper.TypeNodes.ContainsKey(oldType))
                 {
-                    BookKeeper.TypeNodes[oldType].Remove(node);
+                    BookKeeper.RemoveNodeType(oldType, node); 
                     BookKeeper.AddNodeType(node.Type, node);
-
-                    if (BookKeeper.TypeNodes[oldType].Count == 0)
-                    {
-                        BookKeeper.TypeNodes.Remove(oldType);
-                    }
                 }
 
                 return true;
@@ -430,13 +427,8 @@ namespace RoseLibML
 
                 if (oldType != null && BookKeeper.TypeNodes.ContainsKey(oldType))
                 {
-                    BookKeeper.TypeNodes[oldType].Remove(to);
+                    BookKeeper.RemoveNodeType(oldType, to);
                     BookKeeper.AddNodeType(to.Type, to);
-
-                    if (BookKeeper.TypeNodes[oldType].Count == 0)
-                    {
-                        BookKeeper.TypeNodes.Remove(oldType);
-                    }
                 }
 
                 return true;

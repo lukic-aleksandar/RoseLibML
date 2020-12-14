@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,30 +40,44 @@ namespace RoseLibML.Core.LabeledTrees
             }
         }
 
+
         public static string GetFragmentString(this LabeledNode labeledNode)
         {
-            var fragmentString = $"({labeledNode.STInfo})";
+            var stringWriter = new StringWriter();
+            WriteFragmentString(labeledNode, stringWriter);
+
+            var retVal = stringWriter.ToString();
+            stringWriter.Dispose();
+            return retVal;
+                       
+        }
+
+        private static void WriteFragmentString(LabeledNode labeledNode, StringWriter stringWriter)
+        {
+            // var fragmentString = $"({labeledNode.STInfo})";
+            stringWriter.Write($"({labeledNode.STInfo} ");
 
             if (labeledNode.Children.Count > 0)
             {
-                var childrenString = "";
+                // var childrenString = "";
 
                 foreach (var child in labeledNode.Children)
                 {
                     if ((child.IsFragmentRoot) || !child.CanHaveType)
                     {
-                        childrenString += $"({child.STInfo}) ";
+                        stringWriter.Write($"({child.STInfo}) ");
                     }
                     else
                     {
-                        childrenString += GetFragmentString(child);
+                        //childrenString += GetFragmentString(child);
+                        WriteFragmentString(child, stringWriter);
                     }
                 }
 
-                fragmentString = $"({labeledNode.STInfo} {childrenString} ) ";
+                // fragmentString = $"({labeledNode.STInfo} {childrenString} ) ";
             }
 
-            return fragmentString;
+            stringWriter.Write(" ) ");
         }
 
         public static (LabeledNode full, LabeledNode part1, LabeledNode part2) GetFragments(this LabeledNode labeledNode)
