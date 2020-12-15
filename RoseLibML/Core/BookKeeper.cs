@@ -95,15 +95,15 @@ namespace RoseLibML
         public void AddNodeType(LabeledNodeType type, LabeledNode node)
         {
 
-            if (!UsedTypes.ContainsKey(type.GetUniqueRepresentation()))
+            if (!UsedTypes.ContainsKey(type.GetQuasiUniqueRepresentation()))
             {
                 TypeNodes.Add(type, new List<LabeledNode>(10));
-                UsedTypes.Add(type.GetUniqueRepresentation(), type);
+                UsedTypes.Add(type.GetQuasiUniqueRepresentation(), type);
                 node.Type = type;
             }
             else
             {
-                node.Type = UsedTypes[type.GetUniqueRepresentation()];
+                node.Type = UsedTypes[type.GetQuasiUniqueRepresentation()];
             }
 
             TypeNodes[node.Type].Add(node);
@@ -125,7 +125,7 @@ namespace RoseLibML
             {
                 var currentType = zeroNodeTypes[i];
                 TypeNodes.Remove(currentType);
-                UsedTypes.Remove(currentType.GetUniqueRepresentation());
+                UsedTypes.Remove(currentType.GetQuasiUniqueRepresentation());
             }
         }
 

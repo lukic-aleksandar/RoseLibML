@@ -14,57 +14,30 @@ namespace RoseLibML
         public string Part1Fragment { get; set; }
         public string Part2Fragment { get; set; }
 
-        public override bool Equals(object obj)
+        private string quasiUniqueRepresetnation = null;
+        public string GetQuasiUniqueRepresentation()
         {
-            var other = obj as LabeledNodeType;
-
-            if (other != null)
+            if(quasiUniqueRepresetnation == null)
             {
-                return TypesAreEqual(this, other);
+                var hashed = GetMD5HashCode();
+                quasiUniqueRepresetnation = $"{Convert.ToBase64String(hashed)}|{FullFragment.Length}|{Part1Fragment.Length}|{Part2Fragment.Length}";
             }
-            return false;
+
+            return quasiUniqueRepresetnation;
         }
 
-        private string uniqueRepresetnation = null;
-        public string GetUniqueRepresentation()
+        private byte[] MD5HashCode = null;
+        public byte[] GetMD5HashCode()
         {
-            if(uniqueRepresetnation == null)
+            if (MD5HashCode != null)
             {
-                uniqueRepresetnation = $"{Part1Fragment}|{Part2Fragment}";
+                return MD5HashCode;
             }
 
-            return uniqueRepresetnation;
+            MD5 md5Hasher = MD5.Create();
+            var typeRepresentation = FullFragment + Part1Fragment + Part2Fragment;
+            MD5HashCode = md5Hasher.ComputeHash(Encoding.UTF8.GetBytes(typeRepresentation));
+            return MD5HashCode;
         }
-
-        public static bool TypesAreEqual(LabeledNodeType firstType, LabeledNodeType secondType)
-        {
-            if (firstType == secondType)
-            {
-                return true;
-            }
-            if (firstType == null || secondType == null)
-            {
-                return false;
-            }
-
-            if (firstType.FullFragment.Length == secondType.FullFragment.Length &&
-                firstType.Part1Fragment.Length == secondType.Part1Fragment.Length &&
-                firstType.Part2Fragment.Length == secondType.Part2Fragment.Length)
-            {
-                var utf8 = new UTF8Encoding();
-                byte[] fullFragment1Bytes = utf8.GetBytes(firstType.FullFragment);
-                byte[] fullFragment2Bytes = utf8.GetBytes(secondType.FullFragment);
-
-                return memcmp(fullFragment1Bytes, fullFragment2Bytes, fullFragment1Bytes.Length) == 0;
-            }
-
-            return false;
-        }
-
-        
-        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        static extern int memcmp(byte[] b1, byte[] b2, long count);
-        
-
     }
 }
