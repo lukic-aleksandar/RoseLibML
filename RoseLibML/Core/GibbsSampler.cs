@@ -285,13 +285,13 @@ namespace RoseLibML
 
         private void SetLastModified(short iteration, LabeledNode pivot, LabeledNode node)
         {
-            node.LastModified = (typeCode: pivot.Type.GetMD5HashCodeStr(), iteration);
+            node.LastModified = (typeCode: pivot.Type.GetUniqueRepresentation(), iteration);
 
             foreach (var child in node.Children)
             {
                 if (child.IsFragmentRoot && child != pivot)
                 {
-                    child.LastModified = (typeCode: pivot.Type.GetMD5HashCodeStr(), iteration);
+                    child.LastModified = (typeCode: pivot.Type.GetUniqueRepresentation(), iteration);
                 }
                 else
                 {
@@ -303,7 +303,7 @@ namespace RoseLibML
         private bool IsNotConflicting(short iteration, LabeledNode pivot, LabeledNode node)
         {
 
-            if (node.LastModified.typeCode == pivot.Type.GetMD5HashCodeStr() &&
+            if (node.LastModified.typeCode == pivot.Type.GetUniqueRepresentation() &&
                 node.LastModified.iteration == iteration)
             {
                 return false;
@@ -313,7 +313,7 @@ namespace RoseLibML
             {
                 if (child.IsFragmentRoot && child != pivot)
                 {
-                    if (child.LastModified.typeCode == pivot.Type.GetMD5HashCodeStr() &&
+                    if (child.LastModified.typeCode == pivot.Type.GetUniqueRepresentation() &&
                         child.LastModified.iteration == iteration)
                     {
                         return false;

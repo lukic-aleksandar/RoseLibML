@@ -19,7 +19,7 @@ namespace RoseLibML
                 parent.Children.Clear();
 
                 var tempNode = nodeCreator.CreateTempNode();
-                tempNode.STInfo = "BinTempNode";
+                tempNode.STInfo = "B";
 
                 parent.AddChild(firstChild);
                 parent.AddChild(tempNode);

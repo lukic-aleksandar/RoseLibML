@@ -25,59 +25,40 @@ namespace RoseLibML
             return false;
         }
 
-        public string GetMD5HashCodeStr()
+        private string uniqueRepresetnation = null;
+        public string GetUniqueRepresentation()
         {
-            var hashed = GetMD5HashCode();
-            return System.Convert.ToBase64String(hashed);
-        }
-
-        private object hashLock = new object();
-        private byte[] MD5HashCode = null;
-        public byte[] GetMD5HashCode()
-        {
-            lock (hashLock)
+            if(uniqueRepresetnation == null)
             {
-                if (MD5HashCode != null)
-                {
-                    return MD5HashCode;
-                }
-
-                MD5 md5Hasher = MD5.Create();
-                var typeRepresentation = FullFragment + Part1Fragment + Part2Fragment;
-                MD5HashCode = md5Hasher.ComputeHash(Encoding.UTF8.GetBytes(typeRepresentation));
-                return MD5HashCode;
+                uniqueRepresetnation = $"{Part1Fragment}|{Part2Fragment}";
             }
+
+            return uniqueRepresetnation;
         }
 
         public static bool TypesAreEqual(LabeledNodeType firstType, LabeledNodeType secondType)
         {
-            var first = firstType?.GetMD5HashCode();
-            var second = secondType?.GetMD5HashCode();
-
-            if (first == second)
+            if (firstType == secondType)
             {
                 return true;
             }
-            if (first == null || second == null)
+            if (firstType == null || secondType == null)
             {
                 return false;
-            }
-            
-            /*if (first.Length != second.Length)
-            {
-                return false;
-            }
-            for(int i = 0; i < first.Length; i++)
-            {
-                if(first[i] != second[i])
-                {
-                    return false;
-                }
             }
 
-            return true;
-            */
-            return memcmp(first, second, first.Length) == 0;
+            if (firstType.FullFragment.Length == secondType.FullFragment.Length &&
+                firstType.Part1Fragment.Length == secondType.Part1Fragment.Length &&
+                firstType.Part2Fragment.Length == secondType.Part2Fragment.Length)
+            {
+                var utf8 = new UTF8Encoding();
+                byte[] fullFragment1Bytes = utf8.GetBytes(firstType.FullFragment);
+                byte[] fullFragment2Bytes = utf8.GetBytes(secondType.FullFragment);
+
+                return memcmp(fullFragment1Bytes, fullFragment2Bytes, fullFragment1Bytes.Length) == 0;
+            }
+
+            return false;
         }
 
         
