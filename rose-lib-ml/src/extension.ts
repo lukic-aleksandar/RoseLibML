@@ -133,7 +133,7 @@ export function activate(context: vscode.ExtensionContext) {
 				message => {
 					if (message.command === 'generate') {
 						// vscode.commands.executeCommand('rose-lib-ml.generate');
-						vscode.window.showInformationMessage('Generate!');
+						vscode.window.showInformationMessage('Not implemented yet!');
 						return;
 					}
 				},
@@ -160,10 +160,12 @@ function runPCFG(parameters: any) {
 		title: 'RoseLibML'
 	}, async progress => {
 
+		let response: any;
+
 		progress.report({ message: 'calculating probabilities', increment: 0 });
 
 		try {
-			await vscode.commands.executeCommand('rose-lib-ml.runPCFG',
+			response = await vscode.commands.executeCommand('rose-lib-ml.runPCFG',
 				{
 					'ProbabilityCoefficient': parameters.probabilityCoefficient,
 					'InputFolder': parameters.inputFolder,
@@ -172,7 +174,14 @@ function runPCFG(parameters: any) {
 			);
 
 			progress.report({ increment: 100 });
-			vscode.window.showInformationMessage('Successfully done.');
+
+			if(response.value === true) {
+				vscode.window.showInformationMessage(response.message);
+			}
+			else {
+				vscode.window.showErrorMessage(response.message);
+			}
+			
 		}
 		catch (_) {
 			progress.report({ increment: 100 });
@@ -187,10 +196,12 @@ function runMCMC(parameters: any) {
 		title: 'RoseLibML'
 	}, async progress => {
 
+		let response: any;
+
 		progress.report({ message: 'running MCMC', increment: 0 });
 
 		try {
-			await vscode.commands.executeCommand('rose-lib-ml.runMCMC',
+			response = await vscode.commands.executeCommand('rose-lib-ml.runMCMC',
 				{
 					'InputFolder': parameters.inputFolder,
 					'PCFGFile': parameters.pCFGFile,
@@ -203,7 +214,14 @@ function runMCMC(parameters: any) {
 			);
 
 			progress.report({ increment: 100 });
-			vscode.window.showInformationMessage('Successfully done.');
+			
+			if(response.value === true) {
+				vscode.window.showInformationMessage(response.message);
+			}
+			else {
+				vscode.window.showErrorMessage(response.message);
+			}
+
 		}
 		catch (_) {
 			progress.report({ increment: 100 });

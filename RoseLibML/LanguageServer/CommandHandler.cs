@@ -4,6 +4,7 @@ using OmniSharp.Extensions.LanguageServer.Protocol;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Workspace;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,18 +13,14 @@ using System.Threading.Tasks;
 
 namespace RoseLibML.LanguageServer
 {
-    internal class CommandHandler : IExecuteCommandHandler
+    internal class CommandHandler : IExecuteCommandHandler<CommandResponse>
     {
-        private readonly OmniSharp.Extensions.LanguageServer.Protocol.Server.ILanguageServer _router;
         private ExecuteCommandCapability _capability;
 
-        public CommandHandler(OmniSharp.Extensions.LanguageServer.Protocol.Server.ILanguageServer router)
+        public Task<CommandResponse> Handle(ExecuteCommandParams<CommandResponse> request, CancellationToken cancellationToken)
         {
-            _router = router;
-        }
+            Task<CommandResponse> response;
 
-        public Task<Unit> Handle(ExecuteCommandParams request, CancellationToken cancellationToken)
-        {
             JObject requestArguments = (JObject)request.Arguments.First();
 
             switch (request.Command)
@@ -31,31 +28,75 @@ namespace RoseLibML.LanguageServer
                 case "rose-lib-ml.runPCFG":
                     PCFGCommandArguments pCFGArguments = requestArguments.ToObject<PCFGCommandArguments>();
 
-                    if (Directory.Exists(pCFGArguments.InputFolder) && Directory.Exists(Path.GetDirectoryName(pCFGArguments.OutputFile)))
+                    try
                     {
                         CalculateAndSavePCFG(pCFGArguments);
+
+                        response = Task.FromResult(new CommandResponse("Succesfully done.", true));
+                    }
+                    catch (FileNotFoundException e)
+                    {
+                        response = Task.FromResult(new CommandResponse(e.Message, false));
+                    }
+                    catch (DirectoryNotFoundException e)
+                    {
+                        response = Task.FromResult(new CommandResponse(e.Message, false));
+                    }
+                    catch (IOException e)
+                    {
+                        response = Task.FromResult(new CommandResponse(e.Message, false));
+                    }
+                    catch (Exception)
+                    {
+                        response = Task.FromResult(new CommandResponse("An error occurred.", false)); ;
                     }
 
                     break;
                 case "rose-lib-ml.runMCMC":
                     MCMCCommandArguments MCMCarguments = requestArguments.ToObject<MCMCCommandArguments>();
 
-                    if (Directory.Exists(MCMCarguments.InputFolder) && Directory.Exists(MCMCarguments.OutputFolder) && File.Exists(MCMCarguments.PCFGFile) && MCMCarguments.Iterations > 0 && MCMCarguments.BurnInIterations >= 0)
+                    if (MCMCarguments.Iterations <= 0 || MCMCarguments.BurnInIterations < 0)
+                    {
+                        response = Task.FromResult(new CommandResponse("The number of iterations and burn in iterations must be positive.", false));
+
+                        break;
+                    }
+
+                    try
                     {
                         InitializeAndTrain(MCMCarguments);
+
+                        response = Task.FromResult(new CommandResponse("Succesfully done.", true));
+                    }
+                    catch (FileNotFoundException e)
+                    {
+                        response = Task.FromResult(new CommandResponse(e.Message, false));
+                    }
+                    catch (DirectoryNotFoundException e)
+                    {
+                        response = Task.FromResult(new CommandResponse(e.Message, false));
+                    }
+                    catch (IOException e)
+                    {
+                        response = Task.FromResult(new CommandResponse(e.Message, false));
+                    }
+                    catch(Exception)
+                    {
+                        response = Task.FromResult(new CommandResponse("An error occurred.", false)); ;
                     }
 
                     break;
                 case "rose-lib-ml.generate":
-                    //TODO: generate
-                    
+                    response = Task.FromResult(new CommandResponse("Not implemented yet.", false));
+
                     break;
                 default:
+                    response = Task.FromResult(new CommandResponse("Unknown command", false));
 
                     break;
             }
 
-            return Unit.Task;
+            return response;
         }
 
         public void SetCapability(ExecuteCommandCapability capability)
@@ -63,7 +104,7 @@ namespace RoseLibML.LanguageServer
             _capability = capability;
         }
 
-        ExecuteCommandRegistrationOptions IRegistration<ExecuteCommandRegistrationOptions>.GetRegistrationOptions()
+        public ExecuteCommandRegistrationOptions GetRegistrationOptions(ExecuteCommandCapability capability, ClientCapabilities clientCapabilities)
         {
             return new ExecuteCommandRegistrationOptions()
             {

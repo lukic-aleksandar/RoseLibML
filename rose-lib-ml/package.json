@@ -64,6 +64,30 @@
 				}
 			]
 		},
+		"views": {
+			"rose-lib-ml-container": [
+			  {
+				"id": "rose-lib-ml-view",
+				"name": "RoseLibML",
+				"contextualTitle": "RoseLibML"
+			  }
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+			  {
+				"id": "rose-lib-ml-container",
+				"title": "RoseLibML",
+				"icon": "resources/icons/rl_icon.svg"
+			  }
+			]
+		},
+		"viewsWelcome": [
+			{
+			  "view": "rose-lib-ml-view",
+			  "contents": "Welcome to the RoseLibML extension.\n[Open pCFG tab](command:rose-lib-ml.openPCFG)\n[Open MCMC tab](command:rose-lib-ml.openMCMC)\n[Open idioms tab](command:rose-lib-ml.openIdioms)"
+			}
+		],
 		"configuration": {
 			"type": "object",
 			"title": "Example configuration",
