@@ -33,14 +33,17 @@ namespace RoseLibML
             StreamWriter = new StreamWriter(OutputFile, true);
         }
 
-        public void WriteSingleFragment(string fragmentInTreebankNotation, int iteration)
+        public void SetIteration(int iteration)
         {
-            if(iteration != CurrentIteration)
+            if (iteration != CurrentIteration)
             {
                 CurrentIteration = iteration;
                 AnnounceNewIteration();
             }
+        }
 
+        public void WriteSingleFragment(string fragmentInTreebankNotation)
+        {
             var rootNode = RetrieveFragmentRootNode(fragmentInTreebankNotation);
             var leaves = RetrieveFragmentLeaves(rootNode);
 
@@ -210,7 +213,6 @@ namespace RoseLibML
             return null;
         }
 
-
         private CSNode RetrieveOneWithCoressponding(CSNode node)
         {
             while (!node.IsExistingRoslynNode)
@@ -220,6 +222,7 @@ namespace RoseLibML
 
             return node;
         }
+
 
         private void AnnounceNewIteration()
         {

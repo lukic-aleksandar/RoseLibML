@@ -49,6 +49,7 @@ namespace RoseLibML.CS.CSTrees
                         tokenNode.UseRoslynMatchToWrite = true;
 
                         tokenNode.CanHaveType = false;
+                        tokenNode.IsTreeLeaf = true;
                     }
                     else
                     {
@@ -62,6 +63,7 @@ namespace RoseLibML.CS.CSTrees
                         leaf.STInfo = child.AsToken().ValueText;
                         leaf.UseRoslynMatchToWrite = false;
                         leaf.CanHaveType = false;
+                        leaf.IsTreeLeaf = true;
 
                         tokenNode.AddChild(leaf);
                     }

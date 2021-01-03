@@ -62,19 +62,6 @@ namespace RoseLibML
             }
         }
 
-        // private List<LabeledTreeNodeType> typeHistory = new List<LabeledTreeNodeType>();
-        // private List<string> setTypeCallHistory = new List<string>();
-
-        public void CopySimpleProperties(LabeledNode labeledNode)
-        {
-            if (labeledNode != null)
-            {
-                STInfo = labeledNode.STInfo;
-                CanHaveType = labeledNode.CanHaveType;
-                IsFragmentRoot = labeledNode.IsFragmentRoot;
-            }
-        }
-
         public abstract LabeledNode CreateSimpleDuplicate();
 
         public void AddChild(LabeledNode child)
@@ -136,5 +123,6 @@ namespace RoseLibML
 
 
         public abstract bool IsTreeRoot();
+        public bool IsTreeLeaf { get; set; } = false; // In C# terms - a token
     }
 }

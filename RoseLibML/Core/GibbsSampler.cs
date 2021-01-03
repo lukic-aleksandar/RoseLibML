@@ -148,42 +148,19 @@ namespace RoseLibML
         // Concurrent access to the BookKeeper could be a problem.
         private void WriteFragments(int treshold, int iteration)
         {
+            Writer.SetIteration(iteration);
             var commonFragments = BookKeeper.FragmentCounts.Where(kvp => kvp.Value > treshold);
             foreach (var fragmentKV in commonFragments)
             {
                 var fragmentString = fragmentKV.Key;
                 
-                Writer.WriteSingleFragment(fragmentString, iteration);
+                Writer.WriteSingleFragment(fragmentString);
 
             }
         }
 
-        // Dictionary<LabeledTreeNode, int> traversedSites; // for validation purposes
-        // private void AddToTraversedSites(LabeledTreeNode node)
-        //{
-
-        //    bool valuefound = traversedSites.TryGetValue(node, out int outValue);
-        //    if (valuefound)
-        //    {
-        //        throw new Exception("A conflict problem, probably");
-        //        //traversedSites[node] = outValue + 1;
-        //    }
-        //    else
-        //    {
-        //        traversedSites[node] = 1;
-        //    }
-        //}
-
-        // int conflicted = 0; 
         private void TraverseSites(List<LabeledNode> typeBlock, List<int> ones)
         {
-            // if(traversedSites != null && traversedSites.Values.Where(v => v > 1).Count() > 0) // for validation purposes
-            // {
-               // conflicted++;
-                // Console.WriteLine("Conflicted: " + conflicted);
-            // }
-            // traversedSites = new Dictionary<LabeledTreeNode, int>();
-
             LabeledNode cutPart1Root = null;
             LabeledNode noncutFullFragmentRoot = null;
 
@@ -352,7 +329,6 @@ namespace RoseLibML
         {
             if (node.CanHaveType)
             {
-                // AddToTraversedSites(node); For debug purposes
                 var oldType = node.Type;
                 node.Type = LabeledNode.GetType(node);
 
@@ -421,7 +397,6 @@ namespace RoseLibML
         {
             if (to.CanHaveType)
             {
-                // AddToTraversedSites(to); For debug purposes
                 var oldType = to.Type;
                 to.Type = from.Type;
 
@@ -548,7 +523,6 @@ namespace RoseLibML
         {
             return SpecialFunctions.Gamma(x + n)/ SpecialFunctions.Gamma(x);
         }
-
 
         private void Fragmentation(LabeledNode node)
         {

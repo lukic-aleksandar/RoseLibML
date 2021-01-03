@@ -9,8 +9,8 @@ namespace RoseLibML.Core
     public interface Writer
     {
         void Initialize(BookKeeper bookKeeper, LabeledTree[] trees);
-        void WriteSingleFragment(string fragmentInTreebankNotation, int iteration);
-
+        void SetIteration(int iteration);
+        void WriteSingleFragment(string fragmentInTreebankNotation);
         void Close();
     }
 }
