@@ -20,7 +20,7 @@ namespace RoseLib
 
             // Create Labeled Trees
             // Perform Needed transformations
-            var labeledTrees = CreateLabeledTrees(@"C:\Users\nenad\Desktop\Nnd\doktorske\testgibbs2", @"C:\Users\nenad\Desktop\Nnd\doktorske\out1000");
+            var labeledTrees = CreateLabeledTrees(@"C:\Users\nenad\Desktop\Nnd\doktorske\sets\testgibbs2", @"C:\Users\nenad\Desktop\Nnd\doktorske\sets\out1000");
 
             // Calculate and save PCFG to file
             var pCFGComposer = new LabeledTreePCFGComposer(labeledTrees.ToList());

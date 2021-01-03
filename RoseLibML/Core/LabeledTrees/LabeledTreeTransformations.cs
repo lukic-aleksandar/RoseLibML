@@ -56,6 +56,7 @@ namespace RoseLibML
                     parent.Children.RemoveRange(indexOfFirst, group.Count);
 
                     var tempNode = nodeCreator.CreateTempNode();
+                    tempNode.Parent = parent;
                     if (parent.STInfo.StartsWith("B_"))
                     {
                         tempNode.STInfo = parent.STInfo;
@@ -69,8 +70,10 @@ namespace RoseLibML
                     var restOfGroupChildren = group.ToList();
                     restOfGroupChildren.RemoveAt(0);
 
-
-                    tempNode.Children = restOfGroupChildren;
+                    foreach (var child in restOfGroupChildren)
+                    {
+                        tempNode.AddChild(child);
+                    }
 
                     parent.Children.Insert(indexOfFirst, firstGroupChild);
                     parent.Children.Insert(indexOfFirst + 1, tempNode);
