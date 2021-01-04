@@ -92,7 +92,7 @@ namespace RoseLibML
             }
         }
 
-        public void AddNodeType(LabeledNodeType type, LabeledNode node)
+        public virtual void AddNodeType(LabeledNodeType type, LabeledNode node)
         {
 
             if (!UsedTypes.ContainsKey(type.GetQuasiUniqueRepresentation()))
