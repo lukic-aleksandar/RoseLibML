@@ -299,5 +299,69 @@ namespace Tests.TreeTransformation
             LabeledTreeTransformations.Binarize(root, new CSNodeCreator());
             Assert.AreEqual(root.GetFragmentString(), "(root (child1) (child2) (child3) (B_root (child4) (child5)  ) (child6) (child7) (B_root (child8) (child9)  )  ) ");
         }
+
+        [Test]
+        public void TestParentChildRelationshipCorrection()
+        {
+            CSNode root = new CSNode();
+            root.STInfo = "root";
+            root.IsFragmentRoot = true;
+
+            CSNode child1 = new CSNode();
+            child1.STInfo = "child1";
+            child1.IsFragmentRoot = true;
+            root.AddChild(child1);
+
+            CSNode child2 = new CSNode();
+            child2.STInfo = "child2";
+            child2.IsFragmentRoot = true;
+            root.AddChild(child2);
+
+            CSNode child3 = new CSNode();
+            child3.STInfo = "child3";
+            child3.IsFragmentRoot = false;
+            root.AddChild(child3);
+
+            CSNode child4 = new CSNode();
+            child4.STInfo = "child4";
+            child4.IsFragmentRoot = true;
+            root.AddChild(child4);
+
+            CSNode grandchild1 = new CSNode();
+            grandchild1.STInfo = "grandchild1";
+            grandchild1.IsFragmentRoot = true;
+            child3.AddChild(grandchild1);
+
+            CSNode grandchild2 = new CSNode();
+            grandchild2.STInfo = "grandchild2";
+            grandchild2.IsFragmentRoot = true;
+            child3.AddChild(grandchild2);
+
+            CSNode grandchild3 = new CSNode();
+            grandchild3.STInfo = "grandchild3";
+            grandchild3.IsFragmentRoot = true;
+            child3.AddChild(grandchild3);
+
+            LabeledTreeTransformations.Binarize(root, new CSNodeCreator());
+
+            Assert.True(CheckIfRelationshipsAreOK(root));
+
+        }
+
+        public bool CheckIfRelationshipsAreOK(LabeledNode node)
+        {
+            foreach (var child in node.Children)
+            {
+                if (child.Parent != node)
+                {
+                    return false;
+                }
+                if (!CheckIfRelationshipsAreOK(child))
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
     }
 }
