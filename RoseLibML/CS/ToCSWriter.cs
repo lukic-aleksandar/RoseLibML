@@ -99,7 +99,7 @@ namespace RoseLibML
 
         public List<CSNode> RetrieveFragmentLeaves(CSNode rootNode)
         {
-            var rootChildren = rootNode.Children.Cast<CSNode>().ToList();
+            var rootChildren = new List<CSNode>(rootNode.Children.Cast<CSNode>());
             rootChildren.Reverse();
             Stack<CSNode> nodeStack = new Stack<CSNode>(rootChildren);
 
@@ -114,7 +114,7 @@ namespace RoseLibML
                 }
                 else if (!node.IsFragmentRoot)
                 {
-                    var children = node.Children;
+                    var children = new List<CSNode>(node.Children.Cast<CSNode>());
                     children.Reverse();
                     using (var en = children.Cast<CSNode>().GetEnumerator())
                     {
