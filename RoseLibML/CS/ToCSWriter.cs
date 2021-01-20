@@ -57,42 +57,68 @@ namespace RoseLibML
 
         private CSNode RetrieveFragmentRootNode(string fragmentInTreebankNotation)
         {
+            // Looking for a node that will serve as a root node for writing
+            // Using types to find such a node
+            
+
+            // Finding it using a type that has Part2 equal to passed fragment seems easiest
+            // Just take a node with such a type as a root
+            // There could be a side-effect here! What if such a root is not a fragment root? Explore the possibilities.
             var typeKVPart2 = BookKeeper.TypeNodes.Where(kvp => kvp.Key.Part2Fragment == fragmentInTreebankNotation
                                                             && kvp.Value.Count > 0).FirstOrDefault();
             if (typeKVPart2.Value != null)
             {
                 return typeKVPart2.Value.First() as CSNode;
             }
-            else
-            {
-                var typeKVFulls = BookKeeper.TypeNodes.Where(kvp => kvp.Key.FullFragment == fragmentInTreebankNotation
+
+
+            // Finding it using a type that has a same full fragment.
+            // If there is such a type, next thing could pose a problem! For writing mechanism to know when to 
+            // stop writing, it uses "IsFragmentRoot". So, a node which has such type, should not be a fragment root.
+            // When u find such type and node, find the ancestor that is eather a fragment root, or a full tree root.
+            var typeKVFulls = BookKeeper.TypeNodes.Where(kvp => kvp.Key.FullFragment == fragmentInTreebankNotation
                                                             && kvp.Value.Count > 0);
-                foreach (var typeKV in typeKVFulls)
+
+            foreach (var typeKV in typeKVFulls)
+            {
+                var nonCuttingNode = typeKV.Value.Where(node => (node.IsFragmentRoot == false)).FirstOrDefault(); 
+                if (nonCuttingNode != null)
                 {
-                    var nodeFull = typeKV.Value.Where(node => (node.Parent != null && node.IsFragmentRoot == false)
-                                                    || (node.Parent == null && node.IsFragmentRoot == true)).FirstOrDefault();
-                    if (nodeFull != null && nodeFull.IsFragmentRoot == false)
+                    var ancestor = nonCuttingNode.Parent; // Tree root node, which doesn't have a parent, can't have a type, so I'm not taking that case into consideration
+                    while (ancestor.IsFragmentRoot != false && ancestor.Parent != null)
                     {
-                        var ancestor = nodeFull.Parent as CSNode;
-                        while (ancestor != null && (!ancestor.IsFragmentRoot && !ancestor.IsTreeRoot()))
-                        {
-                            ancestor = ancestor.Parent as CSNode;
-                        }
-                        return ancestor;
+                        ancestor = ancestor.Parent;
                     }
-                    else
-                    {
-                        return nodeFull as CSNode;
-                    }
+
+                    return ancestor as CSNode;
                 }
             }
 
-            var typeKVPart1 = BookKeeper.TypeNodes.Where(kvp => kvp.Key.Part1Fragment == fragmentInTreebankNotation
-                                                            && kvp.Value.Count > 0).FirstOrDefault();
-            if (typeKVPart1.Value != null)
+
+            // Finding it using a type that has a same Part 1 fragment.
+            // Similar to the full fragment case, but there is also a catch!
+            // A node which has such a part1 type, must also be a fragment root! Because writing mechanism must know when to stop.
+            var typeKVPart1s = BookKeeper.TypeNodes.Where(kvp => kvp.Key.Part1Fragment == fragmentInTreebankNotation
+                                                            && kvp.Value.Count > 0);
+
+            foreach (var typeKVPart1 in typeKVPart1s)
             {
-                return typeKVPart1.Value.First() as CSNode;
+                var cuttingNode = typeKVPart1.Value.Where(node => (node.IsFragmentRoot == true)).FirstOrDefault();
+                if(cuttingNode != null)
+                {
+                    if (cuttingNode.Parent != null)
+                    {
+                        var ancestor = cuttingNode.Parent;
+                        while (ancestor.IsFragmentRoot != false && ancestor.Parent != null)
+                        {
+                            ancestor = ancestor.Parent;
+                        }
+
+                        return ancestor as CSNode;
+                    }
+                }
             }
+            
 
             return null;
         }

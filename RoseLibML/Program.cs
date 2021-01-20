@@ -30,11 +30,11 @@ namespace RoseLib
 
 
             // TODO: Use existing PCFG, if it exists, and trees 
-            ToCSWriter writer = new ToCSWriter(@"C:\Users\nenad\Desktop\Nnd\doktorske\dev\debug\out\idioms\idioms3.txt");
+            ToCSWriter writer = new ToCSWriter(@"C:\Users\nenad\Desktop\Nnd\doktorske\dev\debug\out\idioms\idioms5.txt");
             var sampler = new GibbsSampler(writer);
             //sampler.Initialize(@"C:\Users\93luk\Desktop\RoseLibMLTraining\training1000", @"C:\Users\93luk\Desktop\RoseLibMLTraining\output1000");
             sampler.Initialize(pCFGComposer, labeledTrees);
-            sampler.Train(50, 15, 5);
+            sampler.Train(25, 18, 3);
 
             foreach (var tree in sampler.Trees)
             {

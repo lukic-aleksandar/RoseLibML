@@ -27,8 +27,8 @@ namespace RoseLibML
         public BookKeeper BookKeeper { get; set; }
         public LabeledTreePCFGComposer PCFG { get; set; }
         public LabeledTree[] Trees { get; set; }
-        public double Alpha { get; set; } = 2;
-        public double CutProbability { get; set; } = 0.8;
+        public double Alpha { get; set; } = 1;
+        public double CutProbability { get; set; } = 0.9;
 
         Writer Writer { get; set; }
 

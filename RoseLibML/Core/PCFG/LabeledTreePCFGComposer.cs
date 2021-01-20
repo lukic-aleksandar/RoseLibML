@@ -20,7 +20,7 @@ namespace RoseLibML
 
         public List<LabeledTree> Trees { get => trees; set => trees = value; }
 
-        public double P { get; set; } = 0.0001;
+        public double P { get; set; } = 0.0085;
 
         public LabeledTreePCFGComposer(List<LabeledTree> trees)
         {
