@@ -20,7 +20,7 @@ namespace RoseLib
 
             // Create Labeled Trees
             // Perform Needed transformations
-            var labeledTrees = CreateLabeledTrees(@"C:\Users\nenad\Desktop\Nnd\doktorske\dev\debug\training_nunit", @"C:\Users\nenad\Desktop\Nnd\doktorske\dev\debug\out");
+            var labeledTrees = CreateLabeledTrees(@"C:\Users\nenad\Desktop\Nnd\doktorske\dev\clean\training_nunit", @"C:\Users\nenad\Desktop\Nnd\doktorske\dev\clean\out");
 
             // Calculate and save PCFG to file
             var pCFGComposer = new LabeledTreePCFGComposer(labeledTrees.ToList());
@@ -30,11 +30,11 @@ namespace RoseLib
 
 
             // TODO: Use existing PCFG, if it exists, and trees 
-            ToCSWriter writer = new ToCSWriter(@"C:\Users\nenad\Desktop\Nnd\doktorske\dev\debug\out\idioms\idioms5.txt");
+            ToCSWriter writer = new ToCSWriter(@"C:\Users\nenad\Desktop\Nnd\doktorske\dev\clean\out\idioms\idioms7.txt");
             var sampler = new GibbsSampler(writer);
             //sampler.Initialize(@"C:\Users\93luk\Desktop\RoseLibMLTraining\training1000", @"C:\Users\93luk\Desktop\RoseLibMLTraining\output1000");
             sampler.Initialize(pCFGComposer, labeledTrees);
-            sampler.Train(25, 18, 3);
+            sampler.Train(65, 50, 3);
 
             foreach (var tree in sampler.Trees)
             {

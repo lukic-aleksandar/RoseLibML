@@ -80,7 +80,7 @@ namespace RoseLibML.Core.LabeledTrees
             stringWriter.Write(" ) ");
         }
 
-        public static (LabeledNode full, LabeledNode part1, LabeledNode part2) GetFragments(this LabeledNode labeledNode)
+        public static (LabeledNode full, LabeledNode part1, LabeledNode part2) GetRootNodesForTypeFragments(this LabeledNode labeledNode)
         {
             var oldIsFragmentRoot = labeledNode.IsFragmentRoot;
             labeledNode.IsFragmentRoot = false;

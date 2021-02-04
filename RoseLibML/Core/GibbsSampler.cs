@@ -19,6 +19,8 @@ using System.Threading.Tasks;
 using RoseLibML.Core.LabeledTrees;
 using RoseLibML.Core;
 using MersenneTwister;
+using System.Numerics;
+using System.Runtime.CompilerServices;
 
 namespace RoseLibML
 {
@@ -27,7 +29,7 @@ namespace RoseLibML
         public BookKeeper BookKeeper { get; set; }
         public LabeledTreePCFGComposer PCFG { get; set; }
         public LabeledTree[] Trees { get; set; }
-        public double Alpha { get; set; } = 1;
+        public double Alpha { get; set; } = 5;
         public double CutProbability { get; set; } = 0.9;
 
         Writer Writer { get; set; }
@@ -117,8 +119,7 @@ namespace RoseLibML
                     var typeBlock = CreateTypeBlockAndAdjustCounts(typeKV.Value.ToList(), (short)i);
 
                     var typeBlockCardinality = typeBlock.Count;
-                    var cutProbability = CalculateCutProbability(typeKV.Key);
-                    var probabilities = CalculateTypeBlockAl(cutProbability, typeBlockCardinality);
+                    var probabilities = CalculateTypeBlockMProbabilities(typeKV.Key, typeBlockCardinality);
 
                     var m = SampleM(probabilities);
                     var ones = SampleOnes(typeBlockCardinality, m);
@@ -141,22 +142,6 @@ namespace RoseLibML
             Console.WriteLine($"Time between: {end - begin}");
 
             Writer.Close();
-        }
-
-
-        // Think about running this functionality in a separate thread. 
-        // Concurrent access to the BookKeeper could be a problem.
-        private void WriteFragments(int treshold, int iteration)
-        {
-            Writer.SetIteration(iteration);
-            var commonFragments = BookKeeper.FragmentCounts.Where(kvp => kvp.Value > treshold);
-            foreach (var fragmentKV in commonFragments)
-            {
-                var fragmentString = fragmentKV.Key;
-                
-                Writer.WriteSingleFragment(fragmentString);
-
-            }
         }
 
         private void TraverseSites(List<LabeledNode> typeBlock, List<int> ones)
@@ -211,6 +196,8 @@ namespace RoseLibML
                 }
             }
         }
+
+        #region Conflict checking and type block creation
 
         private List<LabeledNode> CreateTypeBlockAndAdjustCounts(List<LabeledNode> nodes, short iteration)
         {
@@ -308,6 +295,9 @@ namespace RoseLibML
             return true;
         }
 
+        #endregion
+
+        #region Type update
         void UpdateTypes(LabeledNode node, LabeledNode pivot)
         {
             TryUpdateType(node);
@@ -412,22 +402,13 @@ namespace RoseLibML
             return false;
         }
 
-        private List<double> CalculateMProbabilities(List<double> probabilities, int typeBlockCardinality)
-        {
-            for (int i = 0; i < probabilities.Count; i++)
-            {
-                probabilities[i] *= SpecialFunctions.Binomial(typeBlockCardinality, i);
-            }
+        #endregion
 
-            var list_exp = probabilities.Select(Math.Exp);
-            var sum_z_exp = list_exp.Sum();
-
-            return list_exp.Select(i => i / sum_z_exp).ToList();
-        }
+       
 
         public int SampleM(List<double> list)
         {
-            var randomNumber = new Random().NextDouble();
+            var randomNumber = Randoms.WellBalanced.NextDouble();
 
             var sum = 0.0;
             for (int i = 0; i < list.Count; i++)
@@ -458,70 +439,182 @@ namespace RoseLibML
             return list;
         }
 
-        // Allemanis paper implementation gives cut probability for one node.
-        // To calculate for x nodes, binomial distribution is used
-        List<double> CalculateTypeBlockAl(double p, int typeCardinality)
+        private List<double> CalculateTypeBlockMProbabilities(LabeledNodeType type, int typeCardinality)
         {
-            var probabilities = new List<double>();
-            var distribution = new Binomial(p, typeCardinality);
-          
-            for (int m = 0; m <= typeCardinality; m++)
-            {
-                probabilities.Add(distribution.Probability(m));
-            }
+            var results = new List<double>(new double[typeCardinality]);
 
-            return probabilities;
-        }
+            var gCalculationInfo = new GCalculationInfo();
 
-        // Implementation based on Allemanis paper
-        double CalculateCutProbability(LabeledNodeType type)
-        {
             var node = BookKeeper.TypeNodes[type].FirstOrDefault();
-            var fragments = node.GetFragments();
+            var triplet = node.GetRootNodesForTypeFragments();
+            gCalculationInfo.Triplet = triplet;
 
-            var fragmentJoin = PosteriorAl(fragments.full, node.Type.FullFragment);
-            var part1 = PosteriorAl(fragments.part1, node.Type.Part1Fragment);
-            var part2 = PosteriorAl(fragments.part2, node.Type.Part2Fragment);
+            gCalculationInfo.FfNumerator = Alpha * PCFG.CalculateFragmentProbability(triplet.full) + BookKeeper.GetFragmentCount(node.Type.FullFragment);
+            gCalculationInfo.P1fNumerator = Alpha * PCFG.CalculateFragmentProbability(triplet.part1) + BookKeeper.GetFragmentCount(node.Type.Part1Fragment);
+            gCalculationInfo.P2fNumerator = Alpha * PCFG.CalculateFragmentProbability(triplet.part2) + BookKeeper.GetFragmentCount(node.Type.Part2Fragment);
 
-            var denominator = fragmentJoin + part1 * part2 + Math.Pow(0.1, 10);
-
-            return 1 - (fragmentJoin / denominator); 
-        }
-
-        double PosteriorAl(LabeledNode fragment, string fragmentString)
-        {
-            return (BookKeeper.GetFragmentCount(fragmentString) + Alpha * PCFG.CalculateFragmentProbability(fragment))/
-                (BookKeeper.GetRootCount(fragment.STInfo) + Alpha);
-        }
-
-        List<double> CalculateTypeBlockProbabilities(LabeledNodeType type)
-        {
-            var typeCardinality = BookKeeper.TypeNodes[type].Count;
-            var gms = new List<double>(typeCardinality);
+            gCalculationInfo.FfRootCount = BookKeeper.GetRootCount(triplet.full.STInfo);
+            gCalculationInfo.P2fRootCount = BookKeeper.GetRootCount(triplet.part2.STInfo);
 
             for (int m = 0; m <= typeCardinality; m++)
             {
-                var node = BookKeeper.TypeNodes[type].FirstOrDefault();
-                var fragmets = node.GetFragments();
-
-                var fullProba = PCFG.CalculateFragmentProbability(fragmets.full) + BookKeeper.GetFragmentCount(node.Type.FullFragment);
-                var part1Proba = PCFG.CalculateFragmentProbability(fragmets.part1) + BookKeeper.GetFragmentCount(node.Type.Part1Fragment);
-                var part2Proba = PCFG.CalculateFragmentProbability(fragmets.part2) + BookKeeper.GetFragmentCount(node.Type.Part2Fragment);
-
-                var product = RisingFactorial(fullProba, typeCardinality - m) *
-                    RisingFactorial(part1Proba, m) / (Alpha + RisingFactorial(BookKeeper.GetRootCount(fragmets.full.STInfo), typeCardinality));
-
-                var product1 = RisingFactorial(part2Proba, m) / (Alpha + RisingFactorial(BookKeeper.GetRootCount(fragmets.part2.STInfo), m));
-
-                gms.Insert(m, product * product1 * Math.Pow(1 / Alpha, (BookKeeper.RootCounts.Count - 2)));
+                var gm = CalculateGOptimized(m, typeCardinality, gCalculationInfo);
+                var combinationsWithoutRepetitions = SpecialFunctions.Factorial(typeCardinality) / ((SpecialFunctions.Factorial(typeCardinality - m) * SpecialFunctions.Factorial(m)));
+                results.Insert(m, combinationsWithoutRepetitions * gm);
             }
 
-            return gms;
+            /* Parallel.ForEach(results, new ParallelOptions { MaxDegreeOfParallelism = 2 }, (result, state, index) =>
+            {
+                var m = (int) index;
+                var gm = CalculateGOptimized(m, typeCardinality, gCalculationInfo);
+                var combinationsWithoutRepetitions = SpecialFunctions.Factorial(typeCardinality) / ((SpecialFunctions.Factorial(typeCardinality - m) * SpecialFunctions.Factorial(m)));
+                results[m] = combinationsWithoutRepetitions * gm;
+            }); */
+
+            var totalSum = 0.0;
+            results.ForEach((result) => totalSum += result);
+            var normalizationCoefficient = 1 / totalSum;
+
+            var normalizedResults = new List<double>(typeCardinality);
+            results.ForEach((result) => normalizedResults.Add(result * normalizationCoefficient));
+
+            return normalizedResults;
         }
+
+        private double CalculateGOptimized(int m, int typeCardinality, GCalculationInfo gCalculationInfo)
+        {
+            var ffNumeratorRaised = CalculateRisingFactorial(gCalculationInfo.FfNumerator, typeCardinality - m);
+            var p1fNumeratorRaised = CalculateRisingFactorial(gCalculationInfo.P1fNumerator, m);
+            var p2fNumeratorRaised = CalculateRisingFactorial(gCalculationInfo.P2fNumerator, m);
+
+            if (gCalculationInfo.Triplet.full.STInfo != gCalculationInfo.Triplet.part2.STInfo)
+            {
+                var ffp1fDenominator = Add(Alpha, CalculateRisingFactorial(gCalculationInfo.FfRootCount, typeCardinality));
+                var p2fDenominator = Add(Alpha, CalculateRisingFactorial(gCalculationInfo.P2fRootCount, m));
+
+                var ffp1fNumerator = Multiply(ffNumeratorRaised, p1fNumeratorRaised);
+
+                var ffp1fResult = Divide(ffp1fNumerator, ffp1fDenominator);
+                var p2fResult = Divide(p2fNumeratorRaised, p2fDenominator);
+                return ffp1fResult * p2fResult;
+            }
+            else
+            {
+                var ffp1fp2fNumerator = Multiply(Multiply(ffNumeratorRaised, p1fNumeratorRaised),p2fNumeratorRaised);
+                var ffp1fp2fDenominator = Add(Alpha, CalculateRisingFactorial(gCalculationInfo.FfRootCount, typeCardinality + m));
+                return Divide(ffp1fp2fNumerator, ffp1fp2fDenominator);
+            }
+        }
+
+        private (double, BigInteger?) CalculateRisingFactorial(double x, double n)
+        {
+            if(x+n <= 19)
+            {
+                var result = RisingFactorial(x, n);
+                return (result, null);
+            }
+            
+                return (0, RisingFactorialBIOptimized((int) Math.Round(x), 0, ((int) Math.Round(n) - 1)));
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private (double, BigInteger?) Add(double value, (double, BigInteger?) tuple)
+        {
+            return tuple.Item2 == null ? (value + tuple.Item1, null) : (0.0, new BigInteger(value) + tuple.Item2);
+        }
+
+        static long countOrdinary = 0;
+        static long countBI = 0;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private (double, BigInteger?) Multiply((double, BigInteger?) first, (double, BigInteger?) second)
+        {
+            if (first.Item2 == null && second.Item2 == null)
+            {
+                var result = first.Item1 * second.Item1;
+                if (result.IsFinite()) { countOrdinary++; return (result, null); }
+                else
+                {
+                    countBI++;
+                    return (0, new BigInteger(Math.Round(first.Item1)) * new BigInteger(Math.Round(second.Item1)));
+                }
+            }
+
+            countBI++;
+            var firstBI = first.Item2 != null ? first.Item2 : new BigInteger(first.Item1);
+            var secondBI = second.Item2 != null ? second.Item2 : new BigInteger(second.Item1);
+
+            return (0, firstBI * secondBI);
+        }
+
+
+        static long countOrdinaryDiv = 0;
+        static long countBIDiv = 0;
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private double Divide((double, BigInteger?) numerator, (double, BigInteger?) denominator)
+        {
+            if(numerator.Item2 != null && denominator.Item2 != null)
+            {
+                countOrdinaryDiv++;
+                return numerator.Item1 / denominator.Item1;
+            }
+            else
+            {
+                countBIDiv++;
+                var numeratorBI = numerator.Item2 != null ? numerator.Item2 : new BigInteger(numerator.Item1);
+                var denominatorBI = denominator.Item2 != null ? denominator.Item2 : new BigInteger(denominator.Item1);
+
+                return Math.Exp(BigInteger.Log((BigInteger) numeratorBI) - BigInteger.Log((BigInteger) denominatorBI));
+            }
+        }
+
 
         private double RisingFactorial(double x, double n)
         {
-            return SpecialFunctions.Gamma(x + n)/ SpecialFunctions.Gamma(x);
+            if((x+n) > 19)
+            {
+                throw new OverflowException();
+            }
+
+            x = x < 1 ? 1 : x;
+            var numerator = SpecialFunctions.Gamma(x + n);
+            var denominator = SpecialFunctions.Gamma(x);
+
+            if(!numerator.IsFinite() || !denominator.IsFinite())
+            {
+                throw new OverflowException();
+            }
+
+            return numerator / denominator;
+        }
+
+        public static BigInteger RisingFactorialBIOptimized(int x, int startn, int endn)
+        {
+            if (startn >= endn)
+            {
+                return new BigInteger(x + startn);
+            }
+
+            var leftstartn = startn;
+            var rightendn = endn;
+
+            var middlen = (startn + endn) / 2.0;
+            int leftendn;
+            int rightstartn;
+            if (middlen - (int)middlen == 0)
+            {
+                leftendn = (int)middlen;
+                rightstartn = (int)middlen + 1;
+            }
+            else
+            {
+                leftendn = (int)Math.Floor(middlen);
+                rightstartn = (int)Math.Ceiling(middlen);
+            }
+
+            var leftResult = RisingFactorialBIOptimized(x, leftstartn, leftendn);
+            var rightResult = RisingFactorialBIOptimized(x, rightstartn, rightendn);
+
+            return leftResult * rightResult;
         }
 
         private void Fragmentation(LabeledNode node)
@@ -533,5 +626,33 @@ namespace RoseLibML
                 Fragmentation(child);
             }
         }
+
+
+        private void WriteFragments(int treshold, int iteration)
+        {
+            Writer.SetIteration(iteration);
+            var commonFragments = BookKeeper.FragmentCounts.Where(kvp => kvp.Value > treshold);
+            foreach (var fragmentKV in commonFragments)
+            {
+                var fragmentString = fragmentKV.Key;
+
+                Writer.WriteSingleFragment(fragmentString);
+
+            }
+        }
+
+    }
+
+    class GCalculationInfo
+    {
+        public (LabeledNode full, LabeledNode part1, LabeledNode part2) Triplet { get; set; }
+
+
+        public double FfNumerator { get; set; }
+        public double P1fNumerator { get; set; }
+        public double P2fNumerator { get; set; }
+
+        public int FfRootCount { get; set; }
+        public int P2fRootCount { get; set; }
     }
 }
