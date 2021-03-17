@@ -26,7 +26,7 @@ namespace Tests.AlgorithmTests
                 var x = Randoms.WellBalanced.Next(10000);
                 var n = Randoms.WellBalanced.Next(10000);
                 var resultBasic = RisingFactorialBI(x, n);
-                var resultOptimized = GibbsSampler.RisingFactorialBIOptimized(x, 0, n-1);
+                var resultOptimized = TBSampler.RisingFactorialBIOptimized(x, 0, n-1);
 
                 Assert.AreEqual(resultBasic, resultOptimized);
             }

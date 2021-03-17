@@ -24,7 +24,7 @@ using System.Runtime.CompilerServices;
 
 namespace RoseLibML
 {
-    public class GibbsSampler
+    public class TBSampler
     {
         public BookKeeper BookKeeper { get; set; }
         public LabeledTreePCFGComposer PCFG { get; set; }
@@ -34,7 +34,7 @@ namespace RoseLibML
 
         Writer Writer { get; set; }
 
-        public GibbsSampler(Writer writer)
+        public TBSampler(Writer writer)
         {
             Writer = writer;
             BookKeeper = new BookKeeper();
@@ -489,8 +489,8 @@ namespace RoseLibML
 
             if (gCalculationInfo.Triplet.full.STInfo != gCalculationInfo.Triplet.part2.STInfo)
             {
-                var ffp1fDenominator = Add(Alpha, CalculateRisingFactorial(gCalculationInfo.FfRootCount, typeCardinality));
-                var p2fDenominator = Add(Alpha, CalculateRisingFactorial(gCalculationInfo.P2fRootCount, m));
+                var ffp1fDenominator = CalculateRisingFactorial(Alpha + gCalculationInfo.FfRootCount, typeCardinality);
+                var p2fDenominator = CalculateRisingFactorial(Alpha + gCalculationInfo.P2fRootCount, m);
 
                 var ffp1fNumerator = Multiply(ffNumeratorRaised, p1fNumeratorRaised);
 
@@ -501,7 +501,7 @@ namespace RoseLibML
             else
             {
                 var ffp1fp2fNumerator = Multiply(Multiply(ffNumeratorRaised, p1fNumeratorRaised),p2fNumeratorRaised);
-                var ffp1fp2fDenominator = Add(Alpha, CalculateRisingFactorial(gCalculationInfo.FfRootCount, typeCardinality + m));
+                var ffp1fp2fDenominator = CalculateRisingFactorial(Alpha + gCalculationInfo.FfRootCount, typeCardinality + m);
                 return Divide(ffp1fp2fNumerator, ffp1fp2fDenominator);
             }
         }
