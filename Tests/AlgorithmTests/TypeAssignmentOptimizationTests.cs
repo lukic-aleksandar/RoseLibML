@@ -23,7 +23,7 @@ namespace Tests.AlgorithmTests
             pCFGComposer.CalculateProbabilities();
 
             ToCSWriter writer = new ToCSWriter(@"C:\Users\nenad\Desktop\Nnd\doktorske\out1000\idioms\idioms2.txt");
-            var sampler = new GibbsSampler(writer);
+            var sampler = new TBSampler(writer);
             sampler.BookKeeper = new ExtendedBookKeeper();
             sampler.Initialize(pCFGComposer, labeledTrees);
             

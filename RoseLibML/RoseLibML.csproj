@@ -115,7 +115,6 @@
     <Compile Include="CS\CSTrees\CSTree.cs" />
     <Compile Include="CS\CSTrees\CSTreeCreator.cs" />
     <Compile Include="CS\ToCSWriter.cs" />
-    <Compile Include="Core\GibbsSampler.cs" />
     <Compile Include="Core\PCFG\IPCFGComposer.cs" />
     <Compile Include="Core\LabeledTrees\LabeledTree.cs" />
     <Compile Include="Core\LabeledTrees\LabeledNode.cs" />
@@ -125,6 +124,7 @@
     <Compile Include="Core\PCFG\PCFGNode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Core\TBSampler.cs" />
     <Compile Include="Util\ListExtension.cs" />
   </ItemGroup>
   <ItemGroup>
