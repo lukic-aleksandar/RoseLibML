@@ -11,9 +11,7 @@ The algorithm that the project uses is inspired by next papers:
 * [Inducing compact but accurate treesubstitution grammars](https://www.aclweb.org/anthology/N09-1062.pdf)
 * [Type-based MCMC](https://www.aclweb.org/anthology/N10-1082.pdf)
 * [Mining idioms from source code](https://arxiv.org/pdf/1404.0417.pdf)
-
-An overview of the theory and the implementation: Automating API-based Generators Development by Inferring Code Idioms using Machine-Learning
-
+* 
 ## Two implementations
 
 The repository currently contains two similar implementations of the algorithm.
