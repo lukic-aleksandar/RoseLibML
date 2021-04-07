@@ -1,0 +1,20 @@
+{
+    "modelParams": {
+        "alpha": 5,
+        "cutProbability": 0.9,
+        "p": 0.0085
+    },
+    
+    "paths":{
+        "inData": "C:\\Users\\nenad\\Desktop\\Nnd\\doktorske\\dev new\\dataset2\\studentski_projekti_training",
+        "outModel": "",
+        "outIdioms": "C:\\Users\\nenad\\Desktop\\Nnd\\doktorske\\dev new\\dataset2\\out2\\idioms9.txt"
+    },
+
+    "runParams":{
+        "startIteration": 0,
+        "burnIn": 65,
+        "totalIterations": 100,
+        "threshold": 3
+    }
+}
