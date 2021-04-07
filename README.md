@@ -1,9 +1,10 @@
+
 # RoseLibML
 
 ## The project
 
 This project aims to enable inference of code idioms from an unlabeled data set.
-The architecture of the solution is modular. The inference core can be extended to suport an arbitrary language.
+The architecture of the solution is modular. The inference core can be extended to support an arbitrary language.
 Currently, the solution supports inference from files written in C# language, using [Roslyn](https://docs.microsoft.com/en-us/dotnet/csharp/roslyn-sdk/).
 
 
@@ -15,48 +16,54 @@ The algorithm that the project uses is inspired by next papers:
 ## Two implementations
 
 The repository currently contains two similar implementations of the algorithm.
-The reason for this is that the algorithm includes factorial and rising factorial operations. Long and double-precision numbers cannot hold all the values resulting from these operations. To support these operations, the first implementation, available on the master branch, uses BigInteger class. The second operation relies on a customized implementation of the BigRational for better precision and is available on the BigRational branch. 
+The reason for this is that the algorithm includes factorial and rising factorial operations. Long and double-precision numbers cannot hold all the values resulting from these operations. 
+
+To support these operations, the first implementation uses BigInteger class. This is the implementation available on the main branch.
+The second implementation relies on a custom BigRational for better precision. This implementation is available on the BigRational branch and is currently under development.
 
 ## Running these solutions
 As a test data set, you can use a corpus of student files available on [Mendeley Data](http://dx.doi.org/10.17632/rbvz68v555.1).
 
-Both versions can be compiled and run on the Windows platform using Visual Studio.
+Both these solutions can be run on the Windows platform. Compiled executables are available in the 
+
 ### Runing the BigInteger version
 * Download the data set
-* Cloning the solution: git clone https://github.com/lukic-aleksandar/RoseLibML.git
-* Building the solution: 
-	* Open the .sln file using Visual Studio
-	 * Build -> Build Solution
-* Change paths in Program.cs
-	* At line 23, provide an input path to the data set as a first parameter, and an output path for the model as a second
-	 * At line 33, provide a path to a file where the resulting code idioms will be printed
-* Configure Training parameters:
-	 * Program.cs: Total number of iterations, burn-in iterations and a threshold can be set at line 37 
-	 * Core/TBSampler.cs: Alpha value and CutProbability values can be changed
- * Start!
+* Open cmd/PowerShell and locate to desired folder
+* Clone the solution: git clone https://github.com/lukic-aleksandar/RoseLibML.git
+* Extract Compiled.zip found in the cloned folder
+* Enter the resulting Compiled folder, open config.json
+* In config.json Change the parameters; change the path to the dataset; set the output path for idioms
+* Using cmd/PowerShell enter the RoseLibML folder found inside the Compiled folder
+* Run using  cmd/PowerShell: .\RoseLibML.exe "C:\example-path\config.json"
 
 
 ### Runing the BigRational version
 * Download the data set
-* Cloning the solution: 
-	* Open cmd/terminal/PowerShell
+* Open cmd/PowerShell and locate to desired folder
+* Clone the solution: 
 	* git clone https://github.com/lukic-aleksandar/RoseLibML.git
 	* cd .\RoseLibML\
 	* git checkout BigRational
+* Extract Compiled.zip found in the cloned folder
+* Enter the resulting Compiled folder, open config.json
+* In config.json Change the parameters; change the path to the dataset; set the output path for idioms
+* Using cmd/PowerShell enter the RoseLibML folder found inside the Compiled folder
+* Run using  cmd/PowerShell: .\RoseLibML.exe "C:\example-path\config.json"
+
+
+
+## Compiling the solution
+The solutions can be compiled using Visual Studio.
+
 * Building the solution: 
 	* Open the .sln file using Visual Studio
-	 * Build -> Build Solution
-* Configure Training parameters:
-	 * Program.cs: Total number of iterations, burn-in iterations and a threshold can be set at line 58 
-	 * Core/TBSampler.cs: Alpha value and CutProbability values can be changed
- * Change the Command line arguments to configure paths:
-	 * Solution Explorer  -> right-click on the RoseLibML project -> Properties
-	 * Debug -> Start options -> Command line arguments
-	 * Next parameters should be added:
-		 * An input path to the data set
-		 * An output path for the model
-		 * A path to a file where the resulting code idioms will be printed
-		Example: "C:\dataset" "C:\output" "C:\output\idioms.txt" 
- * Start!
+	* Build -> Build Solution
 
+The compiled version should now be available under the bin folder of the solution, in Debug or Release folders.
 
+To run the solution using Visual Studio, the path to config.js have to be set using the Command line arguments:
+-   Solution Explorer -> right-click on the RoseLibML project -> Properties
+-   Debug -> Start options -> Command line arguments
+
+Be sure that the config.json file is available and that it contains the right values.
+ 
