@@ -1,5 +1,6 @@
 ﻿using MathNet.Numerics.Distributions;
 using RoseLib;
+using RoseLibML.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -20,12 +21,14 @@ namespace RoseLibML
 
         public List<LabeledTree> Trees { get => trees; set => trees = value; }
 
-        public double P { get; set; } = 0.0085;
+        public double P { get; set; }
 
-        public LabeledTreePCFGComposer(List<LabeledTree> trees)
+        public LabeledTreePCFGComposer(List<LabeledTree> trees, Config config)
         {
             Rules = new Dictionary<string, Dictionary<string, PCFGNode>>();
             Trees = trees;
+
+            P = config.ModelParams.P;
         }
 
         public void CalculateProbabilities()

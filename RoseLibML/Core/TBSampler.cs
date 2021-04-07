@@ -29,15 +29,22 @@ namespace RoseLibML
         public BookKeeper BookKeeper { get; set; }
         public LabeledTreePCFGComposer PCFG { get; set; }
         public LabeledTree[] Trees { get; set; }
-        public double Alpha { get; set; } = 5;
-        public double CutProbability { get; set; } = 0.9;
+        public double Alpha { get; set; }
+        public double CutProbability { get; set; }
 
         Writer Writer { get; set; }
+        private Config Config { get; set; }
 
-        public TBSampler(Writer writer)
+
+        public TBSampler(Writer writer, Config config)
         {
             Writer = writer;
             BookKeeper = new BookKeeper();
+
+            Alpha = config.ModelParams.Alpha;
+            CutProbability = config.ModelParams.CutProbability;
+
+            Config = config;
         }
 
         public void Initialize(LabeledTreePCFGComposer pCFG, LabeledTree[] labeledTrees)
@@ -87,14 +94,18 @@ namespace RoseLibML
             }
         }
         
-        public void Train(int iterations, int burnInIterations, int fragmentCountTreshold)
+        public void Train()
         {
+            int startIteration = Config.RunParams.StartIteration;
+            int iterations = Config.RunParams.TotalIterations;
+            int burnInIterations = Config.RunParams.BurnIn;
+            int fragmentCountTreshold = Config.RunParams.Threshold;
 
             var begin = DateTime.Now;
             Console.WriteLine("START");
             Console.WriteLine(begin);
 
-            for (int i = 0; i < iterations; i++)
+            for (int i = startIteration; i < iterations; i++)
             { 
                 Console.WriteLine($"Iteration: {i}");
 

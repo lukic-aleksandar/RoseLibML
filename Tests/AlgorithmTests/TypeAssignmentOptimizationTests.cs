@@ -14,6 +14,7 @@ namespace Tests.AlgorithmTests
 {
     class TypeAssignmentOptimizationTests
     {
+        /*
         [Test, Ignore("Needs to be run on purpose. Can take a lot of time to run.")]
         public void TestThatGivenAndTrueTypeAreEqual()
         {
@@ -38,7 +39,7 @@ namespace Tests.AlgorithmTests
 
             Assert.Pass();
         }
-
+        */
         static LabeledTree[] CreateLabeledTrees(string sourceDirectory, string outputDirectory)
         {
             var directoryInfo = new DirectoryInfo(sourceDirectory);
