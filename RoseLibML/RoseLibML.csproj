@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\build\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\build\Microsoft.CodeAnalysis.Analyzers.props')" />
+  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -16,7 +16,7 @@
     </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x64</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -57,8 +57,8 @@
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="MathNet.Numerics, Version=4.9.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\MathNet.Numerics.4.9.1\lib\net461\MathNet.Numerics.dll</HintPath>
+    <Reference Include="MathNet.Numerics, Version=4.15.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.4.15.0\lib\net461\MathNet.Numerics.dll</HintPath>
     </Reference>
     <Reference Include="MediatR, Version=8.0.0.0, Culture=neutral, PublicKeyToken=bb9a41a5e8aaa7e2, processorArchitecture=MSIL">
       <HintPath>..\packages\MediatR.8.1.0\lib\net461\MediatR.dll</HintPath>
@@ -66,14 +66,17 @@
     <Reference Include="MediatR.Extensions.Microsoft.DependencyInjection, Version=8.0.0.0, Culture=neutral, PublicKeyToken=bb9a41a5e8aaa7e2, processorArchitecture=MSIL">
       <HintPath>..\packages\MediatR.Extensions.Microsoft.DependencyInjection.8.0.0\lib\netstandard2.0\MediatR.Extensions.Microsoft.DependencyInjection.dll</HintPath>
     </Reference>
+    <Reference Include="MersenneTwister, Version=1.0.7081.25709, Culture=neutral, PublicKeyToken=9c84633ec57842f3, processorArchitecture=MSIL">
+      <HintPath>..\packages\MersenneTwister.1.0.6\lib\portable-net45+netcore45+win8+wp8\MersenneTwister.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.1\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.3.5.0\lib\netstandard2.0\Microsoft.CodeAnalysis.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis, Version=3.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.Common.3.9.0\lib\netstandard2.0\Microsoft.CodeAnalysis.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.3.5.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
+    <Reference Include="Microsoft.CodeAnalysis.CSharp, Version=3.9.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeAnalysis.CSharp.3.9.0\lib\netstandard2.0\Microsoft.CodeAnalysis.CSharp.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Configuration, Version=3.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Configuration.3.1.0\lib\netstandard2.0\Microsoft.Extensions.Configuration.dll</HintPath>
@@ -117,30 +120,30 @@
     <Reference Include="Nerdbank.Streams, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cac503e1823ce71c, processorArchitecture=MSIL">
       <HintPath>..\packages\Nerdbank.Streams.2.6.81\lib\netstandard2.0\Nerdbank.Streams.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="OmniSharp.Extensions.JsonRpc, Version=0.19.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
-      <HintPath>..\packages\OmniSharp.Extensions.JsonRpc.0.19.0-beta0004\lib\netstandard2.0\OmniSharp.Extensions.JsonRpc.dll</HintPath>
+      <HintPath>..\packages\OmniSharp.Extensions.JsonRpc.0.19.2\lib\netstandard2.0\OmniSharp.Extensions.JsonRpc.dll</HintPath>
     </Reference>
     <Reference Include="OmniSharp.Extensions.JsonRpc.Generators, Version=0.19.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
-      <HintPath>..\packages\OmniSharp.Extensions.JsonRpc.Generators.0.19.0-beta0004\lib\netstandard2.0\OmniSharp.Extensions.JsonRpc.Generators.dll</HintPath>
+      <HintPath>..\packages\OmniSharp.Extensions.JsonRpc.Generators.0.19.2\lib\netstandard2.0\OmniSharp.Extensions.JsonRpc.Generators.dll</HintPath>
     </Reference>
     <Reference Include="OmniSharp.Extensions.LanguageProtocol, Version=0.19.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
-      <HintPath>..\packages\OmniSharp.Extensions.LanguageProtocol.0.19.0-beta0004\lib\netstandard2.0\OmniSharp.Extensions.LanguageProtocol.dll</HintPath>
+      <HintPath>..\packages\OmniSharp.Extensions.LanguageProtocol.0.19.2\lib\netstandard2.0\OmniSharp.Extensions.LanguageProtocol.dll</HintPath>
     </Reference>
     <Reference Include="OmniSharp.Extensions.LanguageServer, Version=0.19.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
-      <HintPath>..\packages\OmniSharp.Extensions.LanguageServer.0.19.0-beta0004\lib\netstandard2.0\OmniSharp.Extensions.LanguageServer.dll</HintPath>
+      <HintPath>..\packages\OmniSharp.Extensions.LanguageServer.0.19.2\lib\netstandard2.0\OmniSharp.Extensions.LanguageServer.dll</HintPath>
     </Reference>
     <Reference Include="OmniSharp.Extensions.LanguageServer.Shared, Version=0.19.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
-      <HintPath>..\packages\OmniSharp.Extensions.LanguageServer.Shared.0.19.0-beta0004\lib\netstandard2.0\OmniSharp.Extensions.LanguageServer.Shared.dll</HintPath>
+      <HintPath>..\packages\OmniSharp.Extensions.LanguageServer.Shared.0.19.2\lib\netstandard2.0\OmniSharp.Extensions.LanguageServer.Shared.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
     </Reference>
-    <Reference Include="System.Collections.Immutable, Version=1.2.5.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Collections.Immutable.1.7.1\lib\net461\System.Collections.Immutable.dll</HintPath>
+    <Reference Include="System.Collections.Immutable, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Collections.Immutable.5.0.0\lib\net461\System.Collections.Immutable.dll</HintPath>
     </Reference>
     <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ComponentModel.Annotations.4.7.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
@@ -165,11 +168,11 @@
     <Reference Include="System.Reactive, Version=4.4.0.0, Culture=neutral, PublicKeyToken=94bc3704cddfc263, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Reactive.4.4.1\lib\net46\System.Reactive.dll</HintPath>
     </Reference>
-    <Reference Include="System.Reflection.Metadata, Version=1.4.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Reflection.Metadata.1.6.0\lib\netstandard2.0\System.Reflection.Metadata.dll</HintPath>
+    <Reference Include="System.Reflection.Metadata, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Reflection.Metadata.5.0.0\lib\net461\System.Reflection.Metadata.dll</HintPath>
     </Reference>
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.6.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.7.1\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security.AccessControl, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
@@ -178,8 +181,11 @@
     <Reference Include="System.Security.Principal.Windows, Version=4.1.2.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Principal.Windows.4.6.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
     </Reference>
-    <Reference Include="System.Text.Encoding.CodePages, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Text.Encoding.CodePages.4.5.1\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
+    <Reference Include="System.Text.Encoding.CodePages, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Text.Encoding.CodePages.5.0.0\lib\net461\System.Text.Encoding.CodePages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Channels, Version=4.0.2.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Channels.4.7.1\lib\net461\System.Threading.Channels.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461\System.Threading.Tasks.Extensions.dll</HintPath>
@@ -198,37 +204,46 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BookKeeper.cs" />
-    <Compile Include="GibbsSampler.cs" />
     <Compile Include="LanguageServer\CommandResponse.cs" />
-    <Compile Include="PCFG\IPCFGComposer.cs" />
-    <Compile Include="LabeledTrees\LabeledTree.cs" />
-    <Compile Include="LabeledTrees\LabeledTreeNode.cs" />
-    <Compile Include="LabeledTreeNodeType.cs" />
-    <Compile Include="PCFG\LabeledTreePCFGComposer.cs" />
-    <Compile Include="LabeledTrees\LabeledTreeTransformations.cs" />
     <Compile Include="LanguageServer\CommandHandler.cs" />
     <Compile Include="LanguageServer\MCMCCommandArguments.cs" />
     <Compile Include="LanguageServer\PCFGCommandArguments.cs" />
-    <Compile Include="PCFG\RoslynPCFGComposer.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Compile>
-    <Compile Include="PCFG\PCFGNode.cs" />
+    <Compile Include="Core\BookKeeper.cs" />
+    <Compile Include="Core\LabeledTrees\FragmentExtensions.cs" />
+    <Compile Include="Core\LabeledTrees\NodeCreator.cs" />
+    <Compile Include="Core\LabeledTrees\TreeCreator.cs" />
+    <Compile Include="Core\Writer.cs" />
+    <Compile Include="CS\CSTrees\CSNode.cs" />
+    <Compile Include="CS\CSTrees\CSNodeCreator.cs" />
+    <Compile Include="CS\CSTrees\CSTree.cs" />
+    <Compile Include="CS\CSTrees\CSTreeCreator.cs" />
+    <Compile Include="CS\ToCSWriter.cs" />
+    <Compile Include="Core\PCFG\IPCFGComposer.cs" />
+    <Compile Include="Core\LabeledTrees\LabeledTree.cs" />
+    <Compile Include="Core\LabeledTrees\LabeledNode.cs" />
+    <Compile Include="Core\LabeledNodeType.cs" />
+    <Compile Include="Core\PCFG\LabeledTreePCFGComposer.cs" />
+    <Compile Include="Core\LabeledTrees\LabeledTreeTransformations.cs" />
+    <Compile Include="Core\PCFG\PCFGNode.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestFile.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Compile>
-    <Compile Include="Util\ListExtension.cs" />
-    <Compile Include="Util\ThreadSafeRandom.cs" />
+    <Compile Include="Core\TBSampler.cs" />
+    <Compile Include="Core\Util\ListExtension.cs" />
+    <Compile Include="Util\Config.cs" />
+    <Compile Include="Util\ConfigReader.cs" />
+    <Compile Include="Util\DataAnnotationsValidator.cs" />
+    <Compile Include="Util\SkipRecursiveValidation.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
-    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
+    <Content Include="LICENSES-MersenneTwister.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.Analyzers.dll" />
+    <Analyzer Include="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\analyzers\dotnet\cs\Microsoft.CodeAnalysis.CSharp.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.16.7.56\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.16.7.56\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.CSharp.dll" />
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.16.7.56\analyzers\cs\Microsoft.VisualStudio.Threading.Analyzers.dll" />
@@ -236,16 +251,15 @@
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.16.7.56\analyzers\vb\Microsoft.VisualStudio.Threading.Analyzers.dll" />
     <Analyzer Include="..\packages\Microsoft.VisualStudio.Threading.Analyzers.16.7.56\analyzers\vb\Microsoft.VisualStudio.Threading.Analyzers.VisualBasic.dll" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
-    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\build\Microsoft.CodeAnalysis.Analyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\build\Microsoft.CodeAnalysis.Analyzers.targets'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets'))" />
     <Error Condition="!Exists('..\packages\Microsoft.VisualStudio.Threading.Analyzers.16.7.56\build\Microsoft.VisualStudio.Threading.Analyzers.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.VisualStudio.Threading.Analyzers.16.7.56\build\Microsoft.VisualStudio.Threading.Analyzers.targets'))" />
   </Target>
-  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\build\Microsoft.CodeAnalysis.Analyzers.targets" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.0.0\build\Microsoft.CodeAnalysis.Analyzers.targets')" />
+  <Import Project="..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets" Condition="Exists('..\packages\Microsoft.CodeAnalysis.Analyzers.3.3.2\build\Microsoft.CodeAnalysis.Analyzers.targets')" />
   <Import Project="..\packages\Microsoft.VisualStudio.Threading.Analyzers.16.7.56\build\Microsoft.VisualStudio.Threading.Analyzers.targets" Condition="Exists('..\packages\Microsoft.VisualStudio.Threading.Analyzers.16.7.56\build\Microsoft.VisualStudio.Threading.Analyzers.targets')" />
 </Project>
