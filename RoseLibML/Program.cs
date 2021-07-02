@@ -1,33 +1,40 @@
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Logging;
 using OmniSharp.Extensions.LanguageServer.Server;
-using RoseLibML;
 using RoseLibML.LanguageServer;
-using RoseLibML.CS.CSTrees;
-using RoseLibML.Util;
+using Serilog;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RoseLib
 {
     class Program
     {
-        static async Task Main(string[] args)
+        private static void Main(string[] args) => MainAsync(args).Wait();
+
+        private static async Task MainAsync(string[] args)
         {
-            var server = await LanguageServer.From(options =>
-                options
-                    .WithInput(Console.OpenStandardInput())
-                    .WithOutput(Console.OpenStandardOutput())
-                    .WithLoggerFactory(new LoggerFactory())
-                    .AddDefaultLoggingProvider()
-                    .WithHandler<CommandHandler>()
+
+            Log.Logger = new LoggerConfiguration()
+                        .Enrich.FromLogContext()
+                        .WriteTo.File(AppDomain.CurrentDomain.BaseDirectory + "log_.txt", rollingInterval: RollingInterval.Day)
+                        .MinimumLevel.Verbose()
+                        .CreateLogger();
+
+            Log.Logger.Debug("Starting language server...");
+
+            var server = await LanguageServer.From(
+                options =>
+                    options
+                        .WithInput(Console.OpenStandardInput())
+                        .WithOutput(Console.OpenStandardOutput())
+                        .WithMaximumRequestTimeout(TimeSpan.FromDays(1))
+                        .ConfigureLogging(
+                                x => x
+                                    .AddSerilog(Log.Logger)
+                                    .AddLanguageProtocolLogging()
+                                    .SetMinimumLevel(LogLevel.Trace)
+                        )
+                        .WithHandler<CommandHandler>()
                  );
 
             await server.WaitForExit;

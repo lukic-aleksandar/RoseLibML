@@ -19,17 +19,17 @@
 		"commands": [
 			{
 				"command": "rose-lib-ml.openPCFG",
-				"title": "Open pCFG",
+				"title": "Open pCFG phase",
 				"category": "RoseLibML"
 			},
 			{
 				"command": "rose-lib-ml.openMCMC",
-				"title": "Open MCMC",
+				"title": "Open MCMC phase",
 				"category": "RoseLibML"
 			},
 			{
 				"command": "rose-lib-ml.openIdioms",
-				"title": "Open Idioms",
+				"title": "Open generation phase",
 				"category": "RoseLibML"
 			},
 			{
@@ -85,7 +85,7 @@
 		"viewsWelcome": [
 			{
 			  "view": "rose-lib-ml-view",
-			  "contents": "Welcome to the RoseLibML extension.\n[Open pCFG tab](command:rose-lib-ml.openPCFG)\n[Open MCMC tab](command:rose-lib-ml.openMCMC)\n[Open idioms tab](command:rose-lib-ml.openIdioms)"
+			  "contents": "Welcome to the RoseLibML extension.\n[pCFG phase](command:rose-lib-ml.openPCFG)\n[MCMC phase](command:rose-lib-ml.openMCMC)\n[Generation phase](command:rose-lib-ml.openIdioms)"
 			}
 		],
 		"configuration": {

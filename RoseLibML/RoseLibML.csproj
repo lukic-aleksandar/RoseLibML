@@ -138,6 +138,15 @@
     <Reference Include="OmniSharp.Extensions.LanguageServer.Shared, Version=0.19.0.0, Culture=neutral, PublicKeyToken=6d868dff454e6022, processorArchitecture=MSIL">
       <HintPath>..\packages\OmniSharp.Extensions.LanguageServer.Shared.0.19.2\lib\netstandard2.0\OmniSharp.Extensions.LanguageServer.Shared.dll</HintPath>
     </Reference>
+    <Reference Include="Serilog, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.2.10.0\lib\net46\Serilog.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Extensions.Logging, Version=2.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Extensions.Logging.3.0.1\lib\netstandard2.0\Serilog.Extensions.Logging.dll</HintPath>
+    </Reference>
+    <Reference Include="Serilog.Sinks.File, Version=5.0.0.0, Culture=neutral, PublicKeyToken=24c2f752a8e58a10, processorArchitecture=MSIL">
+      <HintPath>..\packages\Serilog.Sinks.File.5.0.0\lib\net45\Serilog.Sinks.File.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -206,8 +215,7 @@
   <ItemGroup>
     <Compile Include="LanguageServer\CommandResponse.cs" />
     <Compile Include="LanguageServer\CommandHandler.cs" />
-    <Compile Include="LanguageServer\MCMCCommandArguments.cs" />
-    <Compile Include="LanguageServer\PCFGCommandArguments.cs" />
+    <Compile Include="LanguageServer\CommandArguments.cs" />
     <Compile Include="Core\BookKeeper.cs" />
     <Compile Include="Core\LabeledTrees\FragmentExtensions.cs" />
     <Compile Include="Core\LabeledTrees\NodeCreator.cs" />

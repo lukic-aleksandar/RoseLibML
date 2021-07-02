@@ -1,97 +1,133 @@
-﻿using MediatR;
-using Newtonsoft.Json.Linq;
-using OmniSharp.Extensions.LanguageServer.Protocol;
+﻿using Newtonsoft.Json.Linq;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Workspace;
 using System;
+using Serilog;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using RoseLibML.Util;
+using RoseLibML.CS.CSTrees;
 
 namespace RoseLibML.LanguageServer
 {
     internal class CommandHandler : IExecuteCommandHandler<CommandResponse>
     {
+
+        private const string pCFGCommand = "rose-lib-ml.runPCFG";
+        private const string MCMCCommand = "rose-lib-ml.runMCMC";
+        private const string generateCommand = "rose-lib-ml.generate";
+
         private ExecuteCommandCapability _capability;
 
         public Task<CommandResponse> Handle(ExecuteCommandParams<CommandResponse> request, CancellationToken cancellationToken)
         {
-            Task<CommandResponse> response;
 
             JObject requestArguments = (JObject)request.Arguments.First();
 
+            Task<CommandResponse> response;
+
             switch (request.Command)
             {
-                case "rose-lib-ml.runPCFG":
+                case pCFGCommand:
+
+                    Log.Logger.Debug("CommandHandler | pCFG command");
+
                     PCFGCommandArguments pCFGArguments = requestArguments.ToObject<PCFGCommandArguments>();
 
-                    try
+                    if (!Directory.Exists(pCFGArguments.InputFolder))
                     {
-                        CalculateAndSavePCFG(pCFGArguments);
+                        response = Task.FromResult(new CommandResponse($"Input folder on path '{pCFGArguments.InputFolder}' doesn't exist.", true));
 
-                        response = Task.FromResult(new CommandResponse("Succesfully done.", true));
+                        break;
                     }
-                    catch (FileNotFoundException e)
+                    else if (!Directory.Exists(Path.GetDirectoryName(pCFGArguments.OutputFile)))
                     {
-                        response = Task.FromResult(new CommandResponse(e.Message, false));
-                    }
-                    catch (DirectoryNotFoundException e)
-                    {
-                        response = Task.FromResult(new CommandResponse(e.Message, false));
-                    }
-                    catch (IOException e)
-                    {
-                        response = Task.FromResult(new CommandResponse(e.Message, false));
-                    }
-                    catch (Exception)
-                    {
-                        response = Task.FromResult(new CommandResponse("An error occurred.", false)); ;
-                    }
+                        response = Task.FromResult(new CommandResponse($"Directory of the output file on path {Path.GetDirectoryName(pCFGArguments.OutputFile)} doesn't exist.", true));
 
-                    break;
-                case "rose-lib-ml.runMCMC":
-                    MCMCCommandArguments MCMCarguments = requestArguments.ToObject<MCMCCommandArguments>();
-
-                    if (MCMCarguments.Iterations <= 0 || MCMCarguments.BurnInIterations < 0)
+                        break;
+                    }
+                    else if (pCFGArguments.ProbabilityCoefficient < 0 || pCFGArguments.ProbabilityCoefficient > 1)
                     {
-                        response = Task.FromResult(new CommandResponse("The number of iterations and burn in iterations must be positive.", false));
+                        response = Task.FromResult(new CommandResponse("Probability coefficient must be a number between 0 and 1.", true));
 
                         break;
                     }
 
                     try
                     {
-                        InitializeAndTrain(MCMCarguments);
+                        Dictionary<string, double> probabilities = CalculateAndSavePCFG(pCFGArguments);
 
-                        response = Task.FromResult(new CommandResponse("Succesfully done.", true));
+                        Log.Logger.Debug("CommandHandler | pCFG command | Succesfully done ");
+                        response = Task.FromResult(new CommandResponse(probabilities, "Succesfully done.", false));
                     }
-                    catch (FileNotFoundException e)
+                    catch (Exception e)
                     {
-                        response = Task.FromResult(new CommandResponse(e.Message, false));
-                    }
-                    catch (DirectoryNotFoundException e)
-                    {
-                        response = Task.FromResult(new CommandResponse(e.Message, false));
-                    }
-                    catch (IOException e)
-                    {
-                        response = Task.FromResult(new CommandResponse(e.Message, false));
-                    }
-                    catch(Exception)
-                    {
-                        response = Task.FromResult(new CommandResponse("An error occurred.", false)); ;
+                        Log.Logger.Error("CommandHandler | pCFG command | " + e.Message);
+                        response = Task.FromResult(new CommandResponse(e.Message, true)); ;
                     }
 
                     break;
-                case "rose-lib-ml.generate":
-                    response = Task.FromResult(new CommandResponse("Not implemented yet.", false));
+                case MCMCCommand:
+
+                    Log.Logger.Debug("CommandHandler | MCMC command");
+
+                    MCMCCommandArguments MCMCarguments = requestArguments.ToObject<MCMCCommandArguments>();
+
+                    if (MCMCarguments.Iterations <= 0 || MCMCarguments.BurnInIterations < 0)
+                    {
+                        response = Task.FromResult(new CommandResponse("The number of iterations and burn in iterations must be positive.", true));
+
+                        break;
+                    }
+                    else if (MCMCarguments.InitialCutProbability < 0 || MCMCarguments.InitialCutProbability > 1)
+                    {
+                        response = Task.FromResult(new CommandResponse("Cut probability must be a number between 0 and 1.", true));
+
+                        break;
+                    }
+                    else if (!Directory.Exists(MCMCarguments.InputFolder))
+                    {
+                        response = Task.FromResult(new CommandResponse($"Input folder on path '{MCMCarguments.InputFolder}' doesn't exist.", true));
+
+                        break;
+                    }
+                    else if (!File.Exists(MCMCarguments.PCFGFile))
+                    {
+                        response = Task.FromResult(new CommandResponse($"pCFG file on path '{MCMCarguments.PCFGFile}' doesn't exist.", true));
+
+                        break;
+                    }
+                    else if (!Directory.Exists(MCMCarguments.OutputFolder))
+                    {
+                        response = Task.FromResult(new CommandResponse($"Output folder on path '{MCMCarguments.OutputFolder}' doesn't exist.", true));
+
+                        break;
+                    }
+
+                    try
+                    {
+                        Dictionary<int, List<string>> fragments = InitializeAndTrain(MCMCarguments);
+
+                        Log.Logger.Debug("CommandHandler | MCMC command | Succesfully done ");
+                        response = Task.FromResult(new CommandResponse(fragments, "Succesfully done.", false));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Logger.Error("CommandHandler | MCMC command | " + e.Message);
+                        response = Task.FromResult(new CommandResponse(e.Message, true)); ;
+                    }
+
+                    break;
+                case generateCommand:
+                    response = Task.FromResult(new CommandResponse("Not implemented yet.", true));
 
                     break;
                 default:
-                    response = Task.FromResult(new CommandResponse("Unknown command", false));
+                    response = Task.FromResult(new CommandResponse("Unknown command", true));
 
                     break;
             }
@@ -108,26 +144,33 @@ namespace RoseLibML.LanguageServer
         {
             return new ExecuteCommandRegistrationOptions()
             {
-                Commands = new List<string> { "rose-lib-ml.runPCFG", "rose-lib-ml.runMCMC", "rose-lib-ml.generate" },
+                Commands = new List<string> { pCFGCommand, MCMCCommand, generateCommand },
             };
         }
 
-        private void CalculateAndSavePCFG(PCFGCommandArguments arguments)
+        private Dictionary<string, double> CalculateAndSavePCFG(PCFGCommandArguments arguments)
         {
             // create labeled trees and perform needed transformations
             var labeledTrees = CreateLabeledTrees(arguments.InputFolder, "");
 
-            // calculate probabilitites and save pCFG to file
-            var pCFGComposer = new LabeledTreePCFGComposer(labeledTrees.ToList())
+            Config config = new Config()
             {
-                P = arguments.ProbabilityCoefficient
+                ModelParams = new ModelParams()
+                {
+                    P = arguments.ProbabilityCoefficient
+                }
             };
+
+            // calculate probabilitites and save pCFG to file
+            var pCFGComposer = new LabeledTreePCFGComposer(labeledTrees.ToList(), config);
 
             pCFGComposer.CalculateProbabilities();
             pCFGComposer.Serialize(arguments.OutputFile);
+
+            return pCFGComposer.GetRulesProbabilities();
         }
 
-        private void InitializeAndTrain(MCMCCommandArguments arguments)
+        private Dictionary<int, List<string>> InitializeAndTrain(MCMCCommandArguments arguments)
         {
             // create labeled trees and perform needed transformations
             var labeledTrees = CreateLabeledTrees(arguments.InputFolder, arguments.OutputFolder);
@@ -135,21 +178,37 @@ namespace RoseLibML.LanguageServer
             // read pCFG from file
             LabeledTreePCFGComposer pCFGComposer = LabeledTreePCFGComposer.Deserialize(arguments.PCFGFile);
 
-            // initialize Gibbs Sampler and start training
-            var sampler = new GibbsSampler()
+            ToCSWriter writer = new ToCSWriter(arguments.OutputFolder + @"\idioms.txt");
+
+            Config config = new Config()
             {
-                Alpha = arguments.Alpha,
-                CutProbability = arguments.InitialCutProbability
+                RunParams = new RunParams()
+                {
+                    StartIteration = 0,
+                    TotalIterations = arguments.Iterations,
+                    Threshold = arguments.Threshold,
+                    BurnIn = arguments.BurnInIterations,
+                },
+                ModelParams = new ModelParams()
+                {
+                    Alpha = arguments.Alpha,
+                    CutProbability = arguments.InitialCutProbability,
+                }
             };
 
+            // initialize Gibbs Sampler and start training
+            var sampler = new TBSampler(writer, config);
+
             sampler.Initialize(pCFGComposer, labeledTrees);
-            sampler.Train(arguments.Iterations);
+            sampler.Train();
 
             // serialize trees
             foreach (var tree in sampler.Trees)
             {
                 tree.Serialize();
             }
+
+            return writer.FragmentsPerIteration;
         }
 
         private LabeledTree[] CreateLabeledTrees(string sourceDirectory, string outputDirectory)
@@ -159,12 +218,12 @@ namespace RoseLibML.LanguageServer
 
             LabeledTree[] labeledTrees = new LabeledTree[files.Length];
 
-            for (int i = 0; i < files.Length; i++)
+            Parallel.For(0, files.Length, (index) =>
             {
-                var labeledTree = LabeledTree.CreateLabeledTree(files[i], outputDirectory);
-                LabeledTreeTransformations.Binarize(labeledTree.Root);
-                labeledTrees[i] = labeledTree;
-            }
+                var labeledTree = CSTreeCreator.CreateTree(files[index], outputDirectory);
+                LabeledTreeTransformations.Binarize(labeledTree.Root, new CSNodeCreator());
+                labeledTrees[index] = labeledTree;
+            });
 
             return labeledTrees;
         }

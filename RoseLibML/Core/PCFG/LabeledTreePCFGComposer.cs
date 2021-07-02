@@ -1,4 +1,5 @@
 ﻿using MathNet.Numerics.Distributions;
+using Microsoft.CodeAnalysis.CSharp;
 using RoseLib;
 using RoseLibML.Util;
 using System;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace RoseLibML
 {
@@ -148,6 +150,54 @@ namespace RoseLibML
             }
 
             Rules[kind][rhs].Increment();
+        }
+
+        public Dictionary<string, double> GetRulesProbabilities()
+        {
+            Dictionary<string, double> probabilities = new Dictionary<string, double>();
+            foreach (var lhs in Rules.Keys)
+            {
+                foreach (var rhs in Rules[lhs].Keys)
+                {
+                    string rule = CreateRuleString(lhs, rhs);
+                    probabilities[rule] = Rules[lhs][rhs].Probability;
+                }
+            }
+
+            return probabilities;
+        }
+
+        private string CreateRuleString(string lhs, string rhs)
+        {
+            string leftSide = lhs;
+
+            if (ushort.TryParse(leftSide, out ushort roslynLHS))
+            {
+                leftSide = ((SyntaxKind)roslynLHS).ToString();
+            }
+            else if (leftSide.StartsWith("B_"))
+            {
+                leftSide = "BinarizationNode";
+            }
+
+            string rightSide = "";
+            foreach (var str in rhs.Split(' '))
+            {
+                if (ushort.TryParse(str, out ushort roslynRHS))
+                {
+                    rightSide += $"{(SyntaxKind)roslynRHS} ";
+                }
+                else if (lhs != "IdentifierToken" && str.StartsWith("B_"))
+                {
+                    rightSide += "BinarizationNode ";
+                }
+                else
+                {
+                    rightSide += $"{str} ";
+                }
+            }
+
+            return $"{leftSide} --> {rightSide}";
         }
 
         public void Serialize(string filePath)

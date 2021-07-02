@@ -11,9 +11,8 @@ div.full-scr {
   min-height: 100%;
 }
 
-div.menu-column {
-  border-right: 1px solid var(--vscode-foreground);
-  height: 100%;
+div.visualization-column {
+  border-left: 1px solid var(--vscode-foreground);
 }
 
 div.right-column {
@@ -63,4 +62,22 @@ input:focus {
   box-shadow: none !important;
   border-color: var(--vscode-button-background) !important;
   border-width: 1px !important;
+}
+
+table {
+  color: var(--vscode-input-foreground) !important;
+}
+
+div.fragment-snippet {
+  font-family: var(--vscode-editor-font-family);
+  font-weight: var(--vscode-editor-font-weight);
+  font-size: var(--vscode-editor-font-size);
+  color: var(--vscode-input-foreground) !important;
+  background-color: var(--vscode-input-background) !important;
+  border: solid;
+  border-color: var(--vscode-sideBar-background) !important;
+  border-width: 1px !important;
+  border-radius: 0px !important;
+  padding: 7px;
+  white-space: pre-wrap;
 }

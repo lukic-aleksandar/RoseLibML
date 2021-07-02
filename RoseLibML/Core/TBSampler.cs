@@ -21,6 +21,7 @@ using RoseLibML.Core;
 using MersenneTwister;
 using System.Numerics;
 using System.Runtime.CompilerServices;
+using Serilog;
 
 namespace RoseLibML
 {
@@ -59,7 +60,7 @@ namespace RoseLibML
 
                 if(item.index % 100 == 0)
                 {
-                    Console.WriteLine($"Initialization passed index {item.index}.");
+                    Log.Logger.Debug($"Initialization passed index {item.index}.");
                 }
             }
 
@@ -102,12 +103,12 @@ namespace RoseLibML
             int fragmentCountTreshold = Config.RunParams.Threshold;
 
             var begin = DateTime.Now;
-            Console.WriteLine("START");
-            Console.WriteLine(begin);
+            Log.Logger.Debug("START TRAINING");
+            Log.Logger.Debug(begin.ToString());
 
             for (int i = startIteration; i < iterations; i++)
-            { 
-                Console.WriteLine($"Iteration: {i}");
+            {
+                Log.Logger.Debug($"Iteration: {i}");
 
                 var typeNodes = BookKeeper.TypeNodes.ToList();
                 typeNodes.Shuffle();
@@ -119,7 +120,7 @@ namespace RoseLibML
 
                     if (cnt % 1000 == 0)
                     {
-                        Console.WriteLine($"Processing type {cnt} of {typeNodes.Count}");
+                        Log.Logger.Debug($"Processing type {cnt} of {typeNodes.Count}");
                     }
 
                     if (!BookKeeper.TypeNodes.ContainsKey(typeKV.Key) || BookKeeper.TypeNodes[typeKV.Key].Count == 0)
@@ -145,12 +146,12 @@ namespace RoseLibML
                 }
             }
 
-            Console.WriteLine();
+            //Console.WriteLine();
             var end = DateTime.Now;
-            Console.WriteLine(end);
-            Console.WriteLine("END");
+            Log.Logger.Debug(end.ToString());
+            Log.Logger.Debug("END TRAINING");
 
-            Console.WriteLine($"Time between: {end - begin}");
+            Log.Logger.Debug($"Time between: {end - begin}");
 
             Writer.Close();
         }
