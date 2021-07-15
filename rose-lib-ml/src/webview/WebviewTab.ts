@@ -29,9 +29,9 @@ export abstract class WebviewTab {
 					enableScripts: true
 				});
 
-			this.setUpWebviewPanel();
-
 			this.addMessageReceiver();
+
+			this.setUpWebviewPanel();
 
 			this._panel.onDidDispose(
 				() => {

@@ -14,7 +14,7 @@ export default class PCFGWebviewTab extends WebviewTab {
         this._disposables = disposables;
     }
 
-    protected addMessageReceiver(): void {
+    protected addMessageReceiver() {
         if (this._panel !== undefined) {
             this._panel.webview.onDidReceiveMessage(
 				message => {
@@ -32,7 +32,7 @@ export default class PCFGWebviewTab extends WebviewTab {
         }
     }
 
-    private runPCFGPhase(parameters: any) : any {
+    private runPCFGPhase(parameters: any) {
 		vscode.window.withProgress({
 			location: vscode.ProgressLocation.Notification,
 			title: 'RoseLibML'
@@ -43,7 +43,7 @@ export default class PCFGWebviewTab extends WebviewTab {
 			progress.report({ message: 'pCFG phase in progress', increment: 0 });
 	
 			try {
-				// execute pCFG command from language server
+				// execute pCFG command from the language server
 				response = await vscode.commands.executeCommand('rose-lib-ml.runPCFG',
 					{
 						'ProbabilityCoefficient': parameters.probabilityCoefficient,

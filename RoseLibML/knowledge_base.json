@@ -1,0 +1,39 @@
+{
+  "rootTypeToComposerMapping": {
+    "UsingDirective": [ "CompilationUnitComposer", "NamespaceComposer" ],
+    "NamespaceDeclaration": [ "CompilationUnitComposer", "NamespaceComposer" ],
+    "ClassDeclaration": [ "CompilationUnitComposer", "NamespaceComposer", "ClassComposer" ],
+    "StructDeclaration": [ "CompilationUnitComposer", "NamespaceComposer", "ClassComposer" ],
+    "InterfaceDeclaration": [ "CompilationUnitComposer", "NamespaceComposer", "ClassComposer" ],
+    "EnumDeclaration": [ "CompilationUnitComposer", "NamespaceComposer", "ClassComposer" ],
+    "DelegateDeclaration": [ "CompilationUnitComposer", "NamespaceComposer", "ClassComposer" ],
+    "FieldDeclaration": [ "ClassComposer" ],
+    "PropertyDeclaration": [ "ClassComposer" ],
+    "MethodDeclaration": [ "ClassComposer" ],
+    "ConstructorDeclaration": [ "ClassComposer" ],
+    "DestructorDeclaration": [ "ClassComposer" ],
+    "Block": [ "MethodComposer" ],
+    "LocalDeclarationStatement": [ "MethodComposer" ],
+    "ExpressionStatement": [ "MethodComposer" ],
+    "IfStatement": [ "MethodComposer" ]
+  },
+  "composerInformationMapping": {
+    "CompilationUnitComposer": {
+      "Template": "ComposerTemplate",
+      "Node": "CompilationUnitSyntax"
+    },
+    "ClassComposer": {
+      "Template": "ComposerTemplate",
+      "Node": "ClassDeclarationSyntax"
+    },
+    "NamespaceComposer": {
+      "Template": "ComposerTemplate",
+      "Node": "NamespaceDeclarationSyntax"
+    },
+    "MethodComposer": {
+      "Template": "MethodComposerTemplate",
+      "Node": "MethodDeclarationSyntax"
+    }
+  },
+  "roseLibPath": "<INSERT PATH TO ROSELIB APP PROJECT>"
+}

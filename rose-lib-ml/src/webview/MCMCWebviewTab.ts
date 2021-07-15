@@ -14,7 +14,7 @@ export default class MCMCWebviewTab extends WebviewTab {
         this._disposables = disposables;
     }
 
-    protected addMessageReceiver(): void {
+    protected addMessageReceiver() {
         if (this._panel !== undefined) {
             this._panel.webview.onDidReceiveMessage(
 				message => {
@@ -32,7 +32,7 @@ export default class MCMCWebviewTab extends WebviewTab {
         }
     }
 
-    private runMCMCPhase(parameters: any){
+    private runMCMCPhase(parameters: any) {
 		vscode.window.withProgress({
 			location: vscode.ProgressLocation.Notification,
 			title: 'RoseLibML'
@@ -43,7 +43,7 @@ export default class MCMCWebviewTab extends WebviewTab {
 			progress.report({ message: 'MCMC phase in progress', increment: 0 });
 	
 			try {
-				// execute MCMC command from language server
+				// execute MCMC command from the language server
 				response = await vscode.commands.executeCommand('rose-lib-ml.runMCMC',
 					{
 						'InputFolder': parameters.inputFolder,
@@ -70,7 +70,6 @@ export default class MCMCWebviewTab extends WebviewTab {
 					if (this._panel !== undefined){
 						this._panel.webview.postMessage({command:'showMCMC', value: response.value });
 					}
-
 				}
 	
 			}

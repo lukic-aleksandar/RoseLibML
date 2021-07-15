@@ -11,21 +11,22 @@ using System.Threading;
 using System.Threading.Tasks;
 using RoseLibML.Util;
 using RoseLibML.CS.CSTrees;
+using Newtonsoft.Json;
+using RoseLibML.LanguageServer.Transformer;
 
 namespace RoseLibML.LanguageServer
 {
     internal class CommandHandler : IExecuteCommandHandler<CommandResponse>
     {
-
         private const string pCFGCommand = "rose-lib-ml.runPCFG";
         private const string MCMCCommand = "rose-lib-ml.runMCMC";
+        private const string idiomsCommand = "rose-lib-ml.getIdioms";
         private const string generateCommand = "rose-lib-ml.generate";
 
         private ExecuteCommandCapability _capability;
 
         public Task<CommandResponse> Handle(ExecuteCommandParams<CommandResponse> request, CancellationToken cancellationToken)
         {
-
             JObject requestArguments = (JObject)request.Arguments.First();
 
             Task<CommandResponse> response;
@@ -33,27 +34,17 @@ namespace RoseLibML.LanguageServer
             switch (request.Command)
             {
                 case pCFGCommand:
-
                     Log.Logger.Debug("CommandHandler | pCFG command");
 
                     PCFGCommandArguments pCFGArguments = requestArguments.ToObject<PCFGCommandArguments>();
 
-                    if (!Directory.Exists(pCFGArguments.InputFolder))
+                    List<string> errorsPCFG = Validation.ValidateArguments(pCFGArguments);
+                    if (errorsPCFG.Count > 0)
                     {
-                        response = Task.FromResult(new CommandResponse($"Input folder on path '{pCFGArguments.InputFolder}' doesn't exist.", true));
+                        string validationErrors = string.Join(". ", errorsPCFG);
 
-                        break;
-                    }
-                    else if (!Directory.Exists(Path.GetDirectoryName(pCFGArguments.OutputFile)))
-                    {
-                        response = Task.FromResult(new CommandResponse($"Directory of the output file on path {Path.GetDirectoryName(pCFGArguments.OutputFile)} doesn't exist.", true));
-
-                        break;
-                    }
-                    else if (pCFGArguments.ProbabilityCoefficient < 0 || pCFGArguments.ProbabilityCoefficient > 1)
-                    {
-                        response = Task.FromResult(new CommandResponse("Probability coefficient must be a number between 0 and 1.", true));
-
+                        Log.Logger.Error($"CommandHandler | pCFG command | {validationErrors}", validationErrors);
+                        response = Task.FromResult(new CommandResponse(validationErrors, true));
                         break;
                     }
 
@@ -61,50 +52,28 @@ namespace RoseLibML.LanguageServer
                     {
                         Dictionary<string, double> probabilities = CalculateAndSavePCFG(pCFGArguments);
 
-                        Log.Logger.Debug("CommandHandler | pCFG command | Succesfully done ");
+                        Log.Logger.Debug("CommandHandler | pCFG command | Succesfully done");
                         response = Task.FromResult(new CommandResponse(probabilities, "Succesfully done.", false));
                     }
                     catch (Exception e)
                     {
                         Log.Logger.Error("CommandHandler | pCFG command | " + e.Message);
-                        response = Task.FromResult(new CommandResponse(e.Message, true)); ;
+                        response = Task.FromResult(new CommandResponse("An error occurred. Please try again.", true)); ;
                     }
 
                     break;
                 case MCMCCommand:
-
                     Log.Logger.Debug("CommandHandler | MCMC command");
 
                     MCMCCommandArguments MCMCarguments = requestArguments.ToObject<MCMCCommandArguments>();
 
-                    if (MCMCarguments.Iterations <= 0 || MCMCarguments.BurnInIterations < 0)
+                    List<string> errorsMCMC = Validation.ValidateArguments(MCMCarguments);
+                    if (errorsMCMC.Count > 0)
                     {
-                        response = Task.FromResult(new CommandResponse("The number of iterations and burn in iterations must be positive.", true));
+                        string validationErrors = string.Join(". ", errorsMCMC);
 
-                        break;
-                    }
-                    else if (MCMCarguments.InitialCutProbability < 0 || MCMCarguments.InitialCutProbability > 1)
-                    {
-                        response = Task.FromResult(new CommandResponse("Cut probability must be a number between 0 and 1.", true));
-
-                        break;
-                    }
-                    else if (!Directory.Exists(MCMCarguments.InputFolder))
-                    {
-                        response = Task.FromResult(new CommandResponse($"Input folder on path '{MCMCarguments.InputFolder}' doesn't exist.", true));
-
-                        break;
-                    }
-                    else if (!File.Exists(MCMCarguments.PCFGFile))
-                    {
-                        response = Task.FromResult(new CommandResponse($"pCFG file on path '{MCMCarguments.PCFGFile}' doesn't exist.", true));
-
-                        break;
-                    }
-                    else if (!Directory.Exists(MCMCarguments.OutputFolder))
-                    {
-                        response = Task.FromResult(new CommandResponse($"Output folder on path '{MCMCarguments.OutputFolder}' doesn't exist.", true));
-
+                        Log.Logger.Error($"CommandHandler | MCMC command | {validationErrors}", validationErrors);
+                        response = Task.FromResult(new CommandResponse(validationErrors, true));
                         break;
                     }
 
@@ -112,23 +81,66 @@ namespace RoseLibML.LanguageServer
                     {
                         Dictionary<int, List<string>> fragments = InitializeAndTrain(MCMCarguments);
 
-                        Log.Logger.Debug("CommandHandler | MCMC command | Succesfully done ");
+                        Log.Logger.Debug("CommandHandler | MCMC command | Succesfully done");
                         response = Task.FromResult(new CommandResponse(fragments, "Succesfully done.", false));
                     }
                     catch (Exception e)
                     {
                         Log.Logger.Error("CommandHandler | MCMC command | " + e.Message);
-                        response = Task.FromResult(new CommandResponse(e.Message, true)); ;
+                        response = Task.FromResult(new CommandResponse("An error occurred. Please try again.", true)); ;
+                    }
+
+                    break;
+                case idiomsCommand:
+                    Log.Logger.Debug("CommandHandler | Idioms command");
+
+                    GetIdiomsCommandArguments getIdiomsArguments = requestArguments.ToObject<GetIdiomsCommandArguments>();
+
+                    try
+                    {
+                        List<CodeIdiom> idioms = LoadCodeIdioms(getIdiomsArguments.RootType);
+
+                        Log.Logger.Debug("CommandHandler | Idioms command | Succesfully done");
+                        response = Task.FromResult(new CommandResponse(idioms, "Succesfully done.", false));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Logger.Error("CommandHandler | Idioms command | " + e.Message);
+                        response = Task.FromResult(new CommandResponse("An error occurred. Please try again.", true)); ;
                     }
 
                     break;
                 case generateCommand:
-                    response = Task.FromResult(new CommandResponse("Not implemented yet.", true));
+                    Log.Logger.Debug("CommandHandler | Generate command");
+
+                    GenerateCommandArguments generateArguments = requestArguments.ToObject<GenerateCommandArguments>();
+
+                    List<string> errorsGenerate = Validation.ValidateArguments(generateArguments);
+                    if (errorsGenerate.Count > 0)
+                    {
+                        string validationErrors = string.Join(". ", errorsGenerate);
+
+                        Log.Logger.Error($"CommandHandler | Generate command | {validationErrors}", validationErrors);
+                        response = Task.FromResult(new CommandResponse(validationErrors, true));
+                        break;
+                    }
+
+                    try
+                    {
+                        List<string> outputSnippets = GenerateMethodsFromIdiom(generateArguments);
+
+                        Log.Logger.Debug("CommandHandler | Generate command | Succesfully done");
+                        response = Task.FromResult(new CommandResponse(outputSnippets, "Succesfully done.", false));
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Logger.Error("CommandHandler | Generate command | " + e.Message);
+                        response = Task.FromResult(new CommandResponse("An error occurred. Please try again.", true)); ;
+                    }
 
                     break;
                 default:
                     response = Task.FromResult(new CommandResponse("Unknown command", true));
-
                     break;
             }
 
@@ -144,7 +156,7 @@ namespace RoseLibML.LanguageServer
         {
             return new ExecuteCommandRegistrationOptions()
             {
-                Commands = new List<string> { pCFGCommand, MCMCCommand, generateCommand },
+                Commands = new List<string> { pCFGCommand, MCMCCommand, idiomsCommand, generateCommand },
             };
         }
 
@@ -228,5 +240,42 @@ namespace RoseLibML.LanguageServer
             return labeledTrees;
         }
 
+        private List<CodeIdiom> LoadCodeIdioms(string rootType)
+        {
+            List<CodeIdiom> idioms = new List<CodeIdiom>();
+
+            using (StreamReader file = File.OpenText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"idioms_proposal.json")))
+            using (JsonTextReader reader = new JsonTextReader(file))
+            {
+                idioms = ((JArray)JToken.ReadFrom(reader)).ToObject<List<CodeIdiom>>();
+
+                // filter by root node type
+                if (rootType != null)
+                {
+                    var filteredIdioms = idioms.Where(x => x.RootCSType.ToLower().Contains(rootType.ToLower()));
+                    idioms = filteredIdioms.ToList();
+                }
+
+                foreach (var idiom in idioms)
+                {
+                    idiom.FindMetavariablesInFragment();
+                }
+            }
+
+            return idioms;
+        }
+
+        private List<string> GenerateMethodsFromIdiom(GenerateCommandArguments arguments)
+        {
+            // load knowledge base
+            using (StreamReader file = File.OpenText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"knowledge_base.json")))
+            using (JsonTextReader reader = new JsonTextReader(file))
+            {
+                KnowledgeBase knowledgeBase = (JToken.ReadFrom(reader)).ToObject<KnowledgeBase>();
+
+                Transformer.Transformer transformer = new Transformer.Transformer(knowledgeBase);
+                return transformer.Generate(arguments);
+            }
+        }
     }
 }

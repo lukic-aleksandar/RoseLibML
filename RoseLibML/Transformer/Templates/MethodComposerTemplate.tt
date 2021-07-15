@@ -1,0 +1,42 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
+
+namespace RoseLibApp.RoseLib.Composers
+{
+    public partial class <#=composer#>
+    {
+        public <#=composer#> <#=methodName#>(<#
+            for(int i = 0; i < methodParameters.Count; i++)
+            {
+                Write("string " + methodParameters[i]);
+                if(i < methodParameters.Count-1){
+                    Write(", ");
+                }
+            }
+        #>)  
+        {
+            if (!IsAtRoot())
+            {
+                throw new Exception("A <#=composer.Replace("Composer", "").ToLower()#> must be selected (which is also a root to the composer)");
+            }
+
+            string fragment = string.Format("<#=fragment#>"<#
+            for(int i = 0; i < methodParameters.Count; i++)
+            {
+                Write(", " + methodParameters[i]);
+            }
+            #>);
+
+            var statement = SyntaxFactory.ParseStatement(fragment);
+
+            var newNode = (CurrentNode as <#=composer.Replace("Composer", "")#>DeclarationSyntax).AddBodyStatements(statement);
+
+            Replace(CurrentNode, newNode, null);
+
+            return this;
+        }
+    }
+}

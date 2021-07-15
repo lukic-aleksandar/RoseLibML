@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { LanguageClient, LanguageClientOptions, ServerOptions } from 'vscode-languageclient';
+
 import PCFGWebviewTab from './webview/PCFGWebviewTab';
 import MCMCWebviewTab from './webview/MCMCWebviewTab';
 import IdiomsWebviewTab from './webview/IdiomsWebviewTab';
@@ -22,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
 		outputChannelName: 'RoseLibML'
 	};
 
-	// create and start the language client
+	// create and start the language client (language client launches the language server on start)
 	client = new LanguageClient(
 		'roseLibMLClient',
 		'RoseLibML Client',
@@ -40,6 +41,13 @@ export function activate(context: vscode.ExtensionContext) {
 	let pCFGTabCommand = vscode.commands.registerCommand(
 		'rose-lib-ml.openPCFG', 
 		() => {
+			// check if initialization is done 
+			// TODO: find a better way to do this?
+			if(client.initializeResult?.serverInfo === undefined){
+				vscode.window.showWarningMessage("Language server initialization in progress. Please try again shortly.");
+				return;
+			}
+
 			pCFGTab.openTab();
 		}
 	);
@@ -48,6 +56,13 @@ export function activate(context: vscode.ExtensionContext) {
 	let MCMCTabCommand = vscode.commands.registerCommand(
 		'rose-lib-ml.openMCMC',
 		() => {
+			// check if initialization is done 
+			// TODO: find a better way to do this?
+			if(client.initializeResult?.serverInfo === undefined){
+				vscode.window.showWarningMessage("Language server initialization in progress. Please try again shortly.");
+				return;
+			}
+
 			MCMCTab.openTab();
 		}
 	);
@@ -56,7 +71,19 @@ export function activate(context: vscode.ExtensionContext) {
 	let idiomsTabCommand = vscode.commands.registerCommand(
 		'rose-lib-ml.openIdioms', 
 		() => {
+			// check if initialization is done 
+			// TODO: find a better way to do this?
+			if(client.initializeResult?.serverInfo === undefined){
+				vscode.window.showWarningMessage("Language server initialization in progress. Please try again shortly.");
+				return;
+			}
+			
 			idiomsTab.openTab();
+
+			// get all found idioms from the language server
+			idiomsTab.getIdioms({
+				rootType: null
+			});
 		}
 	);
 

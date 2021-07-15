@@ -1,6 +1,7 @@
 $(document).ready(function () {
     $("form#MCMCForm").submit(submitMCMCForm());
 
+    // restoring the state of the panel (after changing tabs)
     const previousState = vscode.getState();
 
     if(previousState !== undefined) {
@@ -47,17 +48,17 @@ function submitMCMCForm() {
 function showMCMCVisualization(idiomsPerIteration) {
     $("#idioms-per-iteration").empty();
         
-        for (let key in idiomsPerIteration) {
-            let fragments = idiomsPerIteration[key];
+    for (let key in idiomsPerIteration) {
+        let fragments = idiomsPerIteration[key];
 
-            let iterationHTML = "<p class=\"mt-3 mb-3\"> ITERATION " + key + "</p>";
+        let iterationHTML = "<p class=\"mt-3 mb-3\"> ITERATION " + key + "</p>";
 
-            $("#idioms-per-iteration").append(iterationHTML);
+        $("#idioms-per-iteration").append(iterationHTML);
 
-            for (var i = 0; i < fragments.length; i++) 
-            { 
-                let fragmentHTML = "<div class=\"fragment-snippet mt-3 mb-3\">" + fragments[i] + "</div>";
-                $("#idioms-per-iteration").append(fragmentHTML);
-            }
+        for (var i = 0; i < fragments.length; i++) 
+        { 
+            let fragmentHTML = "<div class=\"fragment-snippet mt-3 mb-3\"><p>" + fragments[i] + "</p></div>";
+            $("#idioms-per-iteration").append(fragmentHTML);
         }
+    }
 }

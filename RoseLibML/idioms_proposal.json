@@ -1,0 +1,17 @@
+[
+  {
+    "contextNodes": [ "ClassDeclaration" ],
+    "rootCSType": "PropertyDeclaration",
+    "fragment": "public $IdentifierToken $IdentifierToken {get;set;}"
+  },
+  {
+    "contextNodes": [ "Block" ],
+    "rootCSType": "IfStatement",
+    "fragment": "if( $GreaterThanExpression ) $Block "
+  },
+  {
+    "contextNodes": [ "IfStatement", "Block" ],
+    "rootCSType": "ExpressionStatement",
+    "fragment": "Console.WriteLine($ArgumentList);"
+  }
+]

@@ -10,9 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:rose-lib-ml.openPCFG",
-		"onCommand:rose-lib-ml.openMCMC",
-		"onCommand:rose-lib-ml.openIdioms"
+		"onView:rose-lib-ml-view"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -43,6 +41,11 @@
 				"category": "RoseLibML"
 			},
 			{
+				"command": "rose-lib-ml.getIdioms",
+				"title": "Get idioms",
+				"category": "RoseLibML"
+			},
+			{
 				"command": "rose-lib-ml.generate",
 				"title": "Generate",
 				"category": "RoseLibML"
@@ -59,7 +62,23 @@
 					"when": "false"
 				},
 				{
+					"command": "rose-lib-ml.getIdioms",
+					"when": "false"
+				},
+				{
 					"command": "rose-lib-ml.generate",
+					"when": "false"
+				},
+				{
+					"command": "rose-lib-ml.openPCFG",
+					"when": "false"
+				},
+				{
+					"command": "rose-lib-ml.openMCMC",
+					"when": "false"
+				},
+				{
+					"command": "rose-lib-ml.openIdioms",
 					"when": "false"
 				}
 			]
