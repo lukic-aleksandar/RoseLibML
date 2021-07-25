@@ -2,16 +2,19 @@
   {
     "contextNodes": [ "ClassDeclaration" ],
     "rootCSType": "PropertyDeclaration",
-    "fragment": "public $IdentifierToken $IdentifierToken {get;set;}"
+    "fragment": "public $IdentifierToken $IdentifierToken {get;set;}",
+    "metavariables":  [ "$IdentifierToken", "$IdentifierToken" ]
   },
   {
     "contextNodes": [ "Block" ],
     "rootCSType": "IfStatement",
-    "fragment": "if( $GreaterThanExpression ) $Block "
+    "fragment": "if( $GreaterThanExpression ) $Block ",
+    "metavariables": [ "$GreaterThanExpression", "$Block" ]
   },
   {
     "contextNodes": [ "IfStatement", "Block" ],
     "rootCSType": "ExpressionStatement",
-    "fragment": "Console.WriteLine($ArgumentList);"
+    "fragment": "Console.WriteLine($ArgumentList);",
+    "metavariables": [ "$ArgumentList" ]
   }
 ]

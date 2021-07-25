@@ -34,7 +34,10 @@ namespace RoseLib
                                     .AddLanguageProtocolLogging()
                                     .SetMinimumLevel(LogLevel.Trace)
                         )
-                        .WithHandler<CommandHandler>()
+                        .WithHandler<PCFGCommandHandler>()
+                        .WithHandler<MCMCCommandHandler>()
+                        .WithHandler<IdiomsCommandHandler>()
+                        .WithHandler<GenerateCommandHandler>()
                  );
 
             await server.WaitForExit;

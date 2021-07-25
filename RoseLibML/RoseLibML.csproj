@@ -214,10 +214,13 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="LanguageServer\IdiomsCommandHandler.cs" />
+    <Compile Include="LanguageServer\MCMCCommandHandler.cs" />
+    <Compile Include="LanguageServer\PCFGCommandHandler.cs" />
     <Compile Include="LanguageServer\Validation.cs" />
     <Compile Include="Transformer\CodeIdiom.cs" />
     <Compile Include="LanguageServer\CommandResponse.cs" />
-    <Compile Include="LanguageServer\CommandHandler.cs" />
+    <Compile Include="LanguageServer\GenerateCommandHandler.cs" />
     <Compile Include="LanguageServer\CommandArguments.cs" />
     <Compile Include="Core\BookKeeper.cs" />
     <Compile Include="Core\LabeledTrees\FragmentExtensions.cs" />
@@ -237,6 +240,11 @@
     <Compile Include="Core\LabeledTrees\LabeledTreeTransformations.cs" />
     <Compile Include="Core\PCFG\PCFGNode.cs" />
     <Compile Include="Transformer\KnowledgeBase.cs" />
+    <Compile Include="Transformer\Templates\BaseTemplate.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>BaseTemplate.tt</DependentUpon>
+    </Compile>
     <Compile Include="Transformer\Templates\MethodComposerTemplate.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -269,6 +277,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Transformer\Templates\BaseTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>BaseTemplate.cs</LastGenOutput>
+    </Content>
     <Content Include="Transformer\Templates\MethodComposerTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>MethodComposerTemplate.cs</LastGenOutput>

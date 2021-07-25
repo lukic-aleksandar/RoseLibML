@@ -9,18 +9,5 @@ namespace RoseLibML.LanguageServer.Transformer
         public string RootCSType { get; set; }
         public string Fragment { get; set; }
         public List<string> Metavariables { get; set; } = new List<string>();
-
-        public void FindMetavariablesInFragment()
-        {
-            // string starting with $ not between quotes
-            string pattern = @"\$[A-Za-z]+(?=([^""]*""[^""]*"")*[^""]*$)";
-
-            Match match = Regex.Match(Fragment, pattern);
-            while (match.Success)
-            {
-                Metavariables.Add(match.Value);
-                match = match.NextMatch();
-            }
-        }
     }
 }

@@ -29,6 +29,11 @@ namespace RoseLibML.LanguageServer.Transformer
 
                 foreach (var composer in composers)
                 {
+                    if(!KnowledgeBase.ComposerInformationMapping.ContainsKey(composer))
+                    {
+                        continue;
+                    }
+
                     string node = KnowledgeBase.ComposerInformationMapping[composer].Node;
                     string template = KnowledgeBase.ComposerInformationMapping[composer].Template;
 
@@ -36,22 +41,11 @@ namespace RoseLibML.LanguageServer.Transformer
                     string transformedFragment = TransformFragmentString(arguments.Fragment);
 
                     // generate method and save to a file
-                    string outputText;
-                    switch (template)
-                    {
-                        case "ComposerTemplate":
-                            var ct = new ComposerTemplate(composer, node, arguments.RootCSType, transformedFragment, arguments.MethodName, arguments.MethodParameters);
-                            outputText = ct.TransformText();
-                            break;
-                        case "MethodComposerTemplate":
-                            var mt = new MethodComposerTemplate(composer, transformedFragment, arguments.MethodName, arguments.MethodParameters);
-                            outputText = mt.TransformText();
-                            break;
-                        default:
-                            outputText = "";
-                            break;
-                    }
+                    BaseTemplate templateObj = GetTemplate(template);
+                    templateObj.Initialize(composer, node, arguments.RootCSType, transformedFragment, arguments.MethodName, arguments.MethodParameters);
 
+                    string outputText = templateObj.TransformText();
+                    
                     string fileName = $"{composer}Extension_{arguments.MethodName}.cs";
                     File.WriteAllText(Path.Combine(KnowledgeBase.RoseLibPath, fileName), outputText);
 
@@ -66,6 +60,25 @@ namespace RoseLibML.LanguageServer.Transformer
             }
 
             return outputSnippets;
+        }
+
+        private BaseTemplate GetTemplate(string templateClassName)
+        {
+            BaseTemplate template;
+            switch (templateClassName)
+            {
+                case "ComposerTemplate":
+                    template = new ComposerTemplate();
+                    break;
+                case "MethodComposerTemplate":
+                    template = new MethodComposerTemplate();
+                    break;
+                default:
+                    template = new BaseTemplate();
+                    break;
+            }
+
+            return template;
         }
 
         private string TransformFragmentString(string fragment)

@@ -1,5 +1,7 @@
-﻿<#@ template language="C#" #>
+﻿<#@ template language="C#" inherits="BaseTemplate" #>
 <#@ assembly name="System.Core" #>
+<# AddTemplateHeader(); #>
+
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
