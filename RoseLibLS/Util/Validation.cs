@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 
-namespace RoseLibML.LanguageServer
+namespace RoseLibLS.Util
 {
     class Validation
     {

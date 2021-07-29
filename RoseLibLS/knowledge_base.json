@@ -35,5 +35,5 @@
       "Node": "MethodDeclarationSyntax"
     }
   },
-  "roseLibPath": "<INSERT PATH TO ROSELIB APP PROJECT>"
+  "roseLibPath": "<INSERT PATH TO ROSE LIB APP>"
 }

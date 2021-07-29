@@ -1,4 +1,4 @@
-﻿namespace RoseLibML.LanguageServer
+﻿namespace RoseLibLS.LanguageServer
 {
     public class CommandResponse
     {

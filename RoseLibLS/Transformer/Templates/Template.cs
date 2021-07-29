@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RoseLibML.Transformer.Templates
+namespace RoseLibLS.Transformer.Templates
 {
     public partial class BaseTemplate
     {
@@ -26,4 +26,5 @@ namespace RoseLibML.Transformer.Templates
             this.methodParameters = methodParameters;
         }
     }
+
 }

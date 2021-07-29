@@ -1,49 +1,18 @@
-using Microsoft.Extensions.Logging;
-using OmniSharp.Extensions.LanguageServer.Server;
-using RoseLibML.LanguageServer;
-using Serilog;
+using RoseLibML;
+using RoseLibML.CS.CSTrees;
+using RoseLibML.Util;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace RoseLib
 {
     class Program
     {
-        private static void Main(string[] args) => MainAsync(args).Wait();
-
-        private static async Task MainAsync(string[] args)
-        {
-
-            Log.Logger = new LoggerConfiguration()
-                        .Enrich.FromLogContext()
-                        .WriteTo.File(AppDomain.CurrentDomain.BaseDirectory + "log_.txt", rollingInterval: RollingInterval.Day)
-                        .MinimumLevel.Verbose()
-                        .CreateLogger();
-
-            Log.Logger.Debug("Starting language server...");
-
-            var server = await LanguageServer.From(
-                options =>
-                    options
-                        .WithInput(Console.OpenStandardInput())
-                        .WithOutput(Console.OpenStandardOutput())
-                        .WithMaximumRequestTimeout(TimeSpan.FromDays(1))
-                        .ConfigureLogging(
-                                x => x
-                                    .AddSerilog(Log.Logger)
-                                    .AddLanguageProtocolLogging()
-                                    .SetMinimumLevel(LogLevel.Trace)
-                        )
-                        .WithHandler<PCFGCommandHandler>()
-                        .WithHandler<MCMCCommandHandler>()
-                        .WithHandler<IdiomsCommandHandler>()
-                        .WithHandler<GenerateCommandHandler>()
-                 );
-
-            await server.WaitForExit;
-        }
-
-        /*static void Main(string[] args)
+        static void Main(string[] args)
         {
             Config config = TryExtractConfig(args);
             if (config == null)
@@ -63,9 +32,9 @@ namespace RoseLib
 
 
             ToCSWriter writer = new ToCSWriter(config.Paths.OutIdioms);
-            
+
             var sampler = new TBSampler(writer, config);
-            
+
             sampler.Initialize(pCFGComposer, labeledTrees);
             sampler.Train();
 
@@ -115,7 +84,7 @@ namespace RoseLib
             var files = directoryInfo.GetFiles();
 
             LabeledTree[] labeledTrees = new LabeledTree[files.Length];
-            
+
             Parallel.For(0, files.Length, (index) =>
             {
 
@@ -124,8 +93,8 @@ namespace RoseLib
                 labeledTrees[index] = labeledTree;
 
             });
-           
+
             return labeledTrees;
-        }*/
+        }
     }
 }

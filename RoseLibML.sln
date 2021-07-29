@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoseLibML", "RoseLibML\Rose
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{8A775295-89EC-435B-89DE-3127F43BBD7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoseLibLS", "RoseLibLS\RoseLibLS.csproj", "{6549EA6C-390E-4001-BAAD-ED598CDADD9E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,14 @@ Global
 		{8A775295-89EC-435B-89DE-3127F43BBD7B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8A775295-89EC-435B-89DE-3127F43BBD7B}.Release|x64.ActiveCfg = Release|Any CPU
 		{8A775295-89EC-435B-89DE-3127F43BBD7B}.Release|x64.Build.0 = Release|Any CPU
+		{6549EA6C-390E-4001-BAAD-ED598CDADD9E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6549EA6C-390E-4001-BAAD-ED598CDADD9E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6549EA6C-390E-4001-BAAD-ED598CDADD9E}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6549EA6C-390E-4001-BAAD-ED598CDADD9E}.Debug|x64.Build.0 = Debug|Any CPU
+		{6549EA6C-390E-4001-BAAD-ED598CDADD9E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6549EA6C-390E-4001-BAAD-ED598CDADD9E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6549EA6C-390E-4001-BAAD-ED598CDADD9E}.Release|x64.ActiveCfg = Release|Any CPU
+		{6549EA6C-390E-4001-BAAD-ED598CDADD9E}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

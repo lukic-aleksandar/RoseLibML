@@ -21,7 +21,6 @@ using RoseLibML.Core;
 using MersenneTwister;
 using System.Numerics;
 using System.Runtime.CompilerServices;
-using Serilog;
 
 namespace RoseLibML
 {
@@ -60,7 +59,7 @@ namespace RoseLibML
 
                 if(item.index % 100 == 0)
                 {
-                    Log.Logger.Debug($"Initialization passed index {item.index}.");
+                    //Console.WriteLine($"Initialization passed index {item.index}.");
                 }
             }
 
@@ -103,12 +102,12 @@ namespace RoseLibML
             int fragmentCountTreshold = Config.RunParams.Threshold;
 
             var begin = DateTime.Now;
-            Log.Logger.Debug("START TRAINING");
-            Log.Logger.Debug(begin.ToString());
+            //Console.WriteLine("START TRAINING");
+            //Console.WriteLine(begin.ToString());
 
             for (int i = startIteration; i < iterations; i++)
             {
-                Log.Logger.Debug($"Iteration: {i}");
+                //Console.WriteLine($"Iteration: {i}");
 
                 var typeNodes = BookKeeper.TypeNodes.ToList();
                 typeNodes.Shuffle();
@@ -120,7 +119,7 @@ namespace RoseLibML
 
                     if (cnt % 1000 == 0)
                     {
-                        Log.Logger.Debug($"Processing type {cnt} of {typeNodes.Count}");
+                        //Console.WriteLine($"Processing type {cnt} of {typeNodes.Count}");
                     }
 
                     if (!BookKeeper.TypeNodes.ContainsKey(typeKV.Key) || BookKeeper.TypeNodes[typeKV.Key].Count == 0)
@@ -148,10 +147,10 @@ namespace RoseLibML
 
             //Console.WriteLine();
             var end = DateTime.Now;
-            Log.Logger.Debug(end.ToString());
-            Log.Logger.Debug("END TRAINING");
+            //Console.WriteLine(end.ToString());
+            //Console.WriteLine("END TRAINING");
 
-            Log.Logger.Debug($"Time between: {end - begin}");
+            //Console.WriteLine($"Time between: {end - begin}");
 
             Writer.Close();
         }

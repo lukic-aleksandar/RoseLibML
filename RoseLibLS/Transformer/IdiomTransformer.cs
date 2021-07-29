@@ -3,17 +3,18 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.Build.Evaluation;
-using RoseLibML.Transformer.Templates;
+using RoseLibLS.LanguageServer;
+using RoseLibLS.Transformer.Templates;
 
-namespace RoseLibML.LanguageServer.Transformer
+namespace RoseLibLS.Transformer
 {
-    class Transformer
+    class IdiomTransformer
     {
         public KnowledgeBase KnowledgeBase { get; set; }
 
         private int metavariableCounter = 0;
 
-        public Transformer(KnowledgeBase knowledgeBase)
+        public IdiomTransformer(KnowledgeBase knowledgeBase)
         {
             KnowledgeBase = knowledgeBase;
         }
@@ -29,7 +30,7 @@ namespace RoseLibML.LanguageServer.Transformer
 
                 foreach (var composer in composers)
                 {
-                    if(!KnowledgeBase.ComposerInformationMapping.ContainsKey(composer))
+                    if (!KnowledgeBase.ComposerInformationMapping.ContainsKey(composer))
                     {
                         continue;
                     }
@@ -45,15 +46,15 @@ namespace RoseLibML.LanguageServer.Transformer
                     templateObj.Initialize(composer, node, arguments.RootCSType, transformedFragment, arguments.MethodName, arguments.MethodParameters);
 
                     string outputText = templateObj.TransformText();
-                    
+
                     string fileName = $"{composer}Extension_{arguments.MethodName}.cs";
                     File.WriteAllText(Path.Combine(KnowledgeBase.RoseLibPath, fileName), outputText);
 
                     // add saved file to the RoseLib project 
                     var project = LoadProject(Path.Combine(KnowledgeBase.RoseLibPath, @"RoseLibApp.csproj"));
-                    project.ReevaluateIfNecessary();
+                   /* project.ReevaluateIfNecessary();
                     project.AddItem("Compile", fileName);
-                    project.Save();
+                    project.Save();*/
 
                     outputSnippets.Add(outputText);
                 }

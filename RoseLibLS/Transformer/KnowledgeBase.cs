@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RoseLibML.LanguageServer.Transformer
+namespace RoseLibLS.Transformer
 {
     class KnowledgeBase
     {

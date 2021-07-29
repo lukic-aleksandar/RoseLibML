@@ -10,7 +10,7 @@ var client: LanguageClient;
 
 export function activate(context: vscode.ExtensionContext) {
 
-	let serverModule = context.asAbsolutePath(path.join('..', 'RoseLibML', 'bin', 'Debug', 'RoseLibML.exe'));
+	let serverModule = context.asAbsolutePath(path.join('..', 'RoseLibLS', 'bin', 'Debug', 'net5.0', 'RoseLibLS.exe'));
 
 	let serverOptions: ServerOptions = {
 		run: { command: serverModule },

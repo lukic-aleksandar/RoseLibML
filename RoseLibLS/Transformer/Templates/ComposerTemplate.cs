@@ -7,7 +7,7 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace RoseLibML.Transformer.Templates
+namespace RoseLibLS.Transformer.Templates
 {
     using System;
     
@@ -15,7 +15,7 @@ namespace RoseLibML.Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\ComposerTemplate.tt"
+    #line 1 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\ComposerTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     public partial class ComposerTemplate : BaseTemplate
     {
@@ -26,7 +26,7 @@ namespace RoseLibML.Transformer.Templates
         public override string TransformText()
         {
             
-            #line 3 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\ComposerTemplate.tt"
+            #line 3 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\ComposerTemplate.tt"
  AddTemplateHeader(); 
             
             #line default
@@ -35,28 +35,28 @@ namespace RoseLibML.Transformer.Templates
                     "x;\r\nusing System;\r\nusing System.Linq;\r\n\r\nnamespace RoseLibApp.RoseLib.Composers\r" +
                     "\n{\r\n    public partial class ");
             
-            #line 12 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\ComposerTemplate.tt"
+            #line 12 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\ComposerTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(composer));
             
             #line default
             #line hidden
             this.Write("\r\n    {\r\n        public ");
             
-            #line 14 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\ComposerTemplate.tt"
+            #line 14 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\ComposerTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(composer));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 14 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\ComposerTemplate.tt"
+            #line 14 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\ComposerTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(methodName));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 14 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\ComposerTemplate.tt"
+            #line 14 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\ComposerTemplate.tt"
 
             for(int i = 0; i < methodParameters.Count; i++)
             {
@@ -72,7 +72,7 @@ namespace RoseLibML.Transformer.Templates
             this.Write(")  \r\n        {\r\n\r\n            if (!IsAtRoot())\r\n            {\r\n                th" +
                     "row new Exception(\"A ");
             
-            #line 27 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\ComposerTemplate.tt"
+            #line 27 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\ComposerTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(composer.Replace("Composer", "").ToLower()));
             
             #line default
@@ -80,14 +80,14 @@ namespace RoseLibML.Transformer.Templates
             this.Write(" must be selected (which is also a root to the composer)\");\r\n            }\r\n\r\n   " +
                     "         string fragment = String.Format(\"");
             
-            #line 30 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\ComposerTemplate.tt"
+            #line 30 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\ComposerTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(fragment));
             
             #line default
             #line hidden
             this.Write("\"");
             
-            #line 30 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\ComposerTemplate.tt"
+            #line 30 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\ComposerTemplate.tt"
 
             for(int i = 0; i < methodParameters.Count; i++)
             {
@@ -101,14 +101,14 @@ namespace RoseLibML.Transformer.Templates
                     "oot();\r\n\r\n            var members = (compilationUnit as CompilationUnitSyntax).M" +
                     "embers.ToArray();\r\n\r\n            var newNode = (CurrentNode as ");
             
-            #line 41 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\ComposerTemplate.tt"
+            #line 41 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\ComposerTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(node));
             
             #line default
             #line hidden
             this.Write(")");
             
-            #line 41 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\ComposerTemplate.tt"
+            #line 41 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\ComposerTemplate.tt"
 
                 if (rootCSType.Equals("UsingDirective")) {
                     Write(".AddUsings");

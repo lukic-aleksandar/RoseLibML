@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
-namespace RoseLibML.LanguageServer.Transformer
+namespace RoseLibLS.Transformer
 {
     public class CodeIdiom
     {

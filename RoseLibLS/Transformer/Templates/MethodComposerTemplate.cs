@@ -7,7 +7,7 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace RoseLibML.Transformer.Templates
+namespace RoseLibLS.Transformer.Templates
 {
     using System;
     
@@ -15,7 +15,7 @@ namespace RoseLibML.Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
+    #line 1 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\MethodComposerTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     public partial class MethodComposerTemplate : BaseTemplate
     {
@@ -26,7 +26,7 @@ namespace RoseLibML.Transformer.Templates
         public override string TransformText()
         {
             
-            #line 3 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
+            #line 3 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\MethodComposerTemplate.tt"
  AddTemplateHeader(); 
             
             #line default
@@ -35,28 +35,28 @@ namespace RoseLibML.Transformer.Templates
                     "x;\r\nusing System;\r\n\r\nnamespace RoseLibApp.RoseLib.Composers\r\n{\r\n    public parti" +
                     "al class ");
             
-            #line 11 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
+            #line 11 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\MethodComposerTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(composer));
             
             #line default
             #line hidden
             this.Write("\r\n    {\r\n        public ");
             
-            #line 13 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
+            #line 13 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\MethodComposerTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(composer));
             
             #line default
             #line hidden
             this.Write(" ");
             
-            #line 13 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
+            #line 13 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\MethodComposerTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(methodName));
             
             #line default
             #line hidden
             this.Write("(");
             
-            #line 13 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
+            #line 13 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\MethodComposerTemplate.tt"
 
             for(int i = 0; i < methodParameters.Count; i++)
             {
@@ -72,7 +72,7 @@ namespace RoseLibML.Transformer.Templates
             this.Write(")  \r\n        {\r\n            if (!IsAtRoot())\r\n            {\r\n                thro" +
                     "w new Exception(\"A ");
             
-            #line 25 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
+            #line 25 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\MethodComposerTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(composer.Replace("Composer", "").ToLower()));
             
             #line default
@@ -80,14 +80,14 @@ namespace RoseLibML.Transformer.Templates
             this.Write(" must be selected (which is also a root to the composer)\");\r\n            }\r\n\r\n   " +
                     "         string fragment = string.Format(\"");
             
-            #line 28 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
+            #line 28 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\MethodComposerTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(fragment));
             
             #line default
             #line hidden
             this.Write("\"");
             
-            #line 28 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
+            #line 28 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\MethodComposerTemplate.tt"
 
             for(int i = 0; i < methodParameters.Count; i++)
             {
@@ -100,7 +100,7 @@ namespace RoseLibML.Transformer.Templates
             this.Write(");\r\n\r\n            var statement = SyntaxFactory.ParseStatement(fragment);\r\n\r\n    " +
                     "        var newNode = (CurrentNode as ");
             
-            #line 37 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
+            #line 37 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\MethodComposerTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(composer.Replace("Composer", "")));
             
             #line default

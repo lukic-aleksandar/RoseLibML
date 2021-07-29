@@ -1,0 +1,80 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Transformer\Templates\ComposerTemplate.tt" />
+    <None Remove="Transformer\Templates\MethodComposerTemplate.tt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Transformer\Templates\ComposerTemplate.tt">
+      <LastGenOutput>ComposerTemplate.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </Content>
+    <Content Include="Transformer\Templates\MethodComposerTemplate.tt">
+      <LastGenOutput>MethodComposerTemplate.cs</LastGenOutput>
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build" Version="16.10.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="OmniSharp.Extensions.JsonRpc" Version="0.19.2" />
+    <PackageReference Include="OmniSharp.Extensions.LanguageProtocol" Version="0.19.2" />
+    <PackageReference Include="OmniSharp.Extensions.LanguageServer" Version="0.19.2" />
+    <PackageReference Include="OmniSharp.Extensions.LanguageServer.Shared" Version="0.19.2" />
+    <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.2-dev-10289" />
+    <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
+    <PackageReference Include="System.CodeDom" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RoseLibML\RoseLibML.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="idioms_proposal.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="knowledge_base.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Transformer\Templates\BaseTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>BaseTemplate.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Transformer\Templates\BaseTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BaseTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Transformer\Templates\ComposerTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ComposerTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Transformer\Templates\MethodComposerTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>MethodComposerTemplate.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+</Project>

@@ -7,7 +7,7 @@
 //     the code is regenerated.
 // </auto-generated>
 // ------------------------------------------------------------------------------
-namespace RoseLibML.Transformer.Templates
+namespace RoseLibLS.Transformer.Templates
 {
     using System;
     
@@ -15,7 +15,7 @@ namespace RoseLibML.Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\BaseTemplate.tt"
+    #line 1 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     public partial class BaseTemplate : BaseTemplateBase
     {
@@ -28,7 +28,7 @@ namespace RoseLibML.Transformer.Templates
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 2 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\BaseTemplate.tt"
+        #line 2 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseTemplate.tt"
 
 protected void AddTemplateHeader()
 {
@@ -37,7 +37,7 @@ protected void AddTemplateHeader()
         #line default
         #line hidden
         
-        #line 5 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\BaseTemplate.tt"
+        #line 5 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseTemplate.tt"
 this.Write("// ------------------------------------------------------------------------------" +
         "\r\n//     This code was generated on ");
 
@@ -45,14 +45,14 @@ this.Write("// -----------------------------------------------------------------
         #line default
         #line hidden
         
-        #line 7 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\BaseTemplate.tt"
+        #line 7 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseTemplate.tt"
 this.Write(this.ToStringHelper.ToStringWithCulture(DateTime.Now));
 
         
         #line default
         #line hidden
         
-        #line 7 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\BaseTemplate.tt"
+        #line 7 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseTemplate.tt"
 this.Write(".\r\n//  \r\n//     Changes to this file may cause incorrect behavior\r\n//     and wil" +
         "l be lost if the code is regenerated.\r\n// --------------------------------------" +
         "----------------------------------------\r\n");
@@ -61,7 +61,7 @@ this.Write(".\r\n//  \r\n//     Changes to this file may cause incorrect behavio
         #line default
         #line hidden
         
-        #line 12 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibML\Transformer\Templates\BaseTemplate.tt"
+        #line 12 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseTemplate.tt"
 
 }
 

@@ -10,9 +10,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using RoseLibML.LanguageServer.Transformer;
+using RoseLibLS.Util;
+using RoseLibLS.Transformer;
 
-namespace RoseLibML.LanguageServer
+namespace RoseLibLS.LanguageServer
 {
     internal class GenerateCommandHandler : IExecuteCommandHandler<CommandResponse>
     {
@@ -68,7 +69,7 @@ namespace RoseLibML.LanguageServer
             {
                 KnowledgeBase knowledgeBase = (JToken.ReadFrom(reader)).ToObject<KnowledgeBase>();
 
-                Transformer.Transformer transformer = new Transformer.Transformer(knowledgeBase);
+                IdiomTransformer transformer = new IdiomTransformer(knowledgeBase);
                 return transformer.Generate(arguments);
             }
         }

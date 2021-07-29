@@ -1,7 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using RoseLibLS.Util;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace RoseLibML.LanguageServer
+namespace RoseLibLS.LanguageServer
 {
     public class PCFGCommandArguments
     {
