@@ -1,4 +1,5 @@
-﻿using RoseLibLS.Util;
+﻿using RoseLibLS.Transformer;
+using RoseLibLS.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -11,8 +12,8 @@ namespace RoseLibLS.LanguageServer
         public double ProbabilityCoefficient { get; set; }
         [Required, DirectoryExists(ErrorMessage = "Input folder doesn't exist.")]
         public string InputFolder { get; set; }
-        [Required, FileDirectoryExists(ErrorMessage = "Directory of the output file doesn't exist.")]
-        public string OutputFile { get; set; }
+        [Required, DirectoryExists(ErrorMessage = "Output folder doesn't exist.")]
+        public string OutputFolder { get; set; }
     }
 
     public class MCMCCommandArguments
@@ -37,20 +38,14 @@ namespace RoseLibLS.LanguageServer
 
     public class GetIdiomsCommandArguments
     {
-        public string RootType { get; set; }
+        public string RootNodeType { get; set; }
     }
 
-    public class GenerateCommandArguments
+    public class PreviewCommandArguments
     {
-        [Required]
-        public List<string> ContextNodes { get; set; }
-        [Required]
-        public string RootCSType { get; set; }
         [Required]
         public string Fragment { get; set; }
         [Required]
-        public string MethodName { get; set; }
-        [Required]
-        public List<string> MethodParameters { get; set; }
+        public List<MethodParameter> MethodParameters { get; set; }
     }
 }

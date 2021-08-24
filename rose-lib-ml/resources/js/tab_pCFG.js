@@ -4,19 +4,30 @@ $(document).ready(function () {
     // restoring the state of the panel (after changing tabs)
     const previousState = vscode.getState();
 
-    if(previousState !== undefined) {
+    if(previousState !== undefined && previousState.probabilities !== undefined) {
         showPCFGVisualization(previousState.probabilities);
     }
+
+    $("button#chooseInputFolder").click(showOpenDialog('inputFolder', false));
+    $("button#chooseOutputFolder").click(showOpenDialog('outputFolder', false));
 });
 
 $(window).on("message", function(e) {
     const message = e.originalEvent.data;
 
-    if(message.command === 'showPCFG' && message.value !== null) {
-        // save state - for panel restoring
-        vscode.setState({probabilities: message.value});
+    if(message.value !== null) {
+        switch(message.command){
+            case 'showPCFG':
+                // save state - for panel restoring
+                vscode.setState({probabilities: message.value});
+                
+                showPCFGVisualization(message.value);
+                break;
+            case 'setPath':
+                $(`input#${message.inputField}`).val(message.chosenFolder);
+                break;
+        }
         
-        showPCFGVisualization(message.value);
     }
 });
 
@@ -31,7 +42,7 @@ function submitPCFGForm() {
             parameters: {
                 probabilityCoefficient: $("#probabilityCoefficient").val(),
                 inputFolder: $("#inputFolder").val(),
-                outputFile: $("#outputFile").val(),
+                outputFolder: $("#outputFolder").val(),
             }
         });
 
@@ -45,10 +56,26 @@ function showPCFGVisualization(probabilities) {
 
     $("#probability-table > thead").append("<tr><td>RULE</td><td>PROBABILITY</td></tr>");
 
-    for (let key in probabilities) {
-        let camelCaseKey = key.charAt(0).toUpperCase();
-        let row = "<tr><td>" + camelCaseKey + key.slice(1) + "</td><td>" + probabilities[key] + "</td></tr>";
+    for (let rule in probabilities) {
+        let firstChar = rule.charAt(0).toUpperCase();
+
+        let row =  `<tr>
+                        <td>${firstChar + rule.slice(1)}</td>
+                        <td>${probabilities[rule]}</td>
+                    </tr>`;
         
         $("#probability-table > tbody").append(row);
     }
+}
+
+function showOpenDialog(formField, file) {
+    return function () {
+        vscode.postMessage({
+            command: "showOpenDialog",
+            parameters: {
+                field: formField,
+                selectFile: file
+            }
+        });
+    };
 }

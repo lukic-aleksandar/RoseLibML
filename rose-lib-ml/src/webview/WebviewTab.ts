@@ -16,6 +16,9 @@ export abstract class WebviewTab {
 
 	protected abstract addMessageReceiver(): void;
 	
+	/**
+	 * Shows the existing Webview Panel or creates a new one if it doesn't exist yet
+	 */
 	public openTab() {
 		if (this._panel) {
 			this._panel.reveal(vscode.ViewColumn.Active);
@@ -41,6 +44,33 @@ export abstract class WebviewTab {
 				this._disposables
 			);
 		}
+	}
+
+	/**
+	 * Opens the dialog for choosing a folder or a file.
+	 * Choosing a folder/file sends a message to the webview with the path 
+	 * of the chosen folder/file and the form field which should be set.
+	 * @param parameters 
+	 */
+	protected showOpenDialog(
+		parameters: {
+			selectFile: boolean, 
+			field: string
+		}
+	) {
+		const options: vscode.OpenDialogOptions = {
+			canSelectMany: false,
+			title: `Choose ${parameters.selectFile ? 'File' : 'Folder'}`,
+			openLabel: 'Choose',
+			canSelectFiles: parameters.selectFile,
+			canSelectFolders: !parameters.selectFile
+		};
+
+		vscode.window.showOpenDialog(options).then(fileUri => {
+			if (fileUri && fileUri[0] && this._panel !== undefined) {
+				this._panel.webview.postMessage({command:'setPath', chosenFolder: fileUri[0].fsPath, inputField: parameters.field});
+			}
+		});
 	}
 
 	private setUpWebviewPanel() {

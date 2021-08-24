@@ -1,23 +1,33 @@
 $(document).ready(function () {
     $("form#MCMCForm").submit(submitMCMCForm());
 
+    $("button#chooseInputFolder").click(showOpenDialog('inputFolder', false));
+    $("button#chooseOutputFolder").click(showOpenDialog('outputFolder', false));
+    $("button#choosePCFGFile").click(showOpenDialog('pCFGFile', true));
+
     // restoring the state of the panel (after changing tabs)
     const previousState = vscode.getState();
 
-    if(previousState !== undefined) {
+    if(previousState !== undefined && previousState.idiomsPerIteration !== undefined) {
         showMCMCVisualization(previousState.idiomsPerIteration);
     }
 });
 
-
 $(window).on("message", function(e) {
     const message = e.originalEvent.data;
 
-    if(message.command === 'showMCMC' && message.value !== null){   
-        // save state - for panel restoring
-        vscode.setState({idiomsPerIteration: message.value});
-        
-        showMCMCVisualization(message.value);
+    if(message.value !== null) {
+        switch(message.command){
+            case 'showMCMC':
+                // save state - for panel restoring
+                vscode.setState({idiomsPerIteration: message.value});
+                
+                showMCMCVisualization(message.value);
+                break;
+            case 'setPath':
+                $(`input#${message.inputField}`).val(message.chosenFolder);
+                break;
+        }
     }
 });
 
@@ -48,17 +58,28 @@ function submitMCMCForm() {
 function showMCMCVisualization(idiomsPerIteration) {
     $("#idioms-per-iteration").empty();
         
-    for (let key in idiomsPerIteration) {
-        let fragments = idiomsPerIteration[key];
+    for (let iteration in idiomsPerIteration) {
+        let idioms = idiomsPerIteration[iteration];
 
-        let iterationHTML = "<p class=\"mt-3 mb-3\"> ITERATION " + key + "</p>";
-
+        let iterationHTML = `<p class="mt-3 mb-3"> ITERATION ${iteration}</p>`;
         $("#idioms-per-iteration").append(iterationHTML);
 
-        for (var i = 0; i < fragments.length; i++) 
+        for (var i = 0; i < idioms.length; i++) 
         { 
-            let fragmentHTML = "<div class=\"fragment-snippet mt-3 mb-3\"><p>" + fragments[i] + "</p></div>";
-            $("#idioms-per-iteration").append(fragmentHTML);
+            let idiomHTML = `<div class="fragment-snippet mt-3 mb-3"><p>${idioms[i]}</p></div>`;
+            $("#idioms-per-iteration").append(idiomHTML);
         }
     }
+}
+
+function showOpenDialog(formField, files) {
+    return function () {
+        vscode.postMessage({
+            command: "showOpenDialog",
+            parameters: {
+                field: formField,
+                selectFile: files
+            }
+        });
+    };
 }

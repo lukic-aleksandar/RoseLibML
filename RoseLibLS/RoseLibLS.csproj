@@ -27,7 +27,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build" Version="16.10.0" />
+    <PackageReference Include="Microsoft.Build" Version="16.10.0" ExcludeAssets="runtime" />
+    <PackageReference Include="Microsoft.Build.Locator" Version="1.4.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="3.11.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="3.11.0" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Workspaces.MSBuild" Version="3.11.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="OmniSharp.Extensions.JsonRpc" Version="0.19.2" />
     <PackageReference Include="OmniSharp.Extensions.LanguageProtocol" Version="0.19.2" />
@@ -49,9 +53,9 @@
     <None Update="knowledge_base.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Transformer\Templates\BaseTemplate.tt">
+    <None Update="Transformer\Templates\BaseFileTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>BaseTemplate.cs</LastGenOutput>
+      <LastGenOutput>BaseFileTemplate.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
@@ -60,11 +64,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Transformer\Templates\BaseTemplate.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>BaseTemplate.tt</DependentUpon>
-    </Compile>
     <Compile Update="Transformer\Templates\ComposerTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -74,6 +73,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>MethodComposerTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Transformer\Templates\BaseFileTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>BaseFileTemplate.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 

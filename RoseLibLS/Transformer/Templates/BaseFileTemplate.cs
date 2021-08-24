@@ -15,9 +15,9 @@ namespace RoseLibLS.Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseTemplate.tt"
+    #line 1 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseFileTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
-    public partial class BaseTemplate : BaseTemplateBase
+    public partial class BaseFileTemplate : BaseFileTemplateBase
     {
 #line hidden
         /// <summary>
@@ -25,49 +25,37 @@ namespace RoseLibLS.Transformer.Templates
         /// </summary>
         public virtual string TransformText()
         {
+            this.Write("// ------------------------------------------------------------------------------" +
+                    "\r\n//     This file was generated on ");
+            
+            #line 3 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseFileTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(DateTime.Now));
+            
+            #line default
+            #line hidden
+            this.Write(@".
+//  
+//     Changes to this file may cause incorrect behavior
+//     and will be lost if the code is regenerated.
+// ------------------------------------------------------------------------------
+
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
+using System.Linq;
+
+namespace RoseLibApp.RoseLib.Composers
+{
+    public partial class ");
+            
+            #line 16 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseFileTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(composer));
+            
+            #line default
+            #line hidden
+            this.Write("\r\n    {\r\n\r\n    }\r\n}");
             return this.GenerationEnvironment.ToString();
         }
-        
-        #line 2 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseTemplate.tt"
-
-protected void AddTemplateHeader()
-{
-
-        
-        #line default
-        #line hidden
-        
-        #line 5 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseTemplate.tt"
-this.Write("// ------------------------------------------------------------------------------" +
-        "\r\n//     This code was generated on ");
-
-        
-        #line default
-        #line hidden
-        
-        #line 7 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseTemplate.tt"
-this.Write(this.ToStringHelper.ToStringWithCulture(DateTime.Now));
-
-        
-        #line default
-        #line hidden
-        
-        #line 7 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseTemplate.tt"
-this.Write(".\r\n//  \r\n//     Changes to this file may cause incorrect behavior\r\n//     and wil" +
-        "l be lost if the code is regenerated.\r\n// --------------------------------------" +
-        "----------------------------------------\r\n");
-
-        
-        #line default
-        #line hidden
-        
-        #line 12 "C:\Users\Marijana Kolosnjaji\Documents\Faks\Master studije\Master\RoseLibML\RoseLibLS\Transformer\Templates\BaseTemplate.tt"
-
-}
-
-        
-        #line default
-        #line hidden
     }
     
     #line default
@@ -77,7 +65,7 @@ this.Write(".\r\n//  \r\n//     Changes to this file may cause incorrect behavio
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
-    public class BaseTemplateBase
+    public class BaseFileTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

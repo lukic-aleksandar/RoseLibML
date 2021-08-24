@@ -17,7 +17,7 @@ namespace RoseLibLS.LanguageServer
 {
     internal class PCFGCommandHandler : IExecuteCommandHandler<CommandResponse>
     {
-        private ExecuteCommandCapability _capability;
+        private ExecuteCommandCapability capability;
 
         public Task<CommandResponse> Handle(ExecuteCommandParams<CommandResponse> request, CancellationToken cancellationToken)
         {
@@ -28,7 +28,7 @@ namespace RoseLibLS.LanguageServer
             List<string> errorsPCFG = Validation.ValidateArguments(arguments);
             if (errorsPCFG.Count > 0)
             {
-                string validationErrors = string.Join(". ", errorsPCFG);
+                string validationErrors = string.Join(" ", errorsPCFG);
 
                 Log.Logger.Error($"pCFG Command Handler | {validationErrors}", validationErrors);
                 return Task.FromResult(new CommandResponse(validationErrors, true));
@@ -46,12 +46,11 @@ namespace RoseLibLS.LanguageServer
                 Log.Logger.Error("pCFG Command Handler | " + e.Message);
                 return Task.FromResult(new CommandResponse("An error occurred. Please try again.", true)); ;
             }
-
         }
 
         public void SetCapability(ExecuteCommandCapability capability)
         {
-            _capability = capability;
+            capability = this.capability;
         }
 
         public ExecuteCommandRegistrationOptions GetRegistrationOptions(ExecuteCommandCapability capability, ClientCapabilities clientCapabilities)
@@ -79,7 +78,7 @@ namespace RoseLibLS.LanguageServer
             var pCFGComposer = new LabeledTreePCFGComposer(labeledTrees.ToList(), config);
 
             pCFGComposer.CalculateProbabilities();
-            pCFGComposer.Serialize(arguments.OutputFile);
+            pCFGComposer.Serialize($"{arguments.OutputFolder}\\pcfg_{DateTime.Now.ToString("yyyyMMddHHmmss")}.bin");
 
             return pCFGComposer.GetRulesProbabilities();
         }

@@ -28,6 +28,22 @@ button.vscbtn-sm:hover {
   color: var(--vscode-button-hoverBackground);
 }
 
+button.vscbtn-md {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-radius: 0px !important;
+  border-color: var(--vscode-sideBar-background) !important;
+  border-width: 1px !important;
+  float: right;
+  text-align: center;
+}
+
+button.vscbtn-md:hover {
+  background-color: var(--vscode-button-hoverBackground);
+  color: var(--vscode-button-foreground);
+  border-radius: 0px !important;
+}
+
 button.vscbtn-lg {
   background-color: var(--vscode-button-background);
   color: var(--vscode-button-foreground);
@@ -44,9 +60,25 @@ button.vscbtn-lg:hover {
 }
 
 button.vscbtn-sm:focus,
-button.vscbtn-lg:focus {
+button.vscbtn-lg:focus,
+button.vscbtn-md:focus {
   -webkit-box-shadow: none !important;
   box-shadow: none !important;
+}
+
+select {
+  background-color: var(--vscode-input-background) !important;
+  color: var(--vscode-input-foreground) !important;
+  border-color: var(--vscode-sideBar-background) !important;
+  border-width: 1px !important;
+  border-radius: 0px !important;
+}
+
+select:focus {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border-color: var(--vscode-button-background) !important;
+  border-width: 1px !important;
 }
 
 input {
@@ -80,4 +112,13 @@ div.fragment-snippet {
   border-radius: 0px !important;
   padding: 7px;
   white-space: pre-wrap;
+}
+
+div#idiomSetup {
+  display: none;
+}
+
+button.folder {
+  position: absolute;
+  bottom: 0;
 }

@@ -13,5 +13,6 @@ namespace RoseLibLS.Transformer
     {
         public string Template { get; set; }
         public string Node { get; set; }
+        public string FileName { get; set; }
     }
 }

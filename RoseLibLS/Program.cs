@@ -37,6 +37,7 @@ namespace RoseLibLS
                         .WithHandler<PCFGCommandHandler>()
                         .WithHandler<MCMCCommandHandler>()
                         .WithHandler<IdiomsCommandHandler>()
+                        .WithHandler<PreviewCommandHandler>()
                         .WithHandler<GenerateCommandHandler>()
                  );
 

@@ -39,20 +39,6 @@ namespace RoseLibLS.Util
         }
     }
 
-    public class FileDirectoryExists : ValidationAttribute
-    {
-        public override bool IsValid(object value)
-        {
-            string path = value as string;
-            if (Directory.Exists(Path.GetDirectoryName(path)))
-            {
-                return true;
-            }
-
-            return false;
-        }
-    }
-
     public class FileExists : ValidationAttribute
     {
         public override bool IsValid(object value)

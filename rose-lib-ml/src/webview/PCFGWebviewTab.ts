@@ -22,6 +22,9 @@ export default class PCFGWebviewTab extends WebviewTab {
 						case 'runPCFG':
 							this.runPCFGPhase(message.parameters);
 							break;
+						case 'showOpenDialog':
+							this.showOpenDialog(message.parameters);
+							break;
 						default:
 							break;
 					}
@@ -32,7 +35,19 @@ export default class PCFGWebviewTab extends WebviewTab {
         }
     }
 
-    private runPCFGPhase(parameters: any) {
+	/**
+	 * Executes the 'rose-lib-ml.runPCFG' command from the language server.
+	 * If the command was executed successfully, a message with the results
+	 * is sent to the webview in order to show the visualization of pCFG.
+	 * @param parameters 
+	 */
+    private runPCFGPhase(
+		parameters: {
+			probabilityCoefficient: number, 
+			inputFolder: string, 
+			outputFolder: string
+		}
+	) {
 		vscode.window.withProgress({
 			location: vscode.ProgressLocation.Notification,
 			title: 'RoseLibML'
@@ -48,29 +63,28 @@ export default class PCFGWebviewTab extends WebviewTab {
 					{
 						'ProbabilityCoefficient': parameters.probabilityCoefficient,
 						'InputFolder': parameters.inputFolder, 
-						'OutputFile': parameters.outputFile
+						'OutputFolder': parameters.outputFolder
 					}
 				);
 	
 				progress.report({message: response.message, increment: 100 });
 	
 				if (response.error === true) {
-					vscode.window.setStatusBarMessage('An error occured.');
+					vscode.window.setStatusBarMessage('RoseLibML - An error occured.');
 					vscode.window.showErrorMessage(response.message);
 				}
 				else {
-					vscode.window.setStatusBarMessage(response.message);
+					vscode.window.setStatusBarMessage(`RoseLibML - ${response.message}`);
 	
-					// show pCFG visualization in webview
+					// send a message to show pCFG visualization in webview
 					if (this._panel !== undefined){
 						this._panel.webview.postMessage({command:'showPCFG', value: response.value});
 					}
-				}
-				
+				}			
 			}
 			catch (_) {
 				progress.report({message: 'An error occured.', increment: 100 });
-				vscode.window.setStatusBarMessage('An error occured.');
+				vscode.window.setStatusBarMessage('RoseLibML - An error occured.');
 				vscode.window.showErrorMessage('An error occurred. Please try again.');
 			}
 		});

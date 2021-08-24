@@ -17,7 +17,7 @@ namespace RoseLibLS.LanguageServer
 {
     internal class MCMCCommandHandler : IExecuteCommandHandler<CommandResponse>
     {
-        private ExecuteCommandCapability _capability;
+        private ExecuteCommandCapability capability;
 
         public Task<CommandResponse> Handle(ExecuteCommandParams<CommandResponse> request, CancellationToken cancellationToken)
         {
@@ -28,7 +28,7 @@ namespace RoseLibLS.LanguageServer
             List<string> errorsMCMC = Validation.ValidateArguments(MCMCarguments);
             if (errorsMCMC.Count > 0)
             {
-                string validationErrors = string.Join(". ", errorsMCMC);
+                string validationErrors = string.Join(" ", errorsMCMC);
 
                 Log.Logger.Error($"MCMC Command Handler | {validationErrors}", validationErrors);
                 return Task.FromResult(new CommandResponse(validationErrors, true));
@@ -46,12 +46,11 @@ namespace RoseLibLS.LanguageServer
                 Log.Logger.Error("MCMC Command Handler | " + e.Message);
                 return Task.FromResult(new CommandResponse("An error occurred. Please try again.", true)); ;
             }
-
         }
 
         public void SetCapability(ExecuteCommandCapability capability)
         {
-            _capability = capability;
+            capability = this.capability;
         }
 
         public ExecuteCommandRegistrationOptions GetRegistrationOptions(ExecuteCommandCapability capability, ClientCapabilities clientCapabilities)
@@ -70,7 +69,7 @@ namespace RoseLibLS.LanguageServer
             // read pCFG from file
             LabeledTreePCFGComposer pCFGComposer = LabeledTreePCFGComposer.Deserialize(arguments.PCFGFile);
 
-            ToCSWriter writer = new ToCSWriter(arguments.OutputFolder + @"\idioms.txt");
+            ToCSWriter writer = new ToCSWriter(arguments.OutputFolder + $"\\idioms__{DateTime.Now.ToString("yyyyMMddHHmmss")}.txt");
 
             Config config = new Config()
             {
@@ -120,5 +119,4 @@ namespace RoseLibLS.LanguageServer
             return labeledTrees;
         }
     }
-
 }

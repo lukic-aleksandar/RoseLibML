@@ -19,18 +19,22 @@
   },
   "composerInformationMapping": {
     "CompilationUnitComposer": {
+      "FileName": "CompilationUnitComposerGenerated.cs",
       "Template": "ComposerTemplate",
       "Node": "CompilationUnitSyntax"
     },
     "ClassComposer": {
+      "FileName": "ClassComposerGenerated.cs",
       "Template": "ComposerTemplate",
       "Node": "ClassDeclarationSyntax"
     },
     "NamespaceComposer": {
+      "FileName": "NamespaceComposerGenerated.cs",
       "Template": "ComposerTemplate",
       "Node": "NamespaceDeclarationSyntax"
     },
     "MethodComposer": {
+      "FileName": "MethodComposerGenerated.cs",
       "Template": "MethodComposerTemplate",
       "Node": "MethodDeclarationSyntax"
     }

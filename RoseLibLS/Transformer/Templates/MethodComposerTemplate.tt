@@ -1,44 +1,18 @@
-﻿<#@ template language="C#" inherits="BaseTemplate" #>
-<#@ assembly name="System.Core" #>
-<# AddTemplateHeader(); #>
+﻿<#@ template language="C#" #>
 
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-
-namespace RoseLibApp.RoseLib.Composers
 {
-    public partial class <#=composer#>
+    if (!IsAtRoot())
     {
-        public <#=composer#> <#=methodName#>(<#
-            for(int i = 0; i < methodParameters.Count; i++)
-            {
-                Write("string " + methodParameters[i]);
-                if(i < methodParameters.Count-1){
-                    Write(", ");
-                }
-            }
-        #>)  
-        {
-            if (!IsAtRoot())
-            {
-                throw new Exception("A <#=composer.Replace("Composer", "").ToLower()#> must be selected (which is also a root to the composer)");
-            }
-
-            string fragment = string.Format("<#=fragment#>"<#
-            for(int i = 0; i < methodParameters.Count; i++)
-            {
-                Write(", " + methodParameters[i]);
-            }
-            #>);
-
-            var statement = SyntaxFactory.ParseStatement(fragment);
-
-            var newNode = (CurrentNode as <#=composer.Replace("Composer", "")#>DeclarationSyntax).AddBodyStatements(statement);
-
-            Replace(CurrentNode, newNode, null);
-
-            return this;
-        }
+        throw new Exception("A <#=composer.Replace("Composer", "").ToLower()#> must be selected (which is also a root to the composer)");
     }
+
+    string fragment = $"<#=fragment#>";
+
+    var statement = SyntaxFactory.ParseStatement(fragment);
+
+    var newNode = (CurrentNode as <#=composerNode#>).AddBodyStatements(statement);
+
+    Replace(CurrentNode, newNode, null);
+
+    return this;
 }

@@ -10,6 +10,8 @@ var client: LanguageClient;
 
 export function activate(context: vscode.ExtensionContext) {
 
+	let clientReady = false;
+
 	let serverModule = context.asAbsolutePath(path.join('..', 'RoseLibLS', 'bin', 'Debug', 'net5.0', 'RoseLibLS.exe'));
 
 	let serverOptions: ServerOptions = {
@@ -20,6 +22,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let clientOptions: LanguageClientOptions = {
 		documentSelector: ['*'],
 		synchronize: {},
+		progressOnInitialization: true,
 		outputChannelName: 'RoseLibML'
 	};
 
@@ -31,7 +34,14 @@ export function activate(context: vscode.ExtensionContext) {
 		clientOptions
 	);
 
+	client.onReady().then(() => {
+		clientReady = true;
+		vscode.window.setStatusBarMessage('RoseLibML - Language server initialized.');
+	});
+
 	let clientDisposable = client.start();
+
+	vscode.window.setStatusBarMessage('RoseLibML - Language server initialization in progress.');
 
 	let pCFGTab = new PCFGWebviewTab(context.extensionPath, context.subscriptions);
 	let MCMCTab = new MCMCWebviewTab(context.extensionPath, context.subscriptions);
@@ -41,9 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let pCFGTabCommand = vscode.commands.registerCommand(
 		'rose-lib-ml.openPCFG', 
 		() => {
-			// check if initialization is done 
-			// TODO: find a better way to do this?
-			if(client.initializeResult?.serverInfo === undefined){
+			if(!clientReady){
 				vscode.window.showWarningMessage("Language server initialization in progress. Please try again shortly.");
 				return;
 			}
@@ -56,9 +64,7 @@ export function activate(context: vscode.ExtensionContext) {
 	let MCMCTabCommand = vscode.commands.registerCommand(
 		'rose-lib-ml.openMCMC',
 		() => {
-			// check if initialization is done 
-			// TODO: find a better way to do this?
-			if(client.initializeResult?.serverInfo === undefined){
+			if(!clientReady){
 				vscode.window.showWarningMessage("Language server initialization in progress. Please try again shortly.");
 				return;
 			}
@@ -71,19 +77,12 @@ export function activate(context: vscode.ExtensionContext) {
 	let idiomsTabCommand = vscode.commands.registerCommand(
 		'rose-lib-ml.openIdioms', 
 		() => {
-			// check if initialization is done 
-			// TODO: find a better way to do this?
-			if(client.initializeResult?.serverInfo === undefined){
+			if(!clientReady){
 				vscode.window.showWarningMessage("Language server initialization in progress. Please try again shortly.");
 				return;
 			}
 			
 			idiomsTab.openTab();
-
-			// get all found idioms from the language server
-			idiomsTab.getIdioms({
-				rootType: null
-			});
 		}
 	);
 
