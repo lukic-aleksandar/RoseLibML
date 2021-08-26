@@ -37,11 +37,11 @@ export default class MCMCWebviewTab extends WebviewTab {
 
 	/**
 	 * Executes the 'rose-lib-ml.runMCMC' command from the language server.
-	 * If the command was executed successfully, a message with the results
-	 * is sent to the webview in order to show the visualization of idioms per iteration.
+	 * If the command was executed successfully, a message is shown to inform
+	 * that the MCMC phase is in progress.
 	 * @param parameters 
 	 */
-    private runMCMCPhase(
+    private async runMCMCPhase(
 		parameters: {
 			inputFolder: string, 
 			outputFolder: string, 
@@ -53,50 +53,49 @@ export default class MCMCWebviewTab extends WebviewTab {
 			threshold: number
 		}
 	) {
-		vscode.window.withProgress({
-			location: vscode.ProgressLocation.Notification,
-			title: 'RoseLibML'
-		}, async progress => {
+		let response: any;
 	
-			let response: any;
-	
-			progress.report({ message: 'MCMC phase in progress', increment: 0 });
-	
-			try {
-				// execute MCMC command from the language server
-				response = await vscode.commands.executeCommand('rose-lib-ml.runMCMC',
-					{
-						'InputFolder': parameters.inputFolder,
-						'PCFGFile': parameters.pCFGFile,
-						'Iterations': parameters.iterations,
-						'BurnInIterations': parameters.burnInIterations,
-						'InitialCutProbability': parameters.initialCutProbability,
-						'Alpha': parameters.alpha,
-						'Threshold': parameters.threshold,
-						'OutputFolder': parameters.outputFolder,
-					}
-				);
-	
-				progress.report({message: response.message, increment: 100 });
-				
-				if(response.error === true) {
-					vscode.window.setStatusBarMessage('RoseLibML - An error occured.');
-					vscode.window.showErrorMessage(response.message);
-				}
-				else {
-					vscode.window.setStatusBarMessage(`RoseLibML - ${response.message}`);
+		try {
+			vscode.window.setStatusBarMessage('RoseLibML: MCMC phase in progress.');
 
-					// send a message to show idioms per iteration in webview
-					if (this._panel !== undefined){
-						this._panel.webview.postMessage({command:'showMCMC', value: response.value });
-					}
-				}	
+			// execute MCMC command from the language server
+			response = await vscode.commands.executeCommand('rose-lib-ml.runMCMC',
+				{
+					'InputFolder': parameters.inputFolder,
+					'PCFGFile': parameters.pCFGFile,
+					'Iterations': parameters.iterations,
+					'BurnInIterations': parameters.burnInIterations,
+					'InitialCutProbability': parameters.initialCutProbability,
+					'Alpha': parameters.alpha,
+					'Threshold': parameters.threshold,
+					'OutputFolder': parameters.outputFolder,
+				}
+			);
+
+			vscode.window.setStatusBarMessage('');
+				
+			if(response.error === true) {
+				vscode.window.setStatusBarMessage('RoseLibML: An error occured during MCMC phase.', 10000);
+				vscode.window.showErrorMessage(`RoseLibML: ${response.message}`);
 			}
-			catch (error) {
-				progress.report({message: 'An error occured.', increment: 100 });
-				vscode.window.setStatusBarMessage('RoseLibML - An error occured.');
-				vscode.window.showErrorMessage('An error occurred. Please try again.');
-			}
-		});
+			else {
+				vscode.window.setStatusBarMessage(`RoseLibML: ${response.message}`, 10000);
+				vscode.window.showInformationMessage(`RoseLibML: ${response.message}`);
+			}	
+		}
+		catch (error) {
+			vscode.window.setStatusBarMessage('RoseLibML: An error occured during MCMC phase.', 10000);
+			vscode.window.showErrorMessage('RoseLibML: An error occurred. Please try again.');
+		}
+	}
+
+	/**
+	 * Sends a message to show idioms per iteration in webview
+	 * @param idiomsPerIteraton 
+	 */
+	public showIdiomsPerIteration(idiomsPerIteraton: any) {
+		if (this._panel !== undefined){
+			this._panel.webview.postMessage({command:'showMCMC', value: idiomsPerIteraton });
+		}
 	}
 }

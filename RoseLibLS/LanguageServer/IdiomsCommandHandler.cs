@@ -40,8 +40,8 @@ namespace RoseLibLS.LanguageServer
             {
                 List<CodeIdiom> idioms = LoadCodeIdioms(getIdiomsArguments.RootNodeType);
 
-                Log.Logger.Debug("Idioms Command Handler | Succesfully done");
-                return Task.FromResult(new CommandResponse(idioms, "Succesfully done.", false));
+                Log.Logger.Debug("Idioms Command Handler | Getting idioms succesfully done");
+                return Task.FromResult(new CommandResponse(idioms, "Getting idioms succesfully done.", false));
             }
             catch (Exception e)
             {

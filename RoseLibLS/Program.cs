@@ -27,7 +27,6 @@ namespace RoseLibLS
                     options
                         .WithInput(Console.OpenStandardInput())
                         .WithOutput(Console.OpenStandardOutput())
-                        .WithMaximumRequestTimeout(TimeSpan.FromDays(1))
                         .ConfigureLogging(
                                 x => x
                                     .AddSerilog(Log.Logger)
@@ -39,9 +38,9 @@ namespace RoseLibLS
                         .WithHandler<IdiomsCommandHandler>()
                         .WithHandler<PreviewCommandHandler>()
                         .WithHandler<GenerateCommandHandler>()
-                 );
+            ).ConfigureAwait(false);
 
-            await server.WaitForExit;
+            await server.WaitForExit.ConfigureAwait(false);
         }
     }
 }

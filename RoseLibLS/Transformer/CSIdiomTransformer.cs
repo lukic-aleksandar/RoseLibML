@@ -102,7 +102,7 @@ namespace RoseLibLS.Transformer
             var document = solution.Projects.Select(pr => pr.Documents.Where(d => d.Name == composerInfo.FileName && d.Folders.Contains(folderName))).Single();
             if (!document.Any())
             {
-                Log.Logger.Debug($"GenerateCommandHandler | Create a new file for the {composer}");
+                Log.Logger.Debug($"Generate Command Handler | Create a new file for the {composer}");
 
                 // read the template for the composer file
                 BaseFileTemplate fileTemplate = new BaseFileTemplate(composer);
@@ -116,7 +116,7 @@ namespace RoseLibLS.Transformer
             }
             else
             {
-                Log.Logger.Debug($"GenerateCommandHandler | Editing an existing file for the {composer}");
+                Log.Logger.Debug($"Generate Command Handler | Editing an existing file for the {composer}");
 
                 var compilationUnit = await document.Single().GetSyntaxRootAsync();
 

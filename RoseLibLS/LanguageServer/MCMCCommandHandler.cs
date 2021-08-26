@@ -1,5 +1,8 @@
 ﻿using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
+using OmniSharp.Extensions.LanguageServer.Protocol.Progress;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server;
+using OmniSharp.Extensions.LanguageServer.Protocol.Server.WorkDone;
 using OmniSharp.Extensions.LanguageServer.Protocol.Workspace;
 using RoseLibLS.Util;
 using RoseLibML;
@@ -18,12 +21,32 @@ namespace RoseLibLS.LanguageServer
     internal class MCMCCommandHandler : IExecuteCommandHandler<CommandResponse>
     {
         private ExecuteCommandCapability capability;
+        private readonly ILanguageServerFacade server;
+        private readonly IServerWorkDoneManager serverWorkDoneManager;
 
-        public Task<CommandResponse> Handle(ExecuteCommandParams<CommandResponse> request, CancellationToken cancellationToken)
+        public MCMCCommandHandler(ILanguageServerFacade server, IServerWorkDoneManager serverWorkDoneManager)
+        {
+            this.server = server;
+            this.serverWorkDoneManager = serverWorkDoneManager;
+        }
+
+        public async Task<CommandResponse> Handle(ExecuteCommandParams<CommandResponse> request, CancellationToken cancellationToken)
         {
             Log.Logger.Debug("MCMC Command Handler");
 
             MCMCCommandArguments MCMCarguments = request.Arguments.First().ToObject<MCMCCommandArguments>();
+
+            var workDoneReporter = await serverWorkDoneManager.Create(
+                new WorkDoneProgressBegin
+                {
+                    Cancellable = false,
+                    Message = "Started the MCMC phase",
+                    Title = "MCMC Command Handler",
+                    Percentage = 0
+                }
+            );
+
+            ProgressListener listener = new ProgressListener(workDoneReporter, MCMCarguments.Iterations);
 
             List<string> errorsMCMC = Validation.ValidateArguments(MCMCarguments);
             if (errorsMCMC.Count > 0)
@@ -31,20 +54,39 @@ namespace RoseLibLS.LanguageServer
                 string validationErrors = string.Join(" ", errorsMCMC);
 
                 Log.Logger.Error($"MCMC Command Handler | {validationErrors}", validationErrors);
-                return Task.FromResult(new CommandResponse(validationErrors, true));
+                return new CommandResponse(validationErrors, true);
             }
 
             try
             {
-                Dictionary<int, List<string>> fragments = InitializeAndTrain(MCMCarguments);
+                _ = Task.Run(() =>
+                    {
+                        Dictionary<int, List<string>> fragments = InitializeAndTrain(MCMCarguments, listener);
 
-                Log.Logger.Debug("MCMC Command Handler | Succesfully done");
-                return Task.FromResult(new CommandResponse(fragments, "Succesfully done.", false));
+                        workDoneReporter.OnNext(new WorkDoneProgressEnd { Message = "Succesfully finished the MCMC phase." });
+                        workDoneReporter.OnCompleted();
+
+                        Log.Logger.Debug("MCMC Command Handler | Succesfully done.");
+                        server.Window.SendNotification("window/showMessage", new CommandNotification("showMCMC", fragments, "MCMC phase succesfully done."));
+                    }).ContinueWith(t =>
+                        {
+                            Log.Logger.Error("MCMC Command Handler | " + t.Exception.Message);
+
+                            workDoneReporter.OnNext(new WorkDoneProgressEnd { Message = "An error occurred. Please try again." });
+                            workDoneReporter.OnCompleted();
+                        },
+                        default,
+                        TaskContinuationOptions.OnlyOnFaulted,
+                        TaskScheduler.Default
+                    );
+
+                Log.Logger.Debug("MCMC Command Handler | Succesfully started");
+                return new CommandResponse("MCMC phase succesfully started.", false);
             }
             catch (Exception e)
             {
                 Log.Logger.Error("MCMC Command Handler | " + e.Message);
-                return Task.FromResult(new CommandResponse("An error occurred. Please try again.", true)); ;
+                return new CommandResponse("An error occurred. Please try again.", true);
             }
         }
 
@@ -61,7 +103,7 @@ namespace RoseLibLS.LanguageServer
             };
         }
 
-        private Dictionary<int, List<string>> InitializeAndTrain(MCMCCommandArguments arguments)
+        private Dictionary<int, List<string>> InitializeAndTrain(MCMCCommandArguments arguments, ProgressListener listener)
         {
             // create labeled trees and perform needed transformations
             var labeledTrees = CreateLabeledTrees(arguments.InputFolder, arguments.OutputFolder);
@@ -90,7 +132,9 @@ namespace RoseLibLS.LanguageServer
             // initialize Gibbs Sampler and start training
             var sampler = new TBSampler(writer, config);
 
+            sampler.AddListener(listener);
             sampler.Initialize(pCFGComposer, labeledTrees);
+
             sampler.Train();
 
             // serialize trees

@@ -41,52 +41,46 @@ export default class PCFGWebviewTab extends WebviewTab {
 	 * is sent to the webview in order to show the visualization of pCFG.
 	 * @param parameters 
 	 */
-    private runPCFGPhase(
+    private async runPCFGPhase(
 		parameters: {
 			probabilityCoefficient: number, 
 			inputFolder: string, 
 			outputFolder: string
 		}
-	) {
-		vscode.window.withProgress({
-			location: vscode.ProgressLocation.Notification,
-			title: 'RoseLibML'
-		}, async progress => {
+	) {	
+		let response: any;
 	
-			let response: any;
-	
-			progress.report({ message: 'pCFG phase in progress', increment: 0 });
-	
-			try {
-				// execute pCFG command from the language server
-				response = await vscode.commands.executeCommand('rose-lib-ml.runPCFG',
-					{
-						'ProbabilityCoefficient': parameters.probabilityCoefficient,
-						'InputFolder': parameters.inputFolder, 
-						'OutputFolder': parameters.outputFolder
-					}
-				);
-	
-				progress.report({message: response.message, increment: 100 });
-	
-				if (response.error === true) {
-					vscode.window.setStatusBarMessage('RoseLibML - An error occured.');
-					vscode.window.showErrorMessage(response.message);
+		try {
+			vscode.window.setStatusBarMessage('RoseLibML: pCFG phase in progress.');
+
+			// execute pCFG command from the language server
+			response = await vscode.commands.executeCommand('rose-lib-ml.runPCFG',
+				{
+					'ProbabilityCoefficient': parameters.probabilityCoefficient,
+					'InputFolder': parameters.inputFolder, 
+					'OutputFolder': parameters.outputFolder
 				}
-				else {
-					vscode.window.setStatusBarMessage(`RoseLibML - ${response.message}`);
+			);
+
+			vscode.window.setStatusBarMessage('');
 	
-					// send a message to show pCFG visualization in webview
-					if (this._panel !== undefined){
-						this._panel.webview.postMessage({command:'showPCFG', value: response.value});
-					}
-				}			
+			if (response.error === true) {
+				vscode.window.setStatusBarMessage('RoseLibML: An error occured during pCFG phase.', 10000);
+				vscode.window.showErrorMessage(`RoseLibML: ${response.message}`);
 			}
-			catch (_) {
-				progress.report({message: 'An error occured.', increment: 100 });
-				vscode.window.setStatusBarMessage('RoseLibML - An error occured.');
-				vscode.window.showErrorMessage('An error occurred. Please try again.');
-			}
-		});
+			else {
+				vscode.window.setStatusBarMessage(`RoseLibML: ${response.message}`, 10000);
+				vscode.window.showInformationMessage(`RoseLibML: ${response.message}`);
+
+				// send a message to show pCFG visualization in webview
+				if (this._panel !== undefined){
+					this._panel.webview.postMessage({command:'showPCFG', value: response.value});
+				}
+			}			
+		}
+		catch (_) {
+			vscode.window.setStatusBarMessage('RoseLibML: An error occured during pCFG phase.', 10000);
+			vscode.window.showErrorMessage('RoseLibML: An error occurred. Please try again.');
+		}
 	}
 }

@@ -29,7 +29,7 @@ export default class IdiomsWebviewTab extends WebviewTab {
 							this.generate(message.parameters);
 							break;
 						case 'showError':
-							vscode.window.showErrorMessage(`Error: ${message.parameters.error}`);
+							vscode.window.showErrorMessage(`RoseLibML: ${message.parameters.error}`);
 							break;
 						default:
 							break;
@@ -47,48 +47,42 @@ export default class IdiomsWebviewTab extends WebviewTab {
 	 * is sent to the webview in order to show the idioms.
 	 * @param parameters 
 	 */
-    public getIdioms(
+    public async getIdioms(
 		parameters: {
 			rootNodeType: string|null
 		}
-	) {
-        vscode.window.withProgress({
-			location: vscode.ProgressLocation.Notification,
-			title: 'RoseLibML'
-		}, async progress => {
+	) {	
+		let response: any;
 	
-			let response: any;
-	
-			progress.report({message: 'Loading idioms in progress', increment: 0});
-	
-			try {
-				// execute get idioms command from the language server
-				response = await vscode.commands.executeCommand('rose-lib-ml.getIdioms',
+		try {
+			vscode.window.setStatusBarMessage('RoseLibML: Getting idioms in progress.', 10000);
+
+			// execute get idioms command from the language server
+			response = await vscode.commands.executeCommand('rose-lib-ml.getIdioms',
 				{
 					'RootNodeType': parameters.rootNodeType,
-				});
-	
-				progress.report({message: response.message, increment: 100 });
-	
-				if (response.error === true) {
-					vscode.window.setStatusBarMessage('RoseLibML - An error occured.');
-					vscode.window.showErrorMessage(response.message);
 				}
-				else {
-					vscode.window.setStatusBarMessage(`RoseLibML - ${response.message}`);
+			);
+
+			vscode.window.setStatusBarMessage('');
 	
-					// send a message to show idioms in webview
-					if (this._panel !== undefined){
-						this._panel.webview.postMessage({command:'showIdioms', value: response.value});
-					}
+			if (response.error === true) {
+				vscode.window.setStatusBarMessage('RoseLibML: An error occured while getting idioms.', 10000);
+				vscode.window.showErrorMessage(`RoseLibML: ${response.message}`);
+			}
+			else {
+				vscode.window.setStatusBarMessage(`RoseLibML: ${response.message}`, 10000);
+
+				// send a message to show idioms in webview
+				if (this._panel !== undefined){
+					this._panel.webview.postMessage({command:'showIdioms', value: response.value});
 				}
 			}
-			catch (error) {
-				progress.report({message: 'An error occured.', increment: 100 });
-				vscode.window.setStatusBarMessage('RoseLibML - An error occured.');
-				vscode.window.showErrorMessage('An error occurred. Please try again.');
-			}
-		});
+		}
+		catch (error) {
+			vscode.window.setStatusBarMessage('RoseLibML: An error occured while getting idioms.', 10000);
+			vscode.window.showErrorMessage('RoseLibML: An error occurred. Please try again.');
+		}
     }
 
 	/**
@@ -97,7 +91,7 @@ export default class IdiomsWebviewTab extends WebviewTab {
 	 * webview in order to show the preview of the output snippet.
 	 * @param parameters 
 	 */
-	private getPreview(
+	private async getPreview(
 		parameters: {
 			fragment: string,
 			metavariables: [],
@@ -117,44 +111,37 @@ export default class IdiomsWebviewTab extends WebviewTab {
 				metavariable: parameters.metavariables[i]
 			});
 		}
-
-		vscode.window.withProgress({
-			location: vscode.ProgressLocation.Window,
-			title: 'RoseLibML'
-		}, async progress => {
 	
-			let response: any;
-
-			progress.report({message: 'Getting the output snippet preview', increment: 0});
-		
-			try {
-				// execute getPreview command from the language server
-				response = await vscode.commands.executeCommand(
-					'rose-lib-ml.getPreview', 
-					snippet
-				);
+		let response: any;
 	
-				progress.report({message: response.message, increment: 100 });
-	
-				if (response.error === true) {
-					vscode.window.setStatusBarMessage('RoseLibML - An error occured.');
-					vscode.window.showErrorMessage(response.message);
-				}
-				else {
-					vscode.window.setStatusBarMessage(`RoseLibML - ${response.message}`);
+		try {
+			vscode.window.setStatusBarMessage('RoseLibML: Getting preview in progress.');
 
-					// send a message to show output snippet in preview
-					if (this._panel !== undefined){
-						this._panel.webview.postMessage({command:'showSnippetPreview', value: response.value, index: parameters.index});
-					}
+			// execute getPreview command from the language server
+			response = await vscode.commands.executeCommand(
+				'rose-lib-ml.getPreview', 
+				snippet
+			);
+
+			vscode.window.setStatusBarMessage('');
+	
+			if (response.error === true) {
+				vscode.window.setStatusBarMessage('RoseLibML: An error occured while getting the preview.', 10000);
+				vscode.window.showErrorMessage(`RoseLibML: ${response.message}`);
+			}
+			else {
+				vscode.window.setStatusBarMessage(`RoseLibML: ${response.message}`, 10000);
+
+				// send a message to show output snippet in preview
+				if (this._panel !== undefined){
+					this._panel.webview.postMessage({command:'showSnippetPreview', value: response.value, index: parameters.index});
 				}
 			}
-			catch (error) {
-				progress.report({message: 'An error occured.', increment: 100 });
-				vscode.window.setStatusBarMessage('RoseLibML - An error occured.');
-				vscode.window.showErrorMessage('An error occurred. Please try again.');
-			}
-		});
+		}
+		catch (error) {
+			vscode.window.setStatusBarMessage('RoseLibML: An error occured while getting the preview.', 10000);
+			vscode.window.showErrorMessage('RoseLibML: An error occurred. Please try again.');
+		}
 	}
 
 	/**
@@ -163,7 +150,7 @@ export default class IdiomsWebviewTab extends WebviewTab {
 	 * webview in order to clear the output snippets. 
 	 * @param parameters 
 	 */
-    private generate(
+    private async generate(
 		parameters: {
 			outputSnippets: any[]
 		}
@@ -172,47 +159,41 @@ export default class IdiomsWebviewTab extends WebviewTab {
 		let outputSnippets = this.prepareOutputSnippets(parameters.outputSnippets);
 
 		if (outputSnippets.length === 0) {
-			vscode.window.showErrorMessage('Output snippets list is empty!');
+			vscode.window.showErrorMessage('RoseLibML: Output snippets list is empty!');
 			return;
 		}
+	
+		let response: any;
+	
+		try {
+			vscode.window.setStatusBarMessage('RoseLibML: Generating methods is in progress.');
 
-		vscode.window.withProgress({
-			location: vscode.ProgressLocation.Notification,
-			title: 'RoseLibML'
-		}, async progress => {
-	
-			let response: any;
-	
-			progress.report({message: 'Generating RoseLib methods in progress', increment: 0});
-	
-			try {
-				// execute generate command from the language server
-				response = await vscode.commands.executeCommand(
-					'rose-lib-ml.generate', 
-					outputSnippets
-				);
-	
-				progress.report({message: response.message, increment: 100 });
-	
-				if (response.error === true) {
-					vscode.window.setStatusBarMessage('RoseLibML - An error occured.');
-					vscode.window.showErrorMessage(response.message);
-				}
-				else {
-					vscode.window.setStatusBarMessage(`RoseLibML - ${response.message}`);
+			// execute generate command from the language server
+			response = await vscode.commands.executeCommand(
+				'rose-lib-ml.generate', 
+				outputSnippets
+			);
 
-					// send a message to clear output snippets
-					if (this._panel !== undefined){
-						this._panel.webview.postMessage({command:'clearOutputSnippets'});
-					}
+			vscode.window.setStatusBarMessage('');
+	
+			if (response.error === true) {
+				vscode.window.setStatusBarMessage('RoseLibML: An error occured while generating.', 10000);
+				vscode.window.showErrorMessage(`RoseLibML: ${response.message}`);
+			}
+			else {
+				vscode.window.setStatusBarMessage(`RoseLibML: ${response.message}`, 10000);
+				vscode.window.showInformationMessage(`RoseLibML: ${response.message}`);
+
+				// send a message to clear output snippets
+				if (this._panel !== undefined){
+					this._panel.webview.postMessage({command:'clearOutputSnippets'});
 				}
 			}
-			catch (error) {
-				progress.report({message: 'An error occured.', increment: 100 });
-				vscode.window.setStatusBarMessage('RoseLibML - An error occured.');
-				vscode.window.showErrorMessage('An error occurred. Please try again.');
-			}
-		});
+		}
+		catch (error) {
+			vscode.window.setStatusBarMessage('RoseLibML - An error occured while generating.', 10000);
+			vscode.window.showErrorMessage('RoseLibML: An error occurred. Please try again.');
+		}
 	}
 
 	/**

@@ -137,6 +137,7 @@
     <Compile Include="Util\Config.cs" />
     <Compile Include="Util\ConfigReader.cs" />
     <Compile Include="Util\DataAnnotationsValidator.cs" />
+    <Compile Include="Util\IProgressListener.cs" />
     <Compile Include="Util\SkipRecursiveValidation.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -51,8 +51,8 @@ namespace RoseLibLS.LanguageServer
                 CSIdiomTransformer transformer = new CSIdiomTransformer(knowledgeBase);
                 string previewFragment = transformer.TransformFragmentString(previewArguments.Fragment, previewArguments.MethodParameters, true);
 
-                Log.Logger.Debug("Preview Command Handler | Succesfully done");
-                return Task.FromResult(new CommandResponse(previewFragment, "Succesfully done.", false));
+                Log.Logger.Debug("Preview Command Handler | Getting preview succesfully done");
+                return Task.FromResult(new CommandResponse(previewFragment, "Getting preview succesfully done.", false));
             }
             catch (Exception e)
             {

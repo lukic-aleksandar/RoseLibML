@@ -35,6 +35,7 @@ namespace RoseLibML
         Writer Writer { get; set; }
         private Config Config { get; set; }
 
+        private List<IProgressListener> listeners = new List<IProgressListener>();
 
         public TBSampler(Writer writer, Config config)
         {
@@ -143,6 +144,8 @@ namespace RoseLibML
                 {
                     WriteFragments(fragmentCountTreshold, i);
                 }
+
+                UpdateListeners(i);
             }
 
             //Console.WriteLine();
@@ -652,6 +655,18 @@ namespace RoseLibML
             }
         }
 
+        public void AddListener(IProgressListener listener)
+        {
+            listeners.Add(listener);
+        }
+
+        public void UpdateListeners(int iteration)
+        {
+            foreach(var listener in listeners)
+            {
+                listener.Update(iteration);
+            }
+        }
     }
 
     class GCalculationInfo
@@ -666,4 +681,6 @@ namespace RoseLibML
         public int FfRootCount { get; set; }
         public int P2fRootCount { get; set; }
     }
+
+
 }

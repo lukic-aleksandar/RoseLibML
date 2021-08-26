@@ -38,8 +38,8 @@ namespace RoseLibLS.LanguageServer
             {
                 Dictionary<string, double> probabilities = CalculateAndSavePCFG(arguments);
 
-                Log.Logger.Debug("pCFG Command Handler | Succesfully done");
-                return Task.FromResult(new CommandResponse(probabilities, "Succesfully done.", false));
+                Log.Logger.Debug("pCFG Command Handler | pCFG phase succesfully done");
+                return Task.FromResult(new CommandResponse(probabilities, "pCFG phase succesfully done.", false));
             }
             catch (Exception e)
             {

@@ -60,8 +60,8 @@ namespace RoseLibLS.LanguageServer
                     return new CommandResponse("An error occurred while generating.", true);
                 }
 
-                Log.Logger.Debug("Generate Command Handler | Succesfully done");
-                return new CommandResponse(null, "Succesfully done.", false);
+                Log.Logger.Debug("Generate Command Handler | Generating succesfully done");
+                return new CommandResponse(null, "Generating succesfully done.", false);
             }
             catch (Exception e)
             {
