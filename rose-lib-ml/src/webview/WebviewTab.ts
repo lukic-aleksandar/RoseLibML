@@ -85,6 +85,8 @@ export abstract class WebviewTab {
 			const jsWebviewUri = this._panel.webview.asWebviewUri(jsUri);
 		
 			this._panel.webview.html = html.replace('${styleUri}', cssWebviewUri.toString()).replace('${scriptUri}', jsWebviewUri.toString()).replace(/\$\{cspSource\}/g, this._panel.webview.cspSource);
+
+			this._panel.iconPath = vscode.Uri.file(path.join(this._extensionPath,"resources/icons/rl_icon.svg"));
 		}
 	}
 }

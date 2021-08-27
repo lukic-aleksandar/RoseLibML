@@ -16,12 +16,13 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let clientReady = false;
 
-	let serverModule = context.asAbsolutePath(path.join('..', 'RoseLibLS', 'bin', 'Debug', 'net5.0', 'RoseLibLS.exe'));
+	let serverCommand = "dotnet";
+	let serverPath = context.asAbsolutePath(path.join('..', 'RoseLibLS', 'bin', 'Debug', 'net5.0', 'RoseLibLS.dll'));
 
 	let serverOptions: ServerOptions = {
-		run: { command: serverModule },
-		debug: { command: serverModule }
-	};
+        run: { command: serverCommand, args: [serverPath] },
+        debug: { command: serverCommand, args: [serverPath] }
+    };
 
 	let clientOptions: LanguageClientOptions = {
 		documentSelector: ['*'],

@@ -39,5 +39,5 @@
       "Node": "MethodDeclarationSyntax"
     }
   },
-  "roseLibPath": "<INSERT PATH TO ROSE LIB APP>"
+  "roseLibPath": "<INSERT PATH TO ROSE LIB>\\RoseLibApp.sln"
 }
