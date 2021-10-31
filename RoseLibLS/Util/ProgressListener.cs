@@ -24,7 +24,7 @@ namespace RoseLibLS.Util
                 {
                     Cancellable = true,
                     Percentage = percentage,
-                    Message = $"MCMC phase in progress - iteration {iteration+1}.",
+                    Message = $"MCMC phase in progress - iteration {iteration+1} of {totalIterations}.",
                 }
             );
         }

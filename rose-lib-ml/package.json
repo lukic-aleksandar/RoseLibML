@@ -2,6 +2,7 @@
 	"name": "rose-lib-ml",
 	"displayName": "RoseLibML",
 	"description": "RoseLibML extension",
+	"publisher": "FTN",
 	"version": "0.0.1",
 	"engines": {
 		"vscode": "^1.48.0"
@@ -85,26 +86,26 @@
 		},
 		"views": {
 			"rose-lib-ml-container": [
-			  {
-				"id": "rose-lib-ml-view",
-				"name": "RoseLibML",
-				"contextualTitle": "RoseLibML"
-			  }
+				{
+					"id": "rose-lib-ml-view",
+					"name": "RoseLibML",
+					"contextualTitle": "RoseLibML"
+				}
 			]
 		},
 		"viewsContainers": {
 			"activitybar": [
-			  {
-				"id": "rose-lib-ml-container",
-				"title": "RoseLibML",
-				"icon": "resources/icons/rl_icon.svg"
-			  }
+				{
+					"id": "rose-lib-ml-container",
+					"title": "RoseLibML",
+					"icon": "resources/icons/rl_icon.svg"
+				}
 			]
 		},
 		"viewsWelcome": [
 			{
-			  "view": "rose-lib-ml-view",
-			  "contents": "Welcome to the RoseLibML extension.\n[pCFG phase](command:rose-lib-ml.openPCFG)\n[MCMC phase](command:rose-lib-ml.openMCMC)\n[Generation phase](command:rose-lib-ml.openIdioms)"
+				"view": "rose-lib-ml-view",
+				"contents": "Welcome to the RoseLibML extension.\n[pCFG phase](command:rose-lib-ml.openPCFG)\n[MCMC phase](command:rose-lib-ml.openMCMC)\n[Generation phase](command:rose-lib-ml.openIdioms)"
 			}
 		],
 		"configuration": {
@@ -153,6 +154,6 @@
 		"vscode-test": "^1.3.0"
 	},
 	"dependencies": {
-		"vscode-languageclient": "^6.1.3"
+		"vscode-languageclient": "^6.1.4"
 	}
 }

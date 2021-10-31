@@ -109,6 +109,7 @@ namespace RoseLibML
             for (int i = startIteration; i < iterations; i++)
             {
                 //Console.WriteLine($"Iteration: {i}");
+                UpdateListeners(i);
 
                 var typeNodes = BookKeeper.TypeNodes.ToList();
                 typeNodes.Shuffle();
@@ -145,7 +146,6 @@ namespace RoseLibML
                     WriteFragments(fragmentCountTreshold, i);
                 }
 
-                UpdateListeners(i);
             }
 
             //Console.WriteLine();
