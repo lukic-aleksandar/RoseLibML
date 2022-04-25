@@ -1,6 +1,3 @@
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RoseLibML;
 using RoseLibML.CS.CSTrees;
 using RoseLibML.Util;
@@ -9,7 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace RoseLib
@@ -36,9 +32,9 @@ namespace RoseLib
 
 
             ToCSWriter writer = new ToCSWriter(config.Paths.OutIdioms);
-            
+
             var sampler = new TBSampler(writer, config);
-            
+
             sampler.Initialize(pCFGComposer, labeledTrees);
             sampler.Train();
 
@@ -88,7 +84,7 @@ namespace RoseLib
             var files = directoryInfo.GetFiles();
 
             LabeledTree[] labeledTrees = new LabeledTree[files.Length];
-            
+
             Parallel.For(0, files.Length, (index) =>
             {
 
@@ -97,7 +93,7 @@ namespace RoseLib
                 labeledTrees[index] = labeledTree;
 
             });
-           
+
             return labeledTrees;
         }
     }

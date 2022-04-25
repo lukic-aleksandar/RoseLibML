@@ -1,0 +1,17 @@
+[
+  {
+    "rootNodeType": "PropertyDeclaration",
+    "fragment": "public $IdentifierToken $IdentifierToken {get;set;}",
+    "metavariables":  [ "$IdentifierToken", "$IdentifierToken" ]
+  },
+  {
+    "rootNodeType": "IfStatement",
+    "fragment": "if( $GreaterThanExpression ) $Block ",
+    "metavariables": [ "$GreaterThanExpression", "$Block" ]
+  },
+  {
+    "rootNodeType": "ExpressionStatement",
+    "fragment": "Console.WriteLine($ArgumentList);",
+    "metavariables": [ "$ArgumentList" ]
+  }
+]

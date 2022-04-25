@@ -1,0 +1,26 @@
+﻿<#@ template language="C#"#>
+{
+    if (!IsAtRoot())
+    {
+        throw new Exception("A <#=composer.Replace("Composer", "").ToLower()#> must be selected (which is also a root to the composer)");
+    }
+
+    string fragment = $"<#=fragment#>";
+
+    var compilationUnit = CSharpSyntaxTree.ParseText(fragment).GetRoot();
+
+    var members = (compilationUnit as CompilationUnitSyntax).Members.ToArray();
+
+    var newNode = (CurrentNode as <#=composerNode#>)<#
+        if (rootNodeType.Equals("UsingDirective")) {
+            Write(".AddUsings");
+        }
+        else {
+            Write(".AddMembers");
+        }
+        #>(members);
+            
+    Replace(CurrentNode, newNode, null);
+
+    return this;
+}

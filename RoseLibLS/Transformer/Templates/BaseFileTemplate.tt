@@ -1,0 +1,20 @@
+﻿<#@ template language="C#" #>
+// ------------------------------------------------------------------------------
+//     This file was generated on <#= DateTime.Now #>.
+//  
+//     Changes to this file may cause incorrect behavior
+//     and will be lost if the code is regenerated.
+// ------------------------------------------------------------------------------
+
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using System;
+using System.Linq;
+
+namespace RoseLibApp.RoseLib.Composers
+{
+    public partial class <#=composer#>
+    {
+
+    }
+}

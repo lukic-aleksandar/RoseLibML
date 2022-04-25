@@ -1,0 +1,159 @@
+{
+	"name": "rose-lib-ml",
+	"displayName": "RoseLibML",
+	"description": "RoseLibML extension",
+	"publisher": "FTN",
+	"version": "0.0.1",
+	"engines": {
+		"vscode": "^1.48.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onView:rose-lib-ml-view"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "rose-lib-ml.openPCFG",
+				"title": "Open pCFG phase",
+				"category": "RoseLibML"
+			},
+			{
+				"command": "rose-lib-ml.openMCMC",
+				"title": "Open MCMC phase",
+				"category": "RoseLibML"
+			},
+			{
+				"command": "rose-lib-ml.openIdioms",
+				"title": "Open generation phase",
+				"category": "RoseLibML"
+			},
+			{
+				"command": "rose-lib-ml.runPCFG",
+				"title": "Run pCFG",
+				"category": "RoseLibML"
+			},
+			{
+				"command": "rose-lib-ml.runMCMC",
+				"title": "Run MCMC",
+				"category": "RoseLibML"
+			},
+			{
+				"command": "rose-lib-ml.getIdioms",
+				"title": "Get idioms",
+				"category": "RoseLibML"
+			},
+			{
+				"command": "rose-lib-ml.generate",
+				"title": "Generate",
+				"category": "RoseLibML"
+			}
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "rose-lib-ml.runPCFG",
+					"when": "false"
+				},
+				{
+					"command": "rose-lib-ml.runMCMC",
+					"when": "false"
+				},
+				{
+					"command": "rose-lib-ml.getIdioms",
+					"when": "false"
+				},
+				{
+					"command": "rose-lib-ml.generate",
+					"when": "false"
+				},
+				{
+					"command": "rose-lib-ml.openPCFG",
+					"when": "false"
+				},
+				{
+					"command": "rose-lib-ml.openMCMC",
+					"when": "false"
+				},
+				{
+					"command": "rose-lib-ml.openIdioms",
+					"when": "false"
+				}
+			]
+		},
+		"views": {
+			"rose-lib-ml-container": [
+				{
+					"id": "rose-lib-ml-view",
+					"name": "RoseLibML",
+					"contextualTitle": "RoseLibML"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "rose-lib-ml-container",
+					"title": "RoseLibML",
+					"icon": "resources/icons/rl_icon.svg"
+				}
+			]
+		},
+		"viewsWelcome": [
+			{
+				"view": "rose-lib-ml-view",
+				"contents": "Welcome to the RoseLibML extension.\n[pCFG phase](command:rose-lib-ml.openPCFG)\n[MCMC phase](command:rose-lib-ml.openMCMC)\n[Generation phase](command:rose-lib-ml.openIdioms)"
+			}
+		],
+		"configuration": {
+			"type": "object",
+			"title": "Example configuration",
+			"properties": {
+				"roseLibMLClient.maxNumberOfProblems": {
+					"scope": "resource",
+					"type": "number",
+					"default": 100,
+					"description": "Controls the maximum number of problems produced by the server."
+				},
+				"roseLibMLClient.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "verbose",
+					"description": "Traces the communication between VS Code and the language server."
+				}
+			}
+		}
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"lint": "eslint src --ext ts",
+		"watch": "tsc -watch -p ./",
+		"pretest": "npm run compile && npm run lint",
+		"test": "node ./out/test/runTest.js"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.48.0",
+		"@types/glob": "^7.1.1",
+		"@types/mocha": "^7.0.2",
+		"@types/node": "^13.11.0",
+		"eslint": "^6.8.0",
+		"@typescript-eslint/parser": "^2.30.0",
+		"@typescript-eslint/eslint-plugin": "^2.30.0",
+		"glob": "^7.1.6",
+		"mocha": "^7.1.2",
+		"typescript": "^3.8.3",
+		"vscode-test": "^1.3.0"
+	},
+	"dependencies": {
+		"vscode-languageclient": "^6.1.4"
+	}
+}

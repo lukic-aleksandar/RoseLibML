@@ -35,6 +35,7 @@ namespace RoseLibML
         Writer Writer { get; set; }
         private Config Config { get; set; }
 
+        private List<IProgressListener> listeners = new List<IProgressListener>();
 
         public TBSampler(Writer writer, Config config)
         {
@@ -59,7 +60,7 @@ namespace RoseLibML
 
                 if(item.index % 100 == 0)
                 {
-                    Console.WriteLine($"Initialization passed index {item.index}.");
+                    //Console.WriteLine($"Initialization passed index {item.index}.");
                 }
             }
 
@@ -102,12 +103,13 @@ namespace RoseLibML
             int fragmentCountTreshold = Config.RunParams.Threshold;
 
             var begin = DateTime.Now;
-            Console.WriteLine("START");
-            Console.WriteLine(begin);
+            //Console.WriteLine("START TRAINING");
+            //Console.WriteLine(begin.ToString());
 
             for (int i = startIteration; i < iterations; i++)
-            { 
-                Console.WriteLine($"Iteration: {i}");
+            {
+                //Console.WriteLine($"Iteration: {i}");
+                UpdateListeners(i);
 
                 var typeNodes = BookKeeper.TypeNodes.ToList();
                 typeNodes.Shuffle();
@@ -119,7 +121,7 @@ namespace RoseLibML
 
                     if (cnt % 1000 == 0)
                     {
-                        Console.WriteLine($"Processing type {cnt} of {typeNodes.Count}");
+                        //Console.WriteLine($"Processing type {cnt} of {typeNodes.Count}");
                     }
 
                     if (!BookKeeper.TypeNodes.ContainsKey(typeKV.Key) || BookKeeper.TypeNodes[typeKV.Key].Count == 0)
@@ -143,14 +145,15 @@ namespace RoseLibML
                 {
                     WriteFragments(fragmentCountTreshold, i);
                 }
+
             }
 
-            Console.WriteLine();
+            //Console.WriteLine();
             var end = DateTime.Now;
-            Console.WriteLine(end);
-            Console.WriteLine("END");
+            //Console.WriteLine(end.ToString());
+            //Console.WriteLine("END TRAINING");
 
-            Console.WriteLine($"Time between: {end - begin}");
+            //Console.WriteLine($"Time between: {end - begin}");
 
             Writer.Close();
         }
@@ -652,6 +655,18 @@ namespace RoseLibML
             }
         }
 
+        public void AddListener(IProgressListener listener)
+        {
+            listeners.Add(listener);
+        }
+
+        public void UpdateListeners(int iteration)
+        {
+            foreach(var listener in listeners)
+            {
+                listener.Update(iteration);
+            }
+        }
     }
 
     class GCalculationInfo
@@ -666,4 +681,6 @@ namespace RoseLibML
         public int FfRootCount { get; set; }
         public int P2fRootCount { get; set; }
     }
+
+
 }
