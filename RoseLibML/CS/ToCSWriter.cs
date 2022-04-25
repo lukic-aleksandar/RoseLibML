@@ -19,9 +19,13 @@ namespace RoseLibML
         private StreamWriter StreamWriter{ get; set; }
         private int CurrentIteration { get; set; } = -1;
 
+        public Dictionary<int, List<String>> FragmentsPerIteration;
+
         public ToCSWriter(string outputFile)
         {
             OutputFile = outputFile;
+
+            FragmentsPerIteration = new Dictionary<int, List<string>>();
         }
 
         public void Initialize(BookKeeper bookKeeper, LabeledTree[] trees)
@@ -199,6 +203,9 @@ namespace RoseLibML
                 }
 
                 AnnounceNewFragment(strWriter.ToString());
+
+                // in order to show in the extension
+                AddFragmentToDictionary(CurrentIteration, strWriter.ToString());
             }
         }
 
@@ -268,7 +275,7 @@ namespace RoseLibML
                 StreamWriter.Flush();
 
 
-                Console.Write(strWriter.ToString());
+                //Console.Write(strWriter.ToString());
             }
         }
 
@@ -285,10 +292,19 @@ namespace RoseLibML
                 StreamWriter.Write(fragment);
                 StreamWriter.Flush();
 
-                Console.Write(strWriter.ToString());
-                Console.Write(fragment);
-
+                //Console.Write(strWriter.ToString());
+                //Console.Write(fragment);
             }
+        }
+
+        private void AddFragmentToDictionary(int iteration, string fragment)
+        {
+            if (!FragmentsPerIteration.ContainsKey(iteration))
+            {
+                FragmentsPerIteration.Add(iteration, new List<String>());
+            }
+
+            FragmentsPerIteration[iteration].Add(fragment);
         }
 
         public void Close()

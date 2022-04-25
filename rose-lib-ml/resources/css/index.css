@@ -1,0 +1,124 @@
+body {
+  background-color: var(--vscode-editor-background);
+  color: var(--vscode-foreground);
+  height: 100%;
+  min-height: 100%;
+}
+
+html,
+div.full-scr {
+  height: 100%;
+  min-height: 100%;
+}
+
+div.visualization-column {
+  border-left: 1px solid var(--vscode-foreground);
+}
+
+div.right-column {
+  position: relative;
+}
+
+button.vscbtn-sm {
+  color: var(--vscode-button-background);
+  float: right;
+}
+
+button.vscbtn-sm:hover {
+  color: var(--vscode-button-hoverBackground);
+}
+
+button.vscbtn-md {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-radius: 0px !important;
+  border-color: var(--vscode-sideBar-background) !important;
+  border-width: 1px !important;
+  float: right;
+  text-align: center;
+}
+
+button.vscbtn-md:hover {
+  background-color: var(--vscode-button-hoverBackground);
+  color: var(--vscode-button-foreground);
+  border-radius: 0px !important;
+}
+
+button.vscbtn-lg {
+  background-color: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+  border-radius: 0px !important;
+  position: absolute;
+  right: 10px;
+  bottom: 30px;
+}
+
+button.vscbtn-lg:hover {
+  background-color: var(--vscode-button-hoverBackground);
+  color: var(--vscode-button-foreground);
+  border-radius: 0px !important;
+}
+
+button.vscbtn-sm:focus,
+button.vscbtn-lg:focus,
+button.vscbtn-md:focus {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+}
+
+select {
+  background-color: var(--vscode-input-background) !important;
+  color: var(--vscode-input-foreground) !important;
+  border-color: var(--vscode-sideBar-background) !important;
+  border-width: 1px !important;
+  border-radius: 0px !important;
+}
+
+select:focus {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border-color: var(--vscode-button-background) !important;
+  border-width: 1px !important;
+}
+
+input {
+  background-color: var(--vscode-input-background) !important;
+  color: var(--vscode-input-foreground) !important;
+  border-color: var(--vscode-sideBar-background) !important;
+  border-width: 1px !important;
+  border-radius: 0px !important;
+}
+
+input:focus {
+  -webkit-box-shadow: none !important;
+  box-shadow: none !important;
+  border-color: var(--vscode-button-background) !important;
+  border-width: 1px !important;
+}
+
+table {
+  color: var(--vscode-input-foreground) !important;
+}
+
+div.fragment-snippet {
+  font-family: var(--vscode-editor-font-family);
+  font-weight: var(--vscode-editor-font-weight);
+  font-size: var(--vscode-editor-font-size);
+  color: var(--vscode-input-foreground) !important;
+  background-color: var(--vscode-input-background) !important;
+  border: solid;
+  border-color: var(--vscode-sideBar-background) !important;
+  border-width: 1px !important;
+  border-radius: 0px !important;
+  padding: 7px;
+  white-space: pre-wrap;
+}
+
+div#idiomSetup {
+  display: none;
+}
+
+button.folder {
+  position: absolute;
+  bottom: 0;
+}
