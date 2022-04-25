@@ -6,9 +6,9 @@
     },
     
     "paths":{
-        "inData": "C:\\Users\\nenad\\Desktop\\Nnd\\doktorske\\dev new\\dataset2\\studentski_projekti_training",
+        "inData": "C:\\Users\\ntodo\\Desktop\\Experiments\\nopCommerce-flat",
         "outModel": "",
-        "outIdioms": "C:\\Users\\nenad\\Desktop\\Nnd\\doktorske\\dev new\\dataset2\\out2\\idioms9.txt"
+        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Experiments\\nopCommerce-idioms-1"
     },
 
     "runParams":{

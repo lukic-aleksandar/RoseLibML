@@ -67,7 +67,7 @@ namespace RoseLib
             {
                 config = ConfigReader.ReadValidateConfig(args[0], validationResults);
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 Console.WriteLine("Could not read from json.");
                 Console.ReadKey();
