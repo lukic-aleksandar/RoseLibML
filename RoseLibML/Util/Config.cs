@@ -44,5 +44,6 @@ namespace RoseLibML.Util
         public int TotalIterations { get; set; }
         [Range(0.0, int.MaxValue)]
         public int Threshold { get; set; }
+        public bool JustWriteTheFragments { get; set; }
     }
 }

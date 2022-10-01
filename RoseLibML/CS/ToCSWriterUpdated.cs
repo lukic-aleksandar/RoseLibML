@@ -11,20 +11,21 @@ using System.Threading.Tasks;
 
 namespace RoseLibML
 {
-    public class ToCSWriter : Writer
+    public class ToCSWriterUpdated : Writer
     {
+        public string OutputFile { get; set; }
+
         public BookKeeper BookKeeper { get; set; }
         public LabeledTree[] Trees { get; set; }
-        public string OutputFile { get; set; }
-        private StreamWriter StreamWriter{ get; set; }
+        private StreamWriter StreamWriter { get; set; }
+
         private int CurrentIteration { get; set; } = -1;
 
         public Dictionary<int, List<String>> FragmentsPerIteration;
 
-        public ToCSWriter(string outputFile)
+        public ToCSWriterUpdated(string outputFile)
         {
             OutputFile = outputFile;
-
             FragmentsPerIteration = new Dictionary<int, List<string>>();
         }
 
@@ -55,8 +56,7 @@ namespace RoseLibML
             var anyLeavesWithAMatch = leaves.Any(l => l.IsExistingRoslynNode && l.UseRoslynMatchToWrite);
             if (anyLeavesToWrite && anyLeavesWithAMatch)
             {
-                FindRootMatchAndWriteFragment(rootNode, leaves);
-                //FindRootMatchAndWriteFragment(rootNode, leaves.Where(l => l.CouldBeWritten));
+                FindRootMatchAndWriteFragment(rootNode, leaves.Where(l => l.CouldBeWritten));
             }
         }
 
@@ -162,8 +162,9 @@ namespace RoseLibML
 
         public void FindRootMatchAndWriteFragment(CSNode fragmentRootNode, IEnumerable<CSNode> fragmentLeaves)
         {
+            // If the root fragment is a temp node, find an ancestor that is not, and use it as a basis for generation.
             var withCorrespondingNode = RetrieveOneWithCoressponding(fragmentRootNode);
-            var roslynTree = RetrieveRoslynTree(withCorrespondingNode);
+            var roslynTree = RetrieveRoslynTree(withCorrespondingNode); // Each time, parse a tree? Could save some time...
             var root = roslynTree.GetRoot();
             var roslynFragmentRootNode = FindCorrespondingRoslynNodeOrToken(new List<SyntaxNodeOrToken>() { root }, withCorrespondingNode);
 
@@ -179,9 +180,7 @@ namespace RoseLibML
 
         private void WriteLeaves(IEnumerable<CSNode> fragmentLeaves, SyntaxNodeOrToken roslynFragmentRoot)
         {
-            //var writableLeaves = fragmentLeaves.Where(l => l.CouldBeWritten);
-            var writableLeaves = fragmentLeaves;
-
+            var writableLeaves = fragmentLeaves.Where(l => l.CouldBeWritten);
             using (StringWriter strWriter = new StringWriter())
             {
                 foreach (var leaf in writableLeaves)
@@ -200,7 +199,10 @@ namespace RoseLibML
                         strWriter.Write((SyntaxKind)uShortSyntaxKind);
                     }
                     else {
-                        strWriter.Write($" {leaf.ToString()} "); // TODO: Resiti, ne moze samo $ tu da se doda
+                        // Zašto ovo nisam ni jednom video za TempNodove?
+                        // Zato što na 59-oj izbaciš "sve koji nisu CouldBeWritten".
+                        // Tu se krije caka. Da li bi najlakše bilo da tamo promenim? Koje su posledice?
+                        strWriter.Write($" {leaf.ToString()}");  
                     }
                     
                 }
@@ -278,7 +280,7 @@ namespace RoseLibML
                 StreamWriter.Flush();
 
 
-                Console.Write(strWriter.ToString());
+                //Console.Write(strWriter.ToString());
             }
         }
 
@@ -295,8 +297,8 @@ namespace RoseLibML
                 StreamWriter.Write(fragment);
                 StreamWriter.Flush();
 
-                Console.Write(strWriter.ToString());
-                Console.Write(fragment);
+                //Console.Write(strWriter.ToString());
+                //Console.Write(fragment);
             }
         }
 

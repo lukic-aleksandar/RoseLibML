@@ -1,21 +1,13 @@
-﻿using RoseLibLS.Transformer;
-using RoseLibLS.Util;
+﻿using RoseLibLS.Util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace RoseLibLS.LanguageServer
 {
-    public class PCFGCommandArguments
-    {
-        [Required, Range(0.0, 1.0)]
-        public double ProbabilityCoefficient { get; set; }
-        [Required, DirectoryExists(ErrorMessage = "Input folder doesn't exist.")]
-        public string InputFolder { get; set; }
-        [Required, DirectoryExists(ErrorMessage = "Output folder doesn't exist.")]
-        public string OutputFolder { get; set; }
-    }
-
     public class MCMCCommandArguments
     {
         [Required, DirectoryExists(ErrorMessage = "Input folder doesn't exist.")]
@@ -34,18 +26,5 @@ namespace RoseLibLS.LanguageServer
         public int Threshold { get; set; }
         [Required, DirectoryExists(ErrorMessage = "Output folder doesn't exist.")]
         public string OutputFolder { get; set; }
-    }
-
-    public class GetIdiomsCommandArguments
-    {
-        public string RootNodeType { get; set; }
-    }
-
-    public class PreviewCommandArguments
-    {
-        [Required]
-        public string Fragment { get; set; }
-        [Required]
-        public List<MethodParameter> MethodParameters { get; set; }
     }
 }

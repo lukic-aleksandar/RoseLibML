@@ -9,15 +9,16 @@ namespace RoseLibML.CS.CSTrees
     [Serializable]
     public class CSNode : LabeledNode
     {
-        public bool UseRoslynMatchToWrite { get; set; }
-        public int RoslynSpanStart { get; set; }
-        public int RoslynSpanEnd { get; set; }
-
         public bool IsExistingRoslynNode
         {
             get { return ushort.TryParse(this.STInfo, out ushort result); }
         }
+        public bool UseRoslynMatchToWrite { get; set; }
+        public int RoslynSpanStart { get; set; }
+        public int RoslynSpanEnd { get; set; }
 
+
+        // Možda bih ovo mogao da izmenim? To bi, možda, bilo dovoljno.
         public bool CouldBeWritten
         {
             get

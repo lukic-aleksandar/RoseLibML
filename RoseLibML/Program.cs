@@ -20,11 +20,13 @@ namespace RoseLib
                 return;
             }
 
+            var loadModel = !string.IsNullOrEmpty(config.Paths.InModel);
+            var justWriteTheFragments = config.RunParams.JustWriteTheFragments;
             var saveModel = !string.IsNullOrEmpty(config.Paths.OutModel);
 
             // Create Labeled Trees
             // Perform Needed transformations
-            var labeledTrees = CreateLabeledTrees(config.Paths.InData, config.Paths.OutModel);
+            var labeledTrees = CreateLabeledTrees(config.Paths.InData, config.Paths.InModel, config.Paths.OutModel);
 
             // Calculate and save PCFG to file
             var pCFGComposer = new LabeledTreePCFGComposer(labeledTrees.ToList(), config);
@@ -35,16 +37,28 @@ namespace RoseLib
 
             var sampler = new TBSampler(writer, config);
 
-            sampler.Initialize(pCFGComposer, labeledTrees);
-            sampler.Train();
+            sampler.Initialize(pCFGComposer, labeledTrees, loadModel);
 
-            if (saveModel)
+            if (!justWriteTheFragments)
             {
-                foreach (var tree in sampler.Trees)
+                sampler.Train();
+
+                if (saveModel)
                 {
-                    tree.Serialize();
+                    foreach (var tree in sampler.Trees)
+                    {
+                        tree.Serialize();
+                    }
                 }
             }
+            else
+            {
+                var threshold = config.RunParams.Threshold;
+                var iteration = config.RunParams.StartIteration;
+                sampler.WriteFragments(threshold, iteration);
+            }
+            
+
             Console.ReadKey();
         }
 
@@ -78,8 +92,9 @@ namespace RoseLib
             return config;
         }
 
-        static LabeledTree[] CreateLabeledTrees(string sourceDirectory, string outputDirectory)
+        static LabeledTree[] CreateLabeledTrees(string sourceDirectory, string modelInputDirectory, string modelOutputDirectory)
         {
+            var inputModelPresent = !string.IsNullOrEmpty(modelInputDirectory);
             var directoryInfo = new DirectoryInfo(sourceDirectory);
             var files = directoryInfo.GetFiles();
 
@@ -87,14 +102,24 @@ namespace RoseLib
 
             Parallel.For(0, files.Length, (index) =>
             {
-
-                var labeledTree = CSTreeCreator.CreateTree(files[index], outputDirectory);
-                LabeledTreeTransformations.Binarize(labeledTree.Root, new CSNodeCreator());
-                labeledTrees[index] = labeledTree;
+                if (!inputModelPresent)
+                {
+                    var labeledTree = CSTreeCreator.CreateTree(files[index], modelOutputDirectory);
+                    LabeledTreeTransformations.Binarize(labeledTree.Root, new CSNodeCreator());
+                    labeledTrees[index] = labeledTree;
+                }
+                else
+                {
+                    var labeledTree = CSTreeCreator.Deserialize(files[index], modelInputDirectory, modelOutputDirectory);
+                    if (labeledTree != null) {
+                        labeledTrees[index] = labeledTree;
+                    }
+                }
+               
 
             });
 
-            return labeledTrees;
+            return labeledTrees.Where(lt => lt != null).ToArray(); ;
         }
     }
 }

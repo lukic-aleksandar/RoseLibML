@@ -133,7 +133,7 @@ namespace RoseLibLS.LanguageServer
             var sampler = new TBSampler(writer, config);
 
             sampler.AddListener(listener);
-            sampler.Initialize(pCFGComposer, labeledTrees);
+            sampler.Initialize(pCFGComposer, labeledTrees, false);
 
             sampler.Train();
 

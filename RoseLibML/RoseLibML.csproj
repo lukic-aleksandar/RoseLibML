@@ -114,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\BookKeeper.cs" />
+    <Compile Include="Core\CodeIdiom.cs" />
     <Compile Include="Core\LabeledTrees\FragmentExtensions.cs" />
     <Compile Include="Core\LabeledTrees\NodeCreator.cs" />
     <Compile Include="Core\LabeledTrees\TreeCreator.cs" />
@@ -122,6 +123,7 @@
     <Compile Include="CS\CSTrees\CSNodeCreator.cs" />
     <Compile Include="CS\CSTrees\CSTree.cs" />
     <Compile Include="CS\CSTrees\CSTreeCreator.cs" />
+    <Compile Include="CS\ToCSWriterUpdated.cs" />
     <Compile Include="CS\ToCSWriter.cs" />
     <Compile Include="Core\PCFG\IPCFGComposer.cs" />
     <Compile Include="Core\LabeledTrees\LabeledTree.cs" />

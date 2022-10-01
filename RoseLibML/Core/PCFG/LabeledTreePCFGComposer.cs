@@ -151,9 +151,9 @@ namespace RoseLibML
             Rules[kind][rhs].Increment();
         }
 
-        public Dictionary<string, double> GetRulesProbabilities()
+        public SortedDictionary<string, double> GetRulesProbabilities()
         {
-            Dictionary<string, double> probabilities = new Dictionary<string, double>();
+            SortedDictionary<string, double> probabilities = new SortedDictionary<string, double>();
             foreach (var lhs in Rules.Keys)
             {
                 foreach (var rhs in Rules[lhs].Keys)

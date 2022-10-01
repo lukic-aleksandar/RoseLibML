@@ -39,5 +39,5 @@
       "Node": "MethodDeclarationSyntax"
     }
   },
-  "roseLibPath": "<INSERT PATH TO ROSE LIB>\\RoseLibApp.sln"
+  "roseLibPath": "C:\\Users\\ntodo\\Desktop\\Experiments\\RoseLib\\RoseLib-master\\RoseLibApp.sln"
 }

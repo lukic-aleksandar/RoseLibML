@@ -48,19 +48,22 @@ namespace RoseLibML
             Config = config;
         }
 
-        public void Initialize(LabeledTreePCFGComposer pCFG, LabeledTree[] labeledTrees)
+        public void Initialize(LabeledTreePCFGComposer pCFG, LabeledTree[] labeledTrees, bool modelLoaded)
         {
             PCFG = pCFG;
             Trees = labeledTrees;
 
             foreach (var item in Trees.Select((tree, index) => new { index, tree }))
             {
-                Fragmentation(item.tree.Root);
+                if (!modelLoaded) // Model loaded. Skip fragmentation.
+                {
+                    Fragmentation(item.tree.Root);
+                }
                 AddToBookKeeper(BookKeeper, item.tree);
 
                 if(item.index % 100 == 0)
                 {
-                    //Console.WriteLine($"Initialization passed index {item.index}.");
+                    Console.WriteLine($"Initialization passed index {item.index}.");
                 }
             }
 
@@ -103,12 +106,12 @@ namespace RoseLibML
             int fragmentCountTreshold = Config.RunParams.Threshold;
 
             var begin = DateTime.Now;
-            //Console.WriteLine("START TRAINING");
-            //Console.WriteLine(begin.ToString());
+            Console.WriteLine("START TRAINING");
+            Console.WriteLine(begin.ToString());
 
             for (int i = startIteration; i < iterations; i++)
             {
-                //Console.WriteLine($"Iteration: {i}");
+                Console.WriteLine($"Iteration: {i}");
                 UpdateListeners(i);
 
                 var typeNodes = BookKeeper.TypeNodes.ToList();
@@ -121,7 +124,7 @@ namespace RoseLibML
 
                     if (cnt % 1000 == 0)
                     {
-                        //Console.WriteLine($"Processing type {cnt} of {typeNodes.Count}");
+                        Console.WriteLine($"Processing type {cnt} of {typeNodes.Count}");
                     }
 
                     if (!BookKeeper.TypeNodes.ContainsKey(typeKV.Key) || BookKeeper.TypeNodes[typeKV.Key].Count == 0)
@@ -148,12 +151,12 @@ namespace RoseLibML
 
             }
 
-            //Console.WriteLine();
+            Console.WriteLine();
             var end = DateTime.Now;
-            //Console.WriteLine(end.ToString());
-            //Console.WriteLine("END TRAINING");
+            Console.WriteLine(end.ToString());
+            Console.WriteLine("END TRAINING");
 
-            //Console.WriteLine($"Time between: {end - begin}");
+            Console.WriteLine($"Time between: {end - begin}");
 
             Writer.Close();
         }
@@ -642,7 +645,7 @@ namespace RoseLibML
         }
 
 
-        private void WriteFragments(int treshold, int iteration)
+        public void WriteFragments(int treshold, int iteration)
         {
             Writer.SetIteration(iteration);
             var commonFragments = BookKeeper.FragmentCounts.Where(kvp => kvp.Value > treshold);

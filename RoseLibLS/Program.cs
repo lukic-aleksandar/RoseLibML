@@ -20,7 +20,7 @@ namespace RoseLibLS
                         .MinimumLevel.Verbose()
                         .CreateLogger();
 
-            Log.Logger.Debug("Starting language server...");
+            Log.Logger.Debug("....Starting language server....");
 
             var server = await OmniSharp.Extensions.LanguageServer.Server.LanguageServer.From(
                 options =>
@@ -39,6 +39,7 @@ namespace RoseLibLS
                         .WithHandler<PreviewCommandHandler>()
                         .WithHandler<GenerateCommandHandler>()
             ).ConfigureAwait(false);
+
 
             await server.WaitForExit.ConfigureAwait(false);
         }
