@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "RoseLibML": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\\\Users\\\\ntodo\\\\Desktop\\\\Doktorske\\\\evaluacija\\\\RoseLibML\\\\config.json\""
+    }
+  }
+}

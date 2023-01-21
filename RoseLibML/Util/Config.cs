@@ -9,9 +9,9 @@ namespace RoseLibML.Util
 {
     public class Config
     {
-        public ModelParams ModelParams { get; set; }
-        public Paths Paths { get; set; }
-        public RunParams RunParams { get; set; }
+        public ModelParams? ModelParams { get; set; }
+        public Paths? Paths { get; set; }
+        public RunParams? RunParams { get; set; }
     }
 
     public class ModelParams
@@ -27,11 +27,11 @@ namespace RoseLibML.Util
     public class Paths
     {
         [Required(AllowEmptyStrings = false)]
-        public string InData { get; set; }
-        public string InModel { get; set; }
-        public string OutModel { get; set; }
+        public string? InData { get; set; }
+        public string? InModel { get; set; }
+        public string? OutModel { get; set; }
         [Required(AllowEmptyStrings = false)]
-        public string OutIdioms { get; set; }
+        public string? OutIdioms { get; set; }
     }
 
     public class RunParams

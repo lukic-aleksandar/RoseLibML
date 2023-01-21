@@ -6,15 +6,16 @@
     },
     
     "paths":{
-        "inData": "C:\\Users\\ntodo\\Desktop\\Experiments\\nopCommerce-flat",
-        "outModel": "",
-        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Experiments\\nopCommerce-idioms-1"
+        "inData": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\nopCommerce Cleansed\\60BaseAdminController",
+        "outModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\model2",
+        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\003idioms.txt"
     },
 
     "runParams":{
+        "justWriteTheFragments": false,
         "startIteration": 0,
-        "burnIn": 65,
-        "totalIterations": 100,
+        "burnIn": 55,
+        "totalIterations": 90,
         "threshold": 3
     }
 }

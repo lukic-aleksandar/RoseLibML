@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30204.135
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoseLibML", "RoseLibML\RoseLibML.csproj", "{20F6A0E5-E2C0-4C43-A8E5-A68ACFA349D6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{8A775295-89EC-435B-89DE-3127F43BBD7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoseLibLS", "RoseLibLS\RoseLibLS.csproj", "{6549EA6C-390E-4001-BAAD-ED598CDADD9E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoseLibLS", "RoseLibLS\RoseLibLS.csproj", "{6549EA6C-390E-4001-BAAD-ED598CDADD9E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoseLibML", "RoseLibML\RoseLibML.csproj", "{2B3E8511-3A71-4026-BB48-BAA54E0C399D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,14 +17,6 @@ Global
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{20F6A0E5-E2C0-4C43-A8E5-A68ACFA349D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{20F6A0E5-E2C0-4C43-A8E5-A68ACFA349D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{20F6A0E5-E2C0-4C43-A8E5-A68ACFA349D6}.Debug|x64.ActiveCfg = Debug|x64
-		{20F6A0E5-E2C0-4C43-A8E5-A68ACFA349D6}.Debug|x64.Build.0 = Debug|x64
-		{20F6A0E5-E2C0-4C43-A8E5-A68ACFA349D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{20F6A0E5-E2C0-4C43-A8E5-A68ACFA349D6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{20F6A0E5-E2C0-4C43-A8E5-A68ACFA349D6}.Release|x64.ActiveCfg = Release|x64
-		{20F6A0E5-E2C0-4C43-A8E5-A68ACFA349D6}.Release|x64.Build.0 = Release|x64
 		{8A775295-89EC-435B-89DE-3127F43BBD7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{8A775295-89EC-435B-89DE-3127F43BBD7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A775295-89EC-435B-89DE-3127F43BBD7B}.Debug|x64.ActiveCfg = Debug|Any CPU
@@ -41,6 +33,14 @@ Global
 		{6549EA6C-390E-4001-BAAD-ED598CDADD9E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6549EA6C-390E-4001-BAAD-ED598CDADD9E}.Release|x64.ActiveCfg = Release|Any CPU
 		{6549EA6C-390E-4001-BAAD-ED598CDADD9E}.Release|x64.Build.0 = Release|Any CPU
+		{2B3E8511-3A71-4026-BB48-BAA54E0C399D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B3E8511-3A71-4026-BB48-BAA54E0C399D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B3E8511-3A71-4026-BB48-BAA54E0C399D}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2B3E8511-3A71-4026-BB48-BAA54E0C399D}.Debug|x64.Build.0 = Debug|Any CPU
+		{2B3E8511-3A71-4026-BB48-BAA54E0C399D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B3E8511-3A71-4026-BB48-BAA54E0C399D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B3E8511-3A71-4026-BB48-BAA54E0C399D}.Release|x64.ActiveCfg = Release|Any CPU
+		{2B3E8511-3A71-4026-BB48-BAA54E0C399D}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
