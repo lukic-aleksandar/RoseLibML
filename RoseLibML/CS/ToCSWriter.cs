@@ -278,7 +278,7 @@ namespace RoseLibML
                 StreamWriter.Flush();
 
 
-                Console.Write(strWriter.ToString());
+                //Console.Write(strWriter.ToString());
             }
         }
 
@@ -295,8 +295,8 @@ namespace RoseLibML
                 StreamWriter.Write(fragment);
                 StreamWriter.Flush();
 
-                Console.Write(strWriter.ToString());
-                Console.Write(fragment);
+                //Console.Write(strWriter.ToString());
+                //Console.Write(fragment);
             }
         }
 

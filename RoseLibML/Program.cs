@@ -56,6 +56,7 @@ namespace RoseLib
                 var threshold = config.RunParams.Threshold;
                 var iteration = config.RunParams.StartIteration;
                 sampler.WriteFragments(threshold, iteration);
+                Console.WriteLine("Finished writing of fragments...");
             }
             
 
@@ -111,12 +112,11 @@ namespace RoseLib
                 else
                 {
                     var labeledTree = CSTreeCreator.Deserialize(files[index], modelInputDirectory, modelOutputDirectory);
-                    if (labeledTree != null) {
+                    if (labeledTree != null)
+                    {
                         labeledTrees[index] = labeledTree;
                     }
                 }
-               
-
             });
 
             return labeledTrees.Where(lt => lt != null).ToArray(); ;

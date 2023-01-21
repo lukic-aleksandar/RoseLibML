@@ -7,15 +7,15 @@
     
     "paths":{
         "inData": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\nopCommerce Cleansed\\60BaseAdminController",
-        "outModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\model2",
-        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\003idioms.txt"
+        "inModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\model",
+        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\004idioms.txt"
     },
 
     "runParams":{
-        "justWriteTheFragments": false,
-        "startIteration": 0,
+        "justWriteTheFragments": true,
+        "startIteration": 90,
         "burnIn": 55,
-        "totalIterations": 90,
+        "totalIterations": 91,
         "threshold": 3
     }
 }
