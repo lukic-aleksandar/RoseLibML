@@ -6,15 +6,15 @@
     },
     
     "paths":{
-        "inData": "C:\\Users\\nenad\\Desktop\\Nnd\\doktorske\\dev new\\dataset2\\studentski_projekti_training",
-        "outModel": "",
-        "outIdioms": "C:\\Users\\nenad\\Desktop\\Nnd\\doktorske\\dev new\\dataset2\\out2\\idioms9.txt"
+        "inData": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\nopCommerce Cleansed\\60BaseAdminController",
+        "outModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\model2",
+        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\003idioms.txt"
     },
 
     "runParams":{
         "startIteration": 0,
-        "burnIn": 65,
-        "totalIterations": 100,
+        "burnIn": 55,
+        "totalIterations": 90,
         "threshold": 3
     }
 }

@@ -20,7 +20,7 @@ namespace RoseLib
                 return;
             }
 
-            var saveModel = !string.IsNullOrEmpty(config.Paths.OutModel);
+            var saveModel = !string.IsNullOrEmpty(config.Paths?.OutModel);
 
             // Create Labeled Trees
             // Perform Needed transformations
