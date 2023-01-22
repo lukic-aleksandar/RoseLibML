@@ -184,6 +184,7 @@ namespace RoseLibML
 
             using (StringWriter strWriter = new StringWriter())
             {
+                var unknownMetaNamedMetaCount = 0;
                 foreach (var leaf in writableLeaves)
                 {
                     if(leaf.IsExistingRoslynNode && leaf.UseRoslynMatchToWrite)
@@ -197,15 +198,36 @@ namespace RoseLibML
                     else if (leaf.IsExistingRoslynNode)
                     {
                         var uShortSyntaxKind = ushort.Parse(leaf.STInfo);
-                        strWriter.Write((SyntaxKind)uShortSyntaxKind);
+                        strWriter.Write($" ${(SyntaxKind)uShortSyntaxKind} ");
+                    }
+                    else if (leaf.UseRoslynMatchToWrite)
+                    {
+                        if (leaf.STInfo.StartsWith("B_"))
+                        {
+                            var uShortSyntaxKindOfMeta = ushort.Parse(leaf.STInfo.Substring("B_".Length));
+                            strWriter.Write($" ${(SyntaxKind)uShortSyntaxKindOfMeta}");
+                        }
+                        else
+                        {
+                            strWriter.Write($" $meta{++unknownMetaNamedMetaCount}");
+                        }
                     }
                     else {
-                        strWriter.Write($" {leaf.ToString()} "); // TODO: Resiti, ne moze samo $ tu da se doda
+                        if(leaf.ToString() == "IdentifierToken")
+                        {
+                            strWriter.Write($"${leaf.ToString()} ");
+
+                        }
+                        else
+                        {
+                            strWriter.Write($"{leaf.ToString()} ");
+
+                        }
                     }
                     
                 }
 
-                AnnounceNewFragment(strWriter.ToString());
+                AnnounceNewFragment(roslynFragmentRoot, strWriter.ToString());
 
                 // in order to show in the extension
                 AddFragmentToDictionary(CurrentIteration, strWriter.ToString());
@@ -282,16 +304,18 @@ namespace RoseLibML
             }
         }
 
-        private void AnnounceNewFragment(string fragment)
+        private void AnnounceNewFragment(SyntaxNodeOrToken roslynFragmentRoot, string fragment)
         {
             using (StringWriter strWriter = new StringWriter())
             {
                 strWriter.WriteLine();
                 strWriter.WriteLine();
-                strWriter.WriteLine($"~~~ Fragment in iteration {CurrentIteration} ~~~");
+                strWriter.WriteLine($"~~~ Fragment (Root {roslynFragmentRoot.Kind()}) in iteration {CurrentIteration} ~~~");
                 strWriter.WriteLine();
 
+
                 StreamWriter.Write(strWriter.ToString());
+
                 StreamWriter.Write(fragment);
                 StreamWriter.Flush();
 
