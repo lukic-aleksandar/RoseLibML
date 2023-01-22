@@ -531,7 +531,7 @@ namespace RoseLibML
                 return (result, null);
             }
             
-                return (0, RisingFactorialBIOptimized((int) Math.Round(x), 0, ((int) Math.Round(n) - 1)));
+                return (0, RisingFactorialBIOptimized((uint) Math.Round(x), 1, (uint) Math.Round(n)));
         }
         
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -604,28 +604,40 @@ namespace RoseLibML
             return numerator / denominator;
         }
 
-        public static BigInteger RisingFactorialBIOptimized(int x, int startn, int endn)
+        // Using uint to denote that the function should not be used for negative integers
+        // As the use case does not require that, and it was not tested with negative values
+        // If start n = 0, then the result must be 1 per the definition
+        // If x = 0, then everything is zero, because x is the first element of the product
+        public static BigInteger RisingFactorialBIOptimized(uint x, uint startn, uint endn)
         {
+            if(x == 0)
+            {
+                return BigInteger.Zero;
+            }
+            if(startn == 0)
+            {
+                return BigInteger.One;
+            }
             if (startn >= endn)
             {
-                return new BigInteger(x + startn);
+                return new BigInteger(x + (startn - 1));
             }
 
             var leftstartn = startn;
             var rightendn = endn;
 
             var middlen = (startn + endn) / 2.0;
-            int leftendn;
-            int rightstartn;
+            uint leftendn;
+            uint rightstartn;
             if (middlen - (int)middlen == 0)
             {
-                leftendn = (int)middlen;
-                rightstartn = (int)middlen + 1;
+                leftendn = (uint)middlen;
+                rightstartn = (uint)middlen + 1;
             }
             else
             {
-                leftendn = (int)Math.Floor(middlen);
-                rightstartn = (int)Math.Ceiling(middlen);
+                leftendn = (uint)Math.Floor(middlen);
+                rightstartn = (uint)Math.Ceiling(middlen);
             }
 
             var leftResult = RisingFactorialBIOptimized(x, leftstartn, leftendn);

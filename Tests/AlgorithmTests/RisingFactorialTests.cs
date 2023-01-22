@@ -23,17 +23,43 @@ namespace Tests.AlgorithmTests
         {
             for(int i = 0; i < 1000; i++)
             {
-                var x = Randoms.WellBalanced.Next(10000);
-                var n = Randoms.WellBalanced.Next(10000);
+                var x = (uint) Randoms.WellBalanced.Next(10000);
+                var n = (uint)Randoms.WellBalanced.Next(10000);
                 var resultBasic = RisingFactorialBI(x, n);
-                var resultOptimized = TBSampler.RisingFactorialBIOptimized(x, 0, n-1);
+                var resultOptimized = TBSampler.RisingFactorialBIOptimized(x, 1, n);
 
                 Assert.AreEqual(resultBasic, resultOptimized);
             }
         }
 
-        public BigInteger RisingFactorialBI(int x, int n)
+        [Test]
+        public void TestDiffBasicVSOptimizedx0()
         {
+            uint x = 0;
+            uint n = 1;
+            var resultBasic = RisingFactorialBI(x, n);
+            var resultOptimized = TBSampler.RisingFactorialBIOptimized(x, 1, n);
+
+            Assert.AreEqual(resultBasic, resultOptimized);
+        }
+
+        [Test]
+        public void TestDiffBasicVSOptimizedn0()
+        {
+            uint x = 2;
+            uint n = 0;
+            var resultBasic = RisingFactorialBI(x, n);
+            var resultOptimized = TBSampler.RisingFactorialBIOptimized(x, n, n);
+
+            Assert.AreEqual(resultBasic, resultOptimized);
+        }
+
+        public BigInteger RisingFactorialBI(uint x, uint n)
+        {
+            if(n == 0)
+            {
+                return 1;
+            }
             BigInteger result = new BigInteger(1);
             for (int k = 0; k < n; k++)
             {
