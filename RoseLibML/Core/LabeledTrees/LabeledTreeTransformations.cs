@@ -45,7 +45,7 @@ namespace RoseLibML
 
         public static void Binarize(LabeledNode parent, NodeCreator nodeCreator)
         {
-            if(parent.Children.Count > 2)
+            if(parent.Children.Count > 2) // Zašto gledam broj svih, a ne samo "neterminala"?
             {
                 var groups = FindSuccessiveNonLeavesGroups(parent.Children);
                 groups.Reverse();

@@ -151,7 +151,7 @@ namespace RoseLibLS.LanguageServer
             pCFGComposer.CalculateProbabilities();
             pCFGComposer.Serialize($"{arguments.OutputFolder}\\pcfg_{DateTime.Now.ToString("yyyyMMddHHmmss")}.bin");
 
-            return pCFGComposer.GetRulesProbabilities();
+            return null;//pCFGComposer.GetRulesProbabilities();
         }
 
         private LabeledTree[] CreateLabeledTrees(string sourceDirectory, string outputDirectory)

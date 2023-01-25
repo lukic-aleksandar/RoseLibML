@@ -6,6 +6,7 @@ using System.Text;
 using System.Numerics;
 using MersenneTwister;
 using RoseLibML;
+using RoseLibML.Core;
 
 namespace Tests.AlgorithmTests
 {
@@ -16,70 +17,43 @@ namespace Tests.AlgorithmTests
             return SpecialFunctions.Gamma(x + n) / SpecialFunctions.Gamma(x);
         }
 
-
-
         [Test]
-        public void TestDiffBasicVSOptimized()
+        public void TestDiffGammaLnVSBasic()
         {
-            for(int i = 0; i < 1000; i++)
+            for (int i = 0; i < 40; i++)
             {
-                var x = (uint) Randoms.WellBalanced.Next(10000);
-                var n = (uint)Randoms.WellBalanced.Next(10000);
-                var resultBasic = RisingFactorialBI(x, n);
-                var resultOptimized = TBSampler.RisingFactorialBIOptimized(x, 1, n);
+                var x = Randoms.WellBalanced.NextDouble() * 10;
+                var n = Randoms.WellBalanced.NextDouble() * 10;
 
-                Assert.AreEqual(resultBasic, resultOptimized);
+                var resultBasic = RisingFactorialReal(x, n);
+                var resultLn = MathFunctions.RisingFactorial(x, n);
+
+                var roundedBasic = Math.Round(resultBasic);
+                var roundedLn = Math.Round(resultLn);
+                Assert.AreEqual(roundedBasic, roundedLn);
             }
         }
 
+
+
         [Test]
-        public void TestDiffBasicVSOptimizedx0()
+        public void TestRisingFactorialOf0()
         {
             uint x = 0;
             uint n = 1;
-            var resultBasic = RisingFactorialBI(x, n);
-            var resultOptimized = TBSampler.RisingFactorialBIOptimized(x, 1, n);
+            var result = MathFunctions.RisingFactorial(x, n);
 
-            Assert.AreEqual(resultBasic, resultOptimized);
+            Assert.AreEqual(0, result);
         }
 
         [Test]
-        public void TestDiffBasicVSOptimizedn0()
+        public void TestRisingFactorialRaisedBy0()
         {
-            uint x = 2;
+            uint x = 1;
             uint n = 0;
-            var resultBasic = RisingFactorialBI(x, n);
-            var resultOptimized = TBSampler.RisingFactorialBIOptimized(x, n, n);
+            var result = MathFunctions.RisingFactorial(x, n);
 
-            Assert.AreEqual(resultBasic, resultOptimized);
+            Assert.AreEqual(1, result);
         }
-
-        public BigInteger RisingFactorialBI(uint x, uint n)
-        {
-            if(n == 0)
-            {
-                return 1;
-            }
-            BigInteger result = new BigInteger(1);
-            for (int k = 0; k < n; k++)
-            {
-                result = result * new BigInteger(x + k);
-            }
-
-            return result;
-        }
-
-        [Test]
-        public void TestMaxGamma()
-        {
-            var parameter = 1;
-            while(SpecialFunctions.Gamma(parameter) < Math.Pow(2,53))
-            {
-                parameter++;
-            }
-
-            Assert.Pass();
-        }
-        
     }
 }

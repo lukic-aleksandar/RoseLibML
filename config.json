@@ -1,21 +1,21 @@
 {
     "modelParams": {
-        "alpha": 5,
+        "alpha": 1,
         "cutProbability": 0.9,
-        "p": 0.0085
+        "p": 0.1
     },
     
     "paths":{
         "inData": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\nopCommerce Cleansed\\60BaseAdminController",
-        "inModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\model",
-        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\005idioms.txt"
+        "outModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\model",
+        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\001idioms.txt"
     },
 
     "runParams":{
-        "justWriteTheFragments": true,
-        "startIteration": 90,
+        "justWriteTheFragments": false,
+        "startIteration": 0,
         "burnIn": 55,
-        "totalIterations": 91,
+        "totalIterations": 90,
         "threshold": 3
     }
 }
