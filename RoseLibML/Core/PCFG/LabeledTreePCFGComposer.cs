@@ -36,7 +36,7 @@ namespace RoseLibML
 
         public void CalculateProbabilities()
         {
-            CountNodesInTrees(Trees);
+            CountRulesInTrees(Trees);
 
             foreach (var lhs in Rules.Keys)
             {
@@ -54,15 +54,15 @@ namespace RoseLibML
             }
         }
      
-        private void CountNodesInTrees(List<LabeledTree> trees)
+        private void CountRulesInTrees(List<LabeledTree> trees)
         {
             foreach (var tree in trees)
             {
-                CountNodeAndChildren(tree.Root);
+                CountRulesForNodeAndItsDescendants(tree.Root);
             }
         }
 
-        private void CountNodeAndChildren(LabeledNode parent)
+        private void CountRulesForNodeAndItsDescendants(LabeledNode parent)
         {
             var kind = parent.STInfo;
             var children = parent.Children;
@@ -83,7 +83,7 @@ namespace RoseLibML
 
             foreach (var child in children)
             {
-                CountNodeAndChildren(child);
+                CountRulesForNodeAndItsDescendants(child);
             }
         }
 
