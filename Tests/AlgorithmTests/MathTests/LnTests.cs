@@ -8,7 +8,7 @@ using MersenneTwister;
 using RoseLibML;
 using RoseLibML.Core;
 
-namespace Tests.AlgorithmTests
+namespace Tests.AlgorithmTests.MathTests
 {
     class LnPrecisionTests
     {
@@ -61,8 +61,8 @@ namespace Tests.AlgorithmTests
                 var y = Randoms.WellBalanced.NextDouble() * 1000;
                 var z = Randoms.WellBalanced.NextDouble() * 1000;
 
-                var resultBasic = (v * w * x) / (y * z);
-                var resultUsingLn = Math.Exp((Math.Log(v) + Math.Log(w) + Math.Log(x)) - (Math.Log(y) + Math.Log(z)));
+                var resultBasic = v * w * x / (y * z);
+                var resultUsingLn = Math.Exp(Math.Log(v) + Math.Log(w) + Math.Log(x) - (Math.Log(y) + Math.Log(z)));
 
                 var roundedBasic = Math.Round(resultBasic, 4);
                 var roundedUsingLn = Math.Round(resultUsingLn, 4);

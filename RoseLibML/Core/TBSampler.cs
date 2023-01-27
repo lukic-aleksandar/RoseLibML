@@ -51,7 +51,7 @@ namespace RoseLibML
                 {
                     Fragmentation(item.tree.Root);
                 }
-                AddToBookKeeper(BookKeeper, item.tree);
+                BookKeeper.RecordTreeData(item.tree);
 
                 if(item.index % 100 == 0)
                 {
@@ -69,34 +69,6 @@ namespace RoseLibML
             foreach (var child in node.Children)
             {
                 Fragmentation(child);
-            }
-        }
-
-
-        private void AddToBookKeeper(BookKeeper bookKeeper, LabeledTree labeledTree)
-        {
-            foreach (var child in labeledTree.Root.Children) // Skips the root
-            {
-                AddToBookKeeper(bookKeeper, child);
-            }
-        }
-
-        public void AddToBookKeeper(BookKeeper bookKeeper, LabeledNode node)
-        {
-            if (node.IsFragmentRoot)
-            {
-                bookKeeper.IncrementRootCount(node.STInfo);
-                bookKeeper.IncrementFragmentCount(LabeledNodeType.CalculateFragmentHash(node.GetFragmentString()));
-            }
-
-            if (node.CanHaveType)
-            {
-                bookKeeper.AddNodeType(LabeledNode.GetType(node), node);
-            }
-
-            foreach (var child in node.Children)
-            {
-                AddToBookKeeper(bookKeeper, child);
             }
         }
         
@@ -244,7 +216,7 @@ namespace RoseLibML
 
         #region Conflict checking and type block creation
 
-        private List<LabeledNode> CreateTypeBlockAndAdjustCounts(List<LabeledNode> nodes, short iteration)
+        public List<LabeledNode> CreateTypeBlockAndAdjustCounts(List<LabeledNode> nodes, short iteration)
         {
             var typeBlock = new List<LabeledNode>();
             nodes.Shuffle();
@@ -265,7 +237,10 @@ namespace RoseLibML
                         BookKeeper.DecrementRootCount(node.STInfo);
 
                         var part1Root = node.Parent.FindFragmentRoot();
-                        BookKeeper.DecrementRootCount(part1Root.STInfo);
+                        if(part1Root.Parent != null) // Not possible for complete trees, but still, for test purposes.
+                        {
+                            BookKeeper.DecrementRootCount(part1Root.STInfo);
+                        }
                     }
                     // If it is not a root, that means only the current full fragment
                     // needs to be "deducted"
@@ -274,7 +249,10 @@ namespace RoseLibML
                         BookKeeper.DecrementFragmentCount(node.Type.FullFragment);
 
                         var part1Root = node.Parent.FindFragmentRoot();
-                        BookKeeper.DecrementRootCount(part1Root.STInfo);
+                        if (part1Root.Parent != null)
+                        {
+                            BookKeeper.DecrementRootCount(part1Root.STInfo);
+                        }
                     }
 
                     typeBlock.Add(node);
@@ -295,23 +273,6 @@ namespace RoseLibML
             }
 
             return false;
-        }
-
-        private void SetLastModified(short iteration, LabeledNode pivot, LabeledNode node)
-        {
-            node.LastModified = (typeCode: pivot.Type.GetTypeHash(), iteration);
-
-            foreach (var child in node.Children)
-            {
-                if (child.IsFragmentRoot && child != pivot)
-                {
-                    child.LastModified = (typeCode: pivot.Type.GetTypeHash(), iteration);
-                }
-                else
-                {
-                    SetLastModified(iteration, pivot, child);
-                }
-            }
         }
 
         private bool IsNotConflicting(short iteration, LabeledNode pivot, LabeledNode node)
@@ -343,6 +304,24 @@ namespace RoseLibML
             }
 
             return true;
+        }
+
+
+        private void SetLastModified(short iteration, LabeledNode pivot, LabeledNode node)
+        {
+            node.LastModified = (typeCode: pivot.Type.GetTypeHash(), iteration);
+
+            foreach (var child in node.Children)
+            {
+                if (child.IsFragmentRoot && child != pivot)
+                {
+                    child.LastModified = (typeCode: pivot.Type.GetTypeHash(), iteration);
+                }
+                else
+                {
+                    SetLastModified(iteration, pivot, child);
+                }
+            }
         }
 
         #endregion

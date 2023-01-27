@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoseLibML.Core.LabeledTrees;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -129,48 +130,31 @@ namespace RoseLibML
             }
         }
 
-        /*
-
-        public void Merge(BookKeeper bookKeeper)
+        public void RecordTreeData(LabeledTree labeledTree)
         {
-            MergeCountDictionaries(FragmentCounts, bookKeeper.FragmentCounts);
-            MergeCountDictionaries(RootCounts, bookKeeper.RootCounts);
-            MergeTypeNodes(bookKeeper.TypeNodes);
-        }
-
-        private void MergeCountDictionaries(Dictionary<string, int> first, Dictionary<string, int> second)
-        {
-            foreach (var keyValuePair in second)
+            foreach (var child in labeledTree.Root.Children) // Skips the root
             {
-                if (!first.ContainsKey(keyValuePair.Key))
-                {
-                    first.Add(keyValuePair.Key, 0);
-                }
-
-                first[keyValuePair.Key] += keyValuePair.Value;
+                RecordRootsFragmentsTypes(child);
             }
         }
 
-        private void MergeTypeNodes(Dictionary<LabeledNodeType, List<LabeledNode>> second)
+        private void RecordRootsFragmentsTypes(LabeledNode node)
         {
-            foreach (var keyValuePair in second)
+            if (node.IsFragmentRoot)
             {
-                if (!TypeNodes.ContainsKey(keyValuePair.Key))
-                {
-                    TypeNodes.Add(keyValuePair.Key, new List<LabeledNode>());
-                }
+                IncrementRootCount(node.STInfo);
+                IncrementFragmentCount(LabeledNodeType.CalculateFragmentHash(node.GetFragmentString()));
+            }
 
-                var existingType = TypeNodes.Keys.Where(k => k.Equals(keyValuePair.Key)).FirstOrDefault();
+            if (node.CanHaveType)
+            {
+                AddNodeType(LabeledNode.GetType(node), node);
+            }
 
-                foreach (var node in keyValuePair.Value)
-                {
-                    node.Type = existingType;
-                }
-
-                TypeNodes[keyValuePair.Key].AddRange(keyValuePair.Value);
+            foreach (var child in node.Children)
+            {
+                RecordRootsFragmentsTypes(child);
             }
         }
-
-        */
     }
 }

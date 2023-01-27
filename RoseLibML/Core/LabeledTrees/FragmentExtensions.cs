@@ -9,6 +9,8 @@ namespace RoseLibML.Core.LabeledTrees
 {
     public static class FragmentExtensions
     {
+        // Finds fragment root, which could include passed labeled node.
+        // So, the root is note necessarily "above" the passed node
         public static LabeledNode FindFragmentRoot(this LabeledNode labeledNode)
         {
             var fragmentRoot = labeledNode;

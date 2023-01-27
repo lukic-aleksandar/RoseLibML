@@ -8,7 +8,7 @@ using MersenneTwister;
 using RoseLibML;
 using RoseLibML.Core;
 
-namespace Tests.AlgorithmTests
+namespace Tests.AlgorithmTests.MathTests
 {
     class CombinationsTests
     {
@@ -21,13 +21,13 @@ namespace Tests.AlgorithmTests
             // Working with big numbers means we approximate division
             // The difference should be really small
             Assert.LessOrEqual(Math.Abs(resultBasic - resultOptimized), 0.1);
-        } 
+        }
 
         public double BasicCombinationsWithoutRepetition(int n, int k)
         {
             var numerator = SpecialFunctions.Factorial(n);
-            var denominator = (SpecialFunctions.Factorial(n - k) * SpecialFunctions.Factorial(k));
-            return numerator / (double) denominator;
+            var denominator = SpecialFunctions.Factorial(n - k) * SpecialFunctions.Factorial(k);
+            return numerator / (double)denominator;
         }
     }
 }
