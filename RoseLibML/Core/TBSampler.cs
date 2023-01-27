@@ -139,80 +139,7 @@ namespace RoseLibML
             var ones = SampleOnes(typeBlockCardinality, m);
             TraverseSites(typeBlock, ones);
         }
-
-
-        ulong didNotUpdate = 0;
-        ulong updated = 0;
-        bool isRedundantUpdate = false;
-        private void TraverseSites(List<LabeledNode> typeBlock, List<int> ones)
-        {
-            isRedundantUpdate = false;
-
-            didNotUpdate = 0;
-            updated = 0;
-
-            LabeledNode cutPart1Root = null;
-            LabeledNode noncutFullFragmentRoot = null;
-
-            for (int j = typeBlock.Count - 1; j >= 0; j--)
-            {
-                var node = typeBlock[j];
-                var wasFragmentRoot = node.IsFragmentRoot;
-                node.IsFragmentRoot = ones[j] == 1;
-
-                if (wasFragmentRoot == node.IsFragmentRoot)
-                {
-                    didNotUpdate++;
-                    isRedundantUpdate = true;
-                }
-                else
-                {
-                    updated++;    
-                }
-
-                var fullFragmentRoot = node.FindFullFragmentRoot();
-                if (node.IsFragmentRoot)
-                {
-                    if (cutPart1Root != null)
-                    {
-                        OptimizedTypeUpdate(cutPart1Root, fullFragmentRoot, node);
-                    }
-                    else
-                    {
-                        UpdateTypes(fullFragmentRoot, node);
-                        cutPart1Root = fullFragmentRoot;
-                    }
-                }
-                else
-                {  
-                    if(noncutFullFragmentRoot != null)
-                    {
-                        OptimizedTypeUpdate(noncutFullFragmentRoot, fullFragmentRoot, node);
-                    }
-                    else
-                    {
-                        UpdateTypes(fullFragmentRoot, node);
-                        noncutFullFragmentRoot = fullFragmentRoot;
-                    }
-                }
-
-                
-
-                if (ones[j] == 1)
-                {
-                    BookKeeper.IncrementFragmentCount(node.Type.Part1Fragment);
-                    BookKeeper.IncrementFragmentCount(node.Type.Part2Fragment);
-                    BookKeeper.IncrementRootCount(node.STInfo);
-                    BookKeeper.IncrementRootCount(node.Parent.FindFragmentRoot().STInfo);
-                }
-                else
-                {
-                    BookKeeper.IncrementFragmentCount(node.Type.FullFragment);
-                    BookKeeper.IncrementRootCount(node.Parent.FindFragmentRoot().STInfo);
-                }
-            }
-            //Console.WriteLine($"Shouldn't have: {didNotUpdate} - Should have: {updated} ");
-        }
+        
 
         #region Conflict checking and type block creation
 
@@ -237,7 +164,7 @@ namespace RoseLibML
                         BookKeeper.DecrementRootCount(node.STInfo);
 
                         var part1Root = node.Parent.FindFragmentRoot();
-                        if(part1Root.Parent != null) // Not possible for complete trees, but still, for test purposes.
+                        if(part1Root.Parent != null) // Tree roots not recorded as fragment roots. The clause not possible for complete trees, but still, for test purposes.
                         {
                             BookKeeper.DecrementRootCount(part1Root.STInfo);
                         }
@@ -249,7 +176,7 @@ namespace RoseLibML
                         BookKeeper.DecrementFragmentCount(node.Type.FullFragment);
 
                         var part1Root = node.Parent.FindFragmentRoot();
-                        if (part1Root.Parent != null)
+                        if (part1Root.Parent != null) // Tree roots not recorded as fragment roots. The clause not possible for complete trees, but still, for test purposes.
                         {
                             BookKeeper.DecrementRootCount(part1Root.STInfo);
                         }
@@ -326,151 +253,7 @@ namespace RoseLibML
 
         #endregion
 
-        #region Type update
-        void UpdateTypes(LabeledNode node, LabeledNode pivot)
-        {
-            TryUpdateType(node);
-
-            foreach (var child in node.Children)
-            {
-                if (child.IsFragmentRoot && child != pivot)
-                {
-                    TryUpdateType(child);
-                }
-                else
-                {
-                    UpdateTypes(child, pivot);
-                }
-            }
-        }
-
-        private bool TryUpdateType(LabeledNode node)
-        {
-            if (node.CanHaveType)
-            {
-                var oldType = node.Type;
-                node.Type = LabeledNode.GetType(node);
-
-                if(oldType!= null && !oldType.GetTypeHash().Equals(node.Type.GetTypeHash()) && isRedundantUpdate)
-                {
-                    //throw new Exception("Did not want to update, but it was necessary!");
-                }
-
-                if (oldType != null && BookKeeper.TypeNodes.ContainsKey(oldType))
-                {
-                    BookKeeper.RemoveNodeType(oldType, node); 
-                    BookKeeper.AddNodeType(node.Type, node);
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        private void OptimizedTypeUpdate(LabeledNode from, LabeledNode to, LabeledNode pivot)
-        {
-
-            if(from.STInfo != to.STInfo || from.Children.Count != to.Children.Count)
-            {
-                throw new Exception("Trying to copy, but two nodes are not identical.");
-            }
-
-            // If it's not a pivot, and can have a type
-            // it should get a new type
-            if(to != pivot && to.CanHaveType)
-            {
-                // If it's a root (being a root of the current fragment, or a leaf)
-                // Update it by calculating the new type (because it can't be copied from existing)
-                if (to.IsFragmentRoot)
-                {
-                    TryUpdateType(to);
-                }
-                // If it's not a root, then it's inside of the current fragment, and
-                // the type of corresponding can be copied
-                else
-                {
-                    TryCopyType(from, to);
-                }
-            }
-
-            for (int i = 0; i < to.Children.Count; i++)
-            {
-                var toChild = to.Children[i];
-                var fromChild = from.Children[i];
-
-                // If a child can have type, the update process should continue
-                if(toChild.CanHaveType)
-                {
-                    // If a child is fragment root (but not a pivot, because the pivot should be skipped),
-                    // Update it by calculating the new type (because it can't be copied from existing)
-                    if (toChild.IsFragmentRoot && toChild != pivot)
-                    {
-                        TryUpdateType(toChild);
-                    }
-                    // Else, recursion
-                    else
-                    {
-                        OptimizedTypeUpdate(fromChild, toChild, pivot);
-                    }
-                }
-            }
-        }
-
-        private bool TryCopyType(LabeledNode from, LabeledNode to)
-        {
-            if (to.CanHaveType)
-            {
-                var oldType = to.Type;
-                to.Type = from.Type;
-
-                if (oldType != null && BookKeeper.TypeNodes.ContainsKey(oldType))
-                {
-                    BookKeeper.RemoveNodeType(oldType, to);
-                    BookKeeper.AddNodeType(to.Type, to);
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        #endregion
-
-        public int SampleM(List<double> list)
-        {
-            var randomNumber = Randoms.WellBalanced.NextDouble();
-
-            var sum = 0.0;
-            for (int i = 0; i < list.Count; i++)
-            {
-                sum += list[i];
-
-                if (sum >= randomNumber)
-                {
-                    return i;
-                }
-            }
-
-            return 0;
-        }
-
-        public List<int> SampleOnes(int numberOfElements, int numberOfOnes)
-        {
-            var array = new int[numberOfElements];
-
-            for (int i = 0; i < numberOfOnes; i++)
-            {
-                array[i] = 1;
-            }
-
-            var list = array.ToList();
-            list.Shuffle();
-
-            return list;
-        }
-
+        #region Calculation and cut decision
         private List<double> CalculateTypeBlockMProbabilities(LabeledNodeType type, int typeCardinality)
         {
             var results = new List<double>(new double[typeCardinality]);
@@ -544,8 +327,228 @@ namespace RoseLibML
             }
 
             var resultLn = ffp1p2NumeratorLn - ffp1p2DenominatorLn;
-            return Math.Exp(resultLn); 
+            return Math.Exp(resultLn);
         }
+
+        public int SampleM(List<double> list)
+        {
+            var randomNumber = Randoms.WellBalanced.NextDouble();
+
+            var sum = 0.0;
+            for (int i = 0; i < list.Count; i++)
+            {
+                sum += list[i];
+
+                if (sum >= randomNumber)
+                {
+                    return i;
+                }
+            }
+
+            return 0;
+        }
+
+        public List<int> SampleOnes(int numberOfElements, int numberOfOnes)
+        {
+            var array = new int[numberOfElements];
+
+            for (int i = 0; i < numberOfOnes; i++)
+            {
+                array[i] = 1;
+            }
+
+            var list = array.ToList();
+            list.Shuffle();
+
+            return list;
+        }
+
+        #endregion
+
+        #region Site update - a possible update of IsFragment root and fragment types
+
+        ulong didNotUpdate = 0;
+        ulong updated = 0;
+        bool isRedundantUpdate = false;
+        private void TraverseSites(List<LabeledNode> typeBlock, List<int> ones)
+        {
+            isRedundantUpdate = false;
+
+            didNotUpdate = 0;
+            updated = 0;
+
+            LabeledNode cutPart1Root = null;
+            LabeledNode noncutFullFragmentRoot = null;
+
+            for (int j = typeBlock.Count - 1; j >= 0; j--)
+            {
+                var node = typeBlock[j];
+                var wasFragmentRoot = node.IsFragmentRoot;
+                node.IsFragmentRoot = ones[j] == 1;
+
+                if (wasFragmentRoot == node.IsFragmentRoot)
+                {
+                    didNotUpdate++;
+                    isRedundantUpdate = true;
+                }
+                else
+                {
+                    updated++;
+                }
+
+                var fullFragmentRoot = node.FindFullFragmentRoot();
+                if (node.IsFragmentRoot)
+                {
+                    if (cutPart1Root != null)
+                    {
+                        OptimizedTypeUpdate(cutPart1Root, fullFragmentRoot, node);
+                    }
+                    else
+                    {
+                        UpdateTypes(fullFragmentRoot, node);
+                        cutPart1Root = fullFragmentRoot;
+                    }
+                }
+                else
+                {
+                    if (noncutFullFragmentRoot != null)
+                    {
+                        OptimizedTypeUpdate(noncutFullFragmentRoot, fullFragmentRoot, node);
+                    }
+                    else
+                    {
+                        UpdateTypes(fullFragmentRoot, node);
+                        noncutFullFragmentRoot = fullFragmentRoot;
+                    }
+                }
+
+
+
+                if (ones[j] == 1)
+                {
+                    BookKeeper.IncrementFragmentCount(node.Type.Part1Fragment);
+                    BookKeeper.IncrementFragmentCount(node.Type.Part2Fragment);
+                    BookKeeper.IncrementRootCount(node.STInfo);
+                    BookKeeper.IncrementRootCount(node.Parent.FindFragmentRoot().STInfo);
+                }
+                else
+                {
+                    BookKeeper.IncrementFragmentCount(node.Type.FullFragment);
+                    BookKeeper.IncrementRootCount(node.Parent.FindFragmentRoot().STInfo);
+                }
+            }
+            //Console.WriteLine($"Shouldn't have: {didNotUpdate} - Should have: {updated} ");
+        }
+        void UpdateTypes(LabeledNode node, LabeledNode pivot)
+        {
+            TryUpdateType(node);
+
+            foreach (var child in node.Children)
+            {
+                if (child.IsFragmentRoot && child != pivot)
+                {
+                    TryUpdateType(child);
+                }
+                else
+                {
+                    UpdateTypes(child, pivot);
+                }
+            }
+        }
+
+        private bool TryUpdateType(LabeledNode node)
+        {
+            if (node.CanHaveType)
+            {
+                var oldType = node.Type;
+                node.Type = LabeledNode.GetType(node);
+
+                if (oldType != null && !oldType.GetTypeHash().Equals(node.Type.GetTypeHash()) && isRedundantUpdate)
+                {
+                    //throw new Exception("Did not want to update, but it was necessary!");
+                }
+
+                if (oldType != null && BookKeeper.TypeNodes.ContainsKey(oldType))
+                {
+                    BookKeeper.RemoveNodeType(oldType, node);
+                    BookKeeper.AddNodeType(node.Type, node);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private void OptimizedTypeUpdate(LabeledNode from, LabeledNode to, LabeledNode pivot)
+        {
+
+            if (from.STInfo != to.STInfo || from.Children.Count != to.Children.Count)
+            {
+                throw new Exception("Trying to copy, but two nodes are not identical.");
+            }
+
+            // If it's not a pivot, and can have a type
+            // it should get a new type
+            if (to != pivot && to.CanHaveType)
+            {
+                // If it's a root (being a root of the current fragment, or a leaf)
+                // Update it by calculating the new type (because it can't be copied from existing)
+                if (to.IsFragmentRoot)
+                {
+                    TryUpdateType(to);
+                }
+                // If it's not a root, then it's inside of the current fragment, and
+                // the type of corresponding can be copied
+                else
+                {
+                    TryCopyType(from, to);
+                }
+            }
+
+            for (int i = 0; i < to.Children.Count; i++)
+            {
+                var toChild = to.Children[i];
+                var fromChild = from.Children[i];
+
+                // If a child can have type, the update process should continue
+                if (toChild.CanHaveType)
+                {
+                    // If a child is fragment root (but not a pivot, because the pivot should be skipped),
+                    // Update it by calculating the new type (because it can't be copied from existing)
+                    if (toChild.IsFragmentRoot && toChild != pivot)
+                    {
+                        TryUpdateType(toChild);
+                    }
+                    // Else, recursion
+                    else
+                    {
+                        OptimizedTypeUpdate(fromChild, toChild, pivot);
+                    }
+                }
+            }
+        }
+
+        private bool TryCopyType(LabeledNode from, LabeledNode to)
+        {
+            if (to.CanHaveType)
+            {
+                var oldType = to.Type;
+                to.Type = from.Type;
+
+                if (oldType != null && BookKeeper.TypeNodes.ContainsKey(oldType))
+                {
+                    BookKeeper.RemoveNodeType(oldType, to);
+                    BookKeeper.AddNodeType(to.Type, to);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        #endregion
 
         private static List<double> NormalizeResults(int typeCardinality, List<double> results)
         {
