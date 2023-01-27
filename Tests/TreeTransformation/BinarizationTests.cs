@@ -1,4 +1,7 @@
-﻿using NUnit.Framework;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis;
+using NUnit.Framework;
 using RoseLibML;
 using RoseLibML.Core.LabeledTrees;
 using RoseLibML.CS.CSTrees;
@@ -348,6 +351,36 @@ namespace Tests.TreeTransformation
 
         }
 
+        /// <summary>
+        /// This is the output of the binarization, explained
+        /// (8875 - Method
+        ///     (8343) - 'public' (a token, attached to the method)
+        ///     (8347) - 'static' (a token, attached to the method)
+        ///     (8621 (8304)  ) - (PredefinedType (bool)), a first child of the method
+        ///     (B_8875 - a binarization node
+        ///         (IdentifierToken (DidSucceed)  ) - a name of the method, first child of the binarization node
+        ///         (B_8875 - a binarization node 
+        ///             (8906 - ParametersList -  a first child of the binarization node
+        ///                 (8200) - '(', a token attached to the method
+        ///                 (8908 (8616 (IdentifierToken (int)  )  ) (IdentifierToken (repeatTimes)  )  ) - a first successive child of ParametersList
+        ///                 (8216) - ',', a token attached to the method
+        ///                 (8908 (8616 (IdentifierToken (BigInteger)  )  ) (IdentifierToken (previousResult)  )  ) - a second, but first successive child of ParametersList
+        ///                 (8201)  ) - ')', a token attached to the method
+        ///             (8792 - Block, the method's body
+        ///                 (8205) - '{', a token attached to the body
+        ///                 (8206)  )  )  )  )  - '}',a token attached to the body
+        /// </summary>
+        [Test]
+        public void TestCSMethodBinarization()
+        {
+            var method = CreateMethod();
+            CSNode csNode = CSNodeCreator.CreateNode(method);
+
+            LabeledTreeTransformations.Binarize(csNode, new CSNodeCreator());
+            
+            Assert.AreEqual(csNode.GetFragmentString(), "(8875 (8343) (8347) (8621 (8304)  ) (B_8875 (IdentifierToken (DidSucceed)  ) (B_8875 (8906 (8200) (8908 (8616 (IdentifierToken (int)  )  ) (IdentifierToken (repeatTimes)  )  ) (8216) (8908 (8616 (IdentifierToken (BigInteger)  )  ) (IdentifierToken (previousResult)  )  ) (8201)  ) (8792 (8205) (8206)  )  )  )  ) ");
+        }
+
         public bool CheckIfRelationshipsAreOK(LabeledNode node)
         {
             foreach (var child in node.Children)
@@ -362,6 +395,62 @@ namespace Tests.TreeTransformation
                 }
             }
             return true;
+        }
+
+        /// <summary>
+        /// Produces a method looking like this:
+        /// public static bool DidSucceed(int repeatTimes, BigInteger previousResult)
+        ///{
+        ///}
+        ///
+        /// Treebank representation:
+        /// (8875 
+        ///     (8343) 
+        ///     (8347) 
+        ///     (8621 (8304)  ) 
+        ///     (IdentifierToken (DidSucceed)  ) 
+        ///     (8906 (8200) 
+        ///           (8908 (8616 (IdentifierToken (int)  )  ) (IdentifierToken (repeatTimes)  )  ) 
+        ///           (8216) 
+        ///           (8908 (8616 (IdentifierToken (BigInteger)  )  ) (IdentifierToken (previousResult)  )  ) 
+        ///           (8201)  ) 
+        ///     (8792 (8205) (8206)  )  )
+        /// </summary>
+        /// <returns>Method syntax node</returns>
+        public SyntaxNode CreateMethod()
+        {
+            SyntaxTokenList modifiers = new SyntaxTokenList();
+
+            modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
+            modifiers = modifiers.Add(SyntaxFactory.Token(SyntaxKind.StaticKeyword));
+
+            TypeSyntax returnType = SyntaxFactory.ParseTypeName("bool");
+            var method = SyntaxFactory.MethodDeclaration(returnType, "DidSucceed");
+            method = method.WithModifiers(modifiers);
+
+
+            var @params = SyntaxFactory.ParameterList();
+            
+            var paramType1 = SyntaxFactory.IdentifierName("int");
+            var paramName1 = SyntaxFactory.Identifier("repeatTimes");
+            var paramSyntax1 = SyntaxFactory
+                .Parameter(new SyntaxList<AttributeListSyntax>(), SyntaxFactory.TokenList(), paramType1, paramName1, null);
+            @params = @params.AddParameters(paramSyntax1);
+
+            var paramType2 = SyntaxFactory.IdentifierName("BigInteger");
+            var paramName2 = SyntaxFactory.Identifier("previousResult");
+            var paramSyntax2 = SyntaxFactory
+                .Parameter(new SyntaxList<AttributeListSyntax>(), SyntaxFactory.TokenList(), paramType2, paramName2, null);
+            @params = @params.AddParameters(paramSyntax2);
+
+            @params = @params.NormalizeWhitespace();
+            method = method.WithParameterList(@params);
+
+            method = method.WithBody(SyntaxFactory.Block());
+            method = method.NormalizeWhitespace();
+
+            //var methodAsAString = method.ToFullString();
+            return method;
         }
     }
 }
