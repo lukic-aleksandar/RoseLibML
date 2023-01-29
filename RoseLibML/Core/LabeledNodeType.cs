@@ -9,30 +9,30 @@ using System.Threading.Tasks;
 
 namespace RoseLibML
 {
-    public class LabeledNodeType
+    public class LabeledNodeType : IEquatable<LabeledNodeType>
     {
         private static MD5 md5Hasher = MD5.Create();
         
         private int fullFragmentLength = 0;
-        private string fullFragmentR = null;
+        private string fullFragmentHash = null;
         public string FullFragment { 
-            get { return fullFragmentR; } 
+            get { return fullFragmentHash; } 
             set
             {
                 fullFragmentLength = value.Length;
-                fullFragmentR = CalculateFragmentHash(value);
+                fullFragmentHash = CalculateFragmentHash(value);
             }
         }
 
         private int part1FragmentLength = 0;
-        private string part1FragmentR = null;
+        private string part1FragmentHash = null;
         public string Part1Fragment 
         {
-            get { return part1FragmentR; }
+            get { return part1FragmentHash; }
             set
             {
                 part1FragmentLength = value.Length;
-                part1FragmentR = CalculateFragmentHash(value);
+                part1FragmentHash = CalculateFragmentHash(value);
             }
         }
         
@@ -76,6 +76,47 @@ namespace RoseLibML
             var hash = GetMD5HashAsString(fragment);
 
             return $"{hash}|{fragmentLength}|{initialSubstring}";
+        }
+
+        public bool Equals(LabeledNodeType? other)
+        {
+            if(other == null)
+            {
+                return false;
+            }
+            
+            if (GetTypeHash().Equals(other.GetTypeHash()))
+            {
+                return true;
+            }
+            
+            return false;
+        }
+
+        public override bool Equals(object? other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+            
+            var objectAsLNT = other as LabeledNodeType;
+            if(objectAsLNT == null)
+            {
+                return false;
+            }
+
+            if (GetTypeHash().Equals(objectAsLNT.GetTypeHash()))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return (fullFragmentHash, part1FragmentHash, part2FragmentHash).GetHashCode();
         }
     }
 }

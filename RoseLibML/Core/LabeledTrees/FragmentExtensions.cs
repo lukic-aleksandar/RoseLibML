@@ -42,6 +42,94 @@ namespace RoseLibML.Core.LabeledTrees
             }
         }
 
+        /// <summary>
+        /// It is guaranteed that the first node in the array will be the full fragment root
+        /// </summary>
+        /// <param name="labeledNode"></param>
+        /// <returns>List of all fragment nodes - flattened</returns>
+        /// <exception cref="Exception">Just added a possible check for a situation that would be interesting to me
+        /// - that someone called this method on a tree root</exception>
+        public static List<LabeledNode> GetAllFullFragmentNodes(this LabeledNode labeledNode)
+        {
+            List<LabeledNode> fragmentNodes = new List<LabeledNode>();
+            var fullFragmentRoot = labeledNode.FindFullFragmentRoot();
+
+            if(fullFragmentRoot == null || fullFragmentRoot == labeledNode)
+            {
+                throw new Exception("It did happen! :)");
+            }
+
+            fragmentNodes.Add(fullFragmentRoot);
+
+            var fragmentDescendants = GetAllFragmentNodes(fullFragmentRoot, labeledNode); // Labeled node is the pivot
+            fragmentNodes.AddRange(fragmentDescendants);
+
+            return fragmentNodes;
+        }
+
+        private static List<LabeledNode> GetAllFragmentNodes(LabeledNode root, LabeledNode pivot)
+        {
+            var listOfNodes = new List<LabeledNode>();
+            listOfNodes.AddRange(root.Children);
+
+            foreach (var child in root.Children)
+            {
+                if (!child.IsFragmentRoot || child == pivot)
+                {
+                    var childsDescendants = GetAllFragmentNodes(child, pivot);
+                    if (childsDescendants != null && childsDescendants.Count > 0)
+                    {
+                        listOfNodes.AddRange(childsDescendants);
+                    }
+                }
+            }
+
+            return listOfNodes;
+        }
+
+
+
+        public static List<LabeledNode> GetAllFullFragmentLeaves(this LabeledNode labeledNode)
+        {
+            List<LabeledNode> fragmentNodes = new List<LabeledNode>();
+            var fullFragmentRoot = labeledNode.FindFullFragmentRoot();
+
+            if (fullFragmentRoot == null || fullFragmentRoot == labeledNode)
+            {
+                throw new Exception("It did happen! :)");
+            }
+
+            var fragmentDescendants = GetAllFragmentLeaves(fullFragmentRoot, labeledNode); // Labeled node is the pivot
+            fragmentNodes.AddRange(fragmentDescendants);
+
+            return fragmentNodes;
+        }
+
+        private static List<LabeledNode> GetAllFragmentLeaves(LabeledNode root, LabeledNode pivot)
+        {
+            var leaves = new List<LabeledNode>();
+
+            foreach (var child in root.Children)
+            {
+                if ((child.IsFragmentRoot || child.IsTreeLeaf) && child != pivot)
+                {
+                    leaves.Add(child);
+                }
+                else
+                {
+                    var descendantLeaves = GetAllFragmentLeaves(child, pivot);
+                    if (descendantLeaves != null && descendantLeaves.Count > 0)
+                    {
+                        leaves.AddRange(descendantLeaves);
+                    }
+                }
+            }
+
+            return leaves;
+        }
+
+
+
 
         public static string GetFragmentString(this LabeledNode labeledNode)
         {
@@ -93,7 +181,7 @@ namespace RoseLibML.Core.LabeledTrees
             var part2 = labeledNode.DuplicateFragment();
             labeledNode.IsFragmentRoot = oldIsFragmentRoot;
 
-            return (full: full, part1: part1, part2: part2);
+            return (full, part1, part2);
         }
 
         // Kreira duplikat fragmenta! Dakle, svih čvorova u fragmentu!

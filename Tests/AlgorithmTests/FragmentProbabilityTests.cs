@@ -82,25 +82,25 @@ namespace Tests.AlgorithmTests
             var modelParams = new ModelParams() { P = 0.05 };
             config.ModelParams = modelParams;
             LabeledTreePCFGComposer pcfgComposer = new LabeledTreePCFGComposer(new List<LabeledTree>() { tree }, config);
-            pcfgComposer.CalculateProbabilities();
+            pcfgComposer.CalculateProbabilitiesLn();
 
             Assert.IsNotNull(pcfgComposer.Rules["rootnt"]);
             Assert.AreEqual(1, pcfgComposer.Rules["rootnt"].Count); // How many right hand sides (RHS) ?
             Assert.AreEqual(1, pcfgComposer.Rules["rootnt"]["nt1"].Count); // How many times did this RHS occur?
-            Assert.AreEqual(1, pcfgComposer.Rules["rootnt"]["nt1"].Probability); // What is the final probability of RHS?
+            Assert.AreEqual(Math.Log(1), pcfgComposer.Rules["rootnt"]["nt1"].ProbabilityLn); // What is the final probability of RHS?
 
             Assert.IsNotNull(pcfgComposer.Rules["nt1"]);
             Assert.AreEqual(2, pcfgComposer.Rules["nt1"].Count);
             Assert.AreEqual(1, pcfgComposer.Rules["nt1"]["nt1 nt2"].Count);
             Assert.AreEqual(1, pcfgComposer.Rules["nt1"]["nt2 nt2"].Count);
-            Assert.AreEqual(0.5, pcfgComposer.Rules["nt1"]["nt1 nt2"].Probability);
-            Assert.AreEqual(0.5, pcfgComposer.Rules["nt1"]["nt2 nt2"].Probability);
+            Assert.AreEqual(Math.Log(0.5), pcfgComposer.Rules["nt1"]["nt1 nt2"].ProbabilityLn);
+            Assert.AreEqual(Math.Log(0.5), pcfgComposer.Rules["nt1"]["nt2 nt2"].ProbabilityLn);
 
 
             Assert.IsNotNull(pcfgComposer.Rules["nt2"]);
             Assert.AreEqual(1, pcfgComposer.Rules["nt2"].Count);
             Assert.AreEqual(2, pcfgComposer.Rules["nt2"]["t1"].Count);
-            Assert.AreEqual(1, pcfgComposer.Rules["nt2"]["t1"].Probability);
+            Assert.AreEqual(Math.Log(1), pcfgComposer.Rules["nt2"]["t1"].ProbabilityLn);
         }
 
         
@@ -113,12 +113,12 @@ namespace Tests.AlgorithmTests
             var modelParams = new ModelParams() { P = 0.05 };
             config.ModelParams = modelParams;
             LabeledTreePCFGComposer pcfgComposer = new LabeledTreePCFGComposer(new List<LabeledTree>() { tree }, config);
-            pcfgComposer.CalculateProbabilities();
+            pcfgComposer.CalculateProbabilitiesLn();
 
             var nt1_1 = tree.Root.Children[0];
 
-            var probability = pcfgComposer.FragmentProbabilityFromPCFGRules(nt1_1, out int fragmentSize);
-            Assert.AreEqual(0.5, probability);
+            var probabilityLn = pcfgComposer.FragmentProbabilityLnFromPCFGRules(nt1_1, out int fragmentSize);
+            Assert.AreEqual(Math.Log(0.5), probabilityLn);
             Assert.AreEqual(3, fragmentSize); // The initial fragment root should not be counted, only its descendants (but descendants that are fragment roots should) 
         }
     }

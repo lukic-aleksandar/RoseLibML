@@ -11,7 +11,7 @@ namespace RoseLib
     public class PCFGRHSData
     {
         public int Count { get; set; }
-        public double Probability { get; set; }
+        public double ProbabilityLn { get; set; }
         public string RHS { get; set; }
 
         public PCFGRHSData()

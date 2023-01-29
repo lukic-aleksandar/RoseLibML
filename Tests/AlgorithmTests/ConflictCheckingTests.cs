@@ -150,7 +150,9 @@ namespace Tests.AlgorithmTests
             var typeBlock = sampler.CreateTypeBlockAndAdjustCounts(typeNodesKVP.Value, 1);
 
             var pivot = typeBlock[0];
-            var fullFragmentRoot = pivot.FindFullFragmentRoot();
+            var fragmentNodes = pivot.GetAllFullFragmentNodes();
+
+            var fullFragmentRoot = fragmentNodes[0];
 
             Assert.AreEqual(1, fullFragmentRoot.LastModified.iteration);
             if (fullFragmentRoot.Parent != null)
@@ -158,13 +160,12 @@ namespace Tests.AlgorithmTests
                 Assert.AreEqual(-1, fullFragmentRoot.Parent.LastModified.iteration);
             }
 
-            var fragmentNodes = GetAllFragmentNodes(fullFragmentRoot, pivot);
             foreach(var fragmentNode in fragmentNodes)
             {
                 Assert.AreEqual(1, fragmentNode.LastModified.iteration);
             }
 
-            var fragmentLeaves = GetAllFragmentLeaves(fullFragmentRoot, pivot);
+            var fragmentLeaves = pivot.GetAllFullFragmentLeaves();
             foreach(var leaf in fragmentLeaves)
             {
                 Assert.AreEqual(1, leaf.LastModified.iteration);
@@ -173,50 +174,6 @@ namespace Tests.AlgorithmTests
                     Assert.AreEqual(-1, leafsChild.LastModified.iteration);
                 }
             }
-
-
-        }
-
-        public List<LabeledNode> GetAllFragmentNodes(LabeledNode root, LabeledNode pivot)
-        {
-            var listOfNodes = new List<LabeledNode>();
-            listOfNodes.AddRange(root.Children);
-
-            foreach(var child in root.Children)
-            {
-                if(!child.IsFragmentRoot || child == pivot)
-                {
-                    var childsDescendants = GetAllFragmentNodes(child, pivot);
-                    if(childsDescendants != null && childsDescendants.Count > 0)
-                    {
-                        listOfNodes.AddRange(childsDescendants);
-                    }
-                }
-            }
-
-            return listOfNodes;
-        }
-
-        public List<LabeledNode> GetAllFragmentLeaves(LabeledNode root, LabeledNode pivot)
-        {
-            var leaves = new List<LabeledNode>();
-
-            foreach (var child in root.Children)
-            {
-                if (child.IsFragmentRoot && child != pivot)
-                {
-                    leaves.Add(child);
-                }
-                else {
-                    var descendantLeaves = GetAllFragmentLeaves(child, pivot);
-                    if (descendantLeaves != null && descendantLeaves.Count > 0)
-                    {
-                        leaves.AddRange(descendantLeaves);
-                    }
-                }
-            }
-
-            return leaves;
         }
     }
 }

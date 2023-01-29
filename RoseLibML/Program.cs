@@ -30,7 +30,7 @@ namespace RoseLib
 
             // Calculate and save PCFG to file
             var pCFGComposer = new LabeledTreePCFGComposer(labeledTrees.ToList(), config);
-            pCFGComposer.CalculateProbabilities();
+            pCFGComposer.CalculateProbabilitiesLn();
 
 
             ToCSWriter writer = new ToCSWriter(config.Paths.OutIdioms);

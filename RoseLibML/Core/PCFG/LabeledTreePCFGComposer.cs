@@ -32,9 +32,9 @@ namespace RoseLibML
             P = config.ModelParams.P;
         }
 
-        #region CFG Calculation
+        #region PCFG Calculation
 
-        public void CalculateProbabilities()
+        public void CalculateProbabilitiesLn()
         {
             CountRulesInTrees(Trees);
 
@@ -49,7 +49,7 @@ namespace RoseLibML
 
                 foreach (var rhs in Rules[lhs].Keys)
                 {
-                    Rules[lhs][rhs].Probability = Rules[lhs][rhs].Count / totalCount;
+                    Rules[lhs][rhs].ProbabilityLn = Math.Log(Rules[lhs][rhs].Count / totalCount);
                 }
             }
         }
@@ -105,29 +105,29 @@ namespace RoseLibML
 
         #endregion
 
-        #region Fragment proprability
+        #region Fragment proprability - PCFG extension
 
         public double CalculateFragmentProbability(LabeledNode root)
         {
-            var fragmentSize = 0;
-            var fragmentProbability = FragmentProbabilityFromPCFGRules(root, out fragmentSize);
+            var fragmentProbabilityLn = FragmentProbabilityLnFromPCFGRules(root, out int fragmentSize);
 
             var dist = new Geometric(P);
-            return dist.Probability(fragmentSize) * fragmentProbability;
+            var probabilityLn = dist.ProbabilityLn(fragmentSize) + fragmentProbabilityLn;
+            return Math.Exp(probabilityLn);
         }
 
-        public double FragmentProbabilityFromPCFGRules(LabeledNode node, out int fragmentSize)
+        public double FragmentProbabilityLnFromPCFGRules(LabeledNode node, out int fragmentSize)
         {
             var kind = node.STInfo;
             var children = node.Children;
             fragmentSize = children.Count;
 
             var rhs = "";
-            var probability = 1.0;
+            var probabilityLn = Math.Log(1.0); // 0, a neutral element (addition), to be returned if node has no descendants.
 
             if (children.Count == 0)
             {
-                return 1.0;
+                return probabilityLn;
             }
 
             foreach (var child in children)
@@ -136,7 +136,7 @@ namespace RoseLibML
                 rhs += $"{child.STInfo} ";
                 if (!child.IsFragmentRoot)
                 {
-                    probability *= FragmentProbabilityFromPCFGRules(child, out childFragmentSize);
+                    probabilityLn += FragmentProbabilityLnFromPCFGRules(child, out childFragmentSize);
                     fragmentSize += childFragmentSize;
                 }
             }
@@ -144,10 +144,10 @@ namespace RoseLibML
             rhs = rhs.Trim();
             if (Rules.ContainsKey(kind) && Rules[kind].ContainsKey(rhs))
             {
-                probability *= Rules[kind][rhs].Probability;
+                probabilityLn += Rules[kind][rhs].ProbabilityLn;
             }
 
-            return probability;
+            return probabilityLn;
         }
 
         #endregion
@@ -213,7 +213,7 @@ namespace RoseLibML
             {
                 foreach (var rhs in Rules[lhs].Keys)
                 {
-                    var output = $"{lhs} --> {rhs} {Rules[lhs][rhs].Probability}";
+                    var output = $"{lhs} --> {rhs} {Rules[lhs][rhs].ProbabilityLn}";
                     stream.WriteLine(output);
                 }
             }
