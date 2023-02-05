@@ -26,11 +26,11 @@ namespace RoseLib
 
             // Create Labeled Trees
             // Perform Needed transformations
-            var labeledTrees = CreateLabeledTrees(config.Paths.InData, config.Paths.InModel, config.Paths.OutModel);
+            var labeledTrees = CreateLabeledTrees(config);
 
             // Calculate and save PCFG to file
             var pCFGComposer = new LabeledTreePCFGComposer(labeledTrees.ToList(), config);
-            pCFGComposer.CalculateProbabilities();
+            pCFGComposer.CalculateProbabilitiesLn();
 
 
             ToCSWriter writer = new ToCSWriter(config.Paths.OutIdioms);
@@ -93,25 +93,26 @@ namespace RoseLib
             return config;
         }
 
-        static LabeledTree[] CreateLabeledTrees(string sourceDirectory, string modelInputDirectory, string modelOutputDirectory)
-        {
-            var inputModelPresent = !string.IsNullOrEmpty(modelInputDirectory);
-            var directoryInfo = new DirectoryInfo(sourceDirectory);
+        static LabeledTree[] CreateLabeledTrees(Config config)
+        { 
+            var inputModelPresent = !string.IsNullOrEmpty(config?.Paths?.InModel);
+            var directoryInfo = new DirectoryInfo(config?.Paths?.InData);
             var files = directoryInfo.GetFiles();
 
             LabeledTree[] labeledTrees = new LabeledTree[files.Length];
 
             Parallel.For(0, files.Length, (index) =>
+            //for(int index = 0; index < files.Length;index++)
             {
                 if (!inputModelPresent)
                 {
-                    var labeledTree = CSTreeCreator.CreateTree(files[index], modelOutputDirectory);
-                    LabeledTreeTransformations.Binarize(labeledTree.Root, new CSNodeCreator());
+                    var labeledTree = CSTreeCreator.CreateTree(files[index], config.Paths.OutModel, config.FixedNodeKinds);
+                    LabeledTreeTransformations.Binarize(labeledTree.Root, new CSNodeCreator(config.FixedNodeKinds));
                     labeledTrees[index] = labeledTree;
                 }
                 else
                 {
-                    var labeledTree = CSTreeCreator.Deserialize(files[index], modelInputDirectory, modelOutputDirectory);
+                    var labeledTree = CSTreeCreator.Deserialize(files[index], config?.Paths?.InModel, config.Paths.OutModel);
                     if (labeledTree != null)
                     {
                         labeledTrees[index] = labeledTree;

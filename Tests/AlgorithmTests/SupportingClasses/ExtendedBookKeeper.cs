@@ -17,15 +17,15 @@ namespace Tests.AlgorithmTests.SupportingClasses
                 throw new ArgumentException("Given type does not equal true type.");
             }
 
-            if (!UsedTypes.ContainsKey(givenType.GetQuasiUniqueRepresentation()))
+            if (!UsedTypes.ContainsKey(givenType.GetTypeHash()))
             {
                 TypeNodes.Add(givenType, new List<LabeledNode>(10));
-                UsedTypes.Add(givenType.GetQuasiUniqueRepresentation(), givenType);
+                UsedTypes.Add(givenType.GetTypeHash(), givenType);
                 node.Type = givenType;
             }
             else
             {
-                node.Type = UsedTypes[givenType.GetQuasiUniqueRepresentation()];
+                node.Type = UsedTypes[givenType.GetTypeHash()];
             }
 
             TypeNodes[node.Type].Add(node);

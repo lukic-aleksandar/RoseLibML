@@ -13,44 +13,14 @@ The algorithm that the project uses is inspired by next papers:
 * [Type-based MCMC](https://www.aclweb.org/anthology/N10-1082.pdf)
 * [Mining idioms from source code](https://arxiv.org/pdf/1404.0417.pdf)
 
-## Two implementations
 
-The repository currently contains two similar implementations of the algorithm.
-The reason for this is that the algorithm includes factorial and rising factorial operations. Long and double-precision numbers cannot hold all the values resulting from these operations. 
-
-To support these operations, the first implementation uses BigInteger class. This is the implementation available on the main branch.
-The second implementation relies on a custom BigRational for better precision. This implementation is available on the BigRational branch and is currently under development.
-
-## Running these solutions
+## Running the solution
 As a test data set, you can use a corpus of student files available on [Mendeley Data](http://dx.doi.org/10.17632/rbvz68v555.1).
 
-Both these solutions can be run on the Windows platform. Compiled executables are available in the 
+The solution is built using .NET 6.0, it should be able to run Windows, Linux, and MacOS. 
+So far, it has only been tested on the Windows.
 
-### Runing the BigInteger version
-* Download the data set
-* Open cmd/PowerShell and locate to desired folder
-* Clone the solution: git clone https://github.com/lukic-aleksandar/RoseLibML.git
-* Extract Compiled.zip found in the cloned folder
-* Enter the resulting Compiled folder, open config.json
-* In config.json Change the parameters; change the path to the dataset; set the output path for idioms
-* Using cmd/PowerShell enter the RoseLibML folder found inside the Compiled folder
-* Run using  cmd/PowerShell: .\RoseLibML.exe "C:\example-path\config.json"
-
-
-### Runing the BigRational version
-* Download the data set
-* Open cmd/PowerShell and locate to desired folder
-* Clone the solution: 
-	* git clone https://github.com/lukic-aleksandar/RoseLibML.git
-	* cd .\RoseLibML\
-	* git checkout BigRational
-* Extract Compiled.zip found in the cloned folder
-* Enter the resulting Compiled folder, open config.json
-* In config.json Change the parameters; change the path to the dataset; set the output path for idioms
-* Using cmd/PowerShell enter the RoseLibML folder found inside the Compiled folder
-* Run using  cmd/PowerShell: .\RoseLibML.exe "C:\example-path\config.json"
-
-
+No executable available at this moment. It will be available once there is a stable version.
 
 ## Compiling the solution
 The solutions can be compiled using Visual Studio.

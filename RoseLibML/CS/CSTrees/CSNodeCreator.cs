@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using RoseLibML.Core.LabeledTrees;
+using RoseLibML.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,23 +10,18 @@ using System.Threading.Tasks;
 
 namespace RoseLibML.CS.CSTrees
 {
-    // Dobro! Čini mi se da imaš situaciju u kojoj imaš 2,3 stanja. i to čuvaš u 2 različite promenljive
-    // Koja je alternativa? Refaktorisati? Osloniti se na postojeće?
-    // Šta bi meni trebalo? Trebalo bi mi da se $BinTempNode ispisuje. Ok je da se ne ispisuje uvek sam za sebe...
-    // Međutim, u nekom trenutku sam hteo da uvedem i BinTempNodove koji odgovaraju konkretnom nadtipu! To je istina. 
-    // Želja je bila da to uradim kako bih ipak malo uticao na verovatnoće, da ne budu tako problematične. Da li sam to uradio?
-    // U Binarize metodi, koja se nalazi u LabeledTreeTransformations možeš videti da jesam! To care! :D 
-    // Ali se tamo menja isključivo STInfo! Vidi da li možeš da izoluješ ove dve promenljive. I onda, da Uvedeš neku agregatnu.
-    // Te dve promenljive su:
-    // - UseRoslynMatchToWrite
-    // - IsExistingRoslynNode
-    // Druga promeljiva nije baš promenljiva. Zavisi od enumeracije, roslyn tipa
-    // Problematični deo koda:
-    // - 22 linija, gde za temp odmah pravim hak kako ga ne bi ispisao
-    // 
     public class CSNodeCreator: NodeCreator
     {
-        public override LabeledNode CreateTempNode()
+        private FixedNodeKinds? fixedNodeKinds = null;
+
+        public CSNodeCreator(FixedNodeKinds? fixedNodeKinds = null) 
+        {
+            if(fixedNodeKinds!= null)
+            {
+                this.fixedNodeKinds = fixedNodeKinds;
+            }
+        }
+        public override LabeledNode CreateTempNode()   
         {
             var node = new CSNode()
             {
@@ -33,13 +29,32 @@ namespace RoseLibML.CS.CSTrees
             };
             return node;
         }
-        public static CSNode CreateNode(SyntaxNode parent)
+        public CSNode CreateNode(SyntaxNode parent)
         {
             var children = parent.ChildNodesAndTokens();
             var node = new CSNode();
-
+             
             node.STInfo = ((ushort)parent.Kind()).ToString();
             node.UseRoslynMatchToWrite = false;
+
+            if (fixedNodeKinds != null
+                && fixedNodeKinds.FixedCutNodeKinds != null
+                && fixedNodeKinds.FixedCutNodeKinds.Contains(node.STInfo)
+                )
+            {
+                node.IsFixed = true;
+                node.IsFragmentRoot = true;
+            }
+
+            if (fixedNodeKinds != null
+                && fixedNodeKinds.FixedNonCutNodeKinds != null
+                && fixedNodeKinds.FixedNonCutNodeKinds.Contains(node.STInfo)
+                )
+            {
+                node.IsFixed = true;
+                node.IsFragmentRoot = false;
+            }
+
             node.RoslynSpanStart = parent.Span.Start;
             node.RoslynSpanEnd = parent.Span.End;
 

@@ -16,29 +16,15 @@ namespace RoseLibML
     [Serializable]
     public abstract class LabeledNode
     {
-        public bool CanHaveType { get; set; } = true;
-
-        private bool isFragmentRoot;
-        public bool IsFragmentRoot
-        {
-            get
-            {
-                if (!CanHaveType)
-                {
-                    return false;
-                }
-                return isFragmentRoot;
-            }
-            set => isFragmentRoot = value;
-        }
+        public abstract bool IsTreeRoot();
+        public bool IsFixed { get; set; } = false;
+        public bool IsTreeLeaf { get; set; } = false; // In C# terms - a token
         public string STInfo { get; set; } // Syntax Tree Info - serves to hold Concrete Syntax type, some concrete value, or custom type.
-        
         public LabeledNode Parent { get; set; }
         public List<LabeledNode> Children { get; set; } = new List<LabeledNode>();
 
-        [NonSerialized]
-        private (string typeCode, short iteration) lastModified = (typeCode: "", iteration: -1);
-        public (string typeCode, short iteration) LastModified { get => lastModified; set { lastModified = value; } }
+
+        public bool CanHaveType { get; set; } = true;
 
         [NonSerialized]
         private LabeledNodeType type;
@@ -61,6 +47,26 @@ namespace RoseLibML
                 // setTypeCallHistory.Add(callerName);
             }
         }
+
+        private bool isFragmentRoot;
+        public bool IsFragmentRoot
+        {
+            get
+            {
+                if (!CanHaveType)
+                {
+                    return false;
+                }
+                return isFragmentRoot;
+            }
+            set => isFragmentRoot = value;
+        }
+
+
+        [NonSerialized]
+        private (string typeCode, short iteration) lastModified = (typeCode: "", iteration: -1);
+        public (string typeCode, short iteration) LastModified { get => lastModified; set { lastModified = value; } }
+
 
         public abstract LabeledNode CreateSimpleDuplicate();
 
@@ -120,9 +126,5 @@ namespace RoseLibML
 
             return null;
         }
-
-
-        public abstract bool IsTreeRoot();
-        public bool IsTreeLeaf { get; set; } = false; // In C# terms - a token
     }
 }

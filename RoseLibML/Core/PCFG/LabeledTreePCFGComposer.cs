@@ -15,7 +15,7 @@ namespace RoseLibML
     [Serializable]
     public class LabeledTreePCFGComposer 
     { 
-        public Dictionary<string, Dictionary<string, PCFGNode>> Rules { get; set; }
+        public Dictionary<string, Dictionary<string, PCFGRHSData>> Rules { get; set; }
 
         [NonSerialized]
         private List<LabeledTree> trees;
@@ -23,18 +23,23 @@ namespace RoseLibML
         public List<LabeledTree> Trees { get => trees; set => trees = value; }
 
         public double P { get; set; }
+        public bool ExcludeLeafsFromGeometric { get; set; }
+
 
         public LabeledTreePCFGComposer(List<LabeledTree> trees, Config config)
         {
-            Rules = new Dictionary<string, Dictionary<string, PCFGNode>>();
+            Rules = new Dictionary<string, Dictionary<string, PCFGRHSData>>();
             Trees = trees;
 
             P = config.ModelParams.P;
+            ExcludeLeafsFromGeometric = config.ModelParams.ExcludeLeafsFromGeometric;
         }
 
-        public void CalculateProbabilities()
+        #region PCFG Calculation
+
+        public void CalculateProbabilitiesLn()
         {
-            Count(Trees);
+            CountRulesInTrees(Trees);
 
             foreach (var lhs in Rules.Keys)
             {
@@ -47,74 +52,20 @@ namespace RoseLibML
 
                 foreach (var rhs in Rules[lhs].Keys)
                 {
-                    Rules[lhs][rhs].Probability = Rules[lhs][rhs].Count / totalCount;
+                    Rules[lhs][rhs].ProbabilityLn = Math.Log(Rules[lhs][rhs].Count / totalCount);
                 }
             }
-        }
-
-        public double CalculateFragmentProbability(LabeledNode root)
-        {
-            var fragmentSize = 0;
-            var fragmentProbability = GetNodeProbability(root, out fragmentSize);
-
-            var dist = new Geometric(P);
-            return dist.Probability(fragmentSize) * fragmentProbability;
-        }
-
-        public void PrintRules(StreamWriter stream)
-        {
-            foreach (var lhs in Rules.Keys)
-            {
-                foreach (var rhs in Rules[lhs].Keys)
-                {
-                    var output = $"{lhs} --> {rhs} {Rules[lhs][rhs].Probability}";
-                    stream.WriteLine(output);
-                }
-            }
-
-            stream.Flush();
-            stream.Close();
-        }
-
-        private double GetNodeProbability(LabeledNode node, out int fragmentSize)
-        {
-            var kind = node.STInfo;
-            var children = node.Children;
-            fragmentSize = children.Count;
-
-            var rhs = "";
-            var probability = 1.0;
-
-            if(children.Count == 0)
-            {
-                return 1.0;
-            }
-
-            foreach (var child in children)
-            {
-                var childFragmentSize = 0;
-                rhs += $"{child.STInfo} ";
-                probability *= GetNodeProbability(child, out childFragmentSize);
-                fragmentSize += childFragmentSize;
-            }
-
-            if (Rules.ContainsKey(kind) && Rules[kind].ContainsKey(rhs))
-            {
-                probability *= Rules[kind][rhs].Probability;
-            }
-
-            return probability;
         }
      
-        private void Count(List<LabeledTree> trees)
+        private void CountRulesInTrees(List<LabeledTree> trees)
         {
             foreach (var tree in trees)
             {
-                Count(tree.Root);
+                CountRulesForNodeAndItsDescendants(tree.Root);
             }
         }
 
-        private void Count(LabeledNode parent)
+        private void CountRulesForNodeAndItsDescendants(LabeledNode parent)
         {
             var kind = parent.STInfo;
             var children = parent.Children;
@@ -124,7 +75,6 @@ namespace RoseLibML
             foreach (var child in children)
             {
                 rhs += $"{child.STInfo} ";
-                Count(child);
             }
 
             rhs = rhs.Trim();
@@ -133,24 +83,97 @@ namespace RoseLibML
             {
                 IncrementRuleCount(kind, rhs);
             }
+
+            foreach (var child in children)
+            {
+                CountRulesForNodeAndItsDescendants(child);
+            }
         }
 
         private void IncrementRuleCount(string kind, string rhs)
         {
             if (!Rules.ContainsKey(kind))
             {
-                Rules.Add(kind, new Dictionary<string, PCFGNode>());
+                Rules.Add(kind, new Dictionary<string, PCFGRHSData>());
             }
 
             if (!Rules[kind].ContainsKey(rhs))
             {
-                var pcfgNode = new PCFGNode(rhs);
+                var pcfgNode = new PCFGRHSData(rhs);
                 Rules[kind][rhs] = pcfgNode;
             }
 
             Rules[kind][rhs].Increment();
         }
 
+        #endregion
+
+        #region Fragment proprability - PCFG extension
+
+        public double CalculateFragmentProbability(LabeledNode root)
+        {
+            var fragmentProbabilityLn = FragmentProbabilityLnFromPCFGRules(root, out int fragmentSize);
+
+            var dist = new Geometric(P);
+            var probabilityLn = dist.ProbabilityLn(fragmentSize) + fragmentProbabilityLn;
+            return Math.Exp(probabilityLn);
+        }
+
+        public double FragmentProbabilityLnFromPCFGRules(LabeledNode node, out int fragmentSize)
+        {
+            var kind = node.STInfo;
+            var children = node.Children;
+
+            if (children != null && children.Count > 0)
+            {
+                if (ExcludeLeafsFromGeometric)
+                {
+                    fragmentSize = children.Where(c => c.IsTreeLeaf == false).Count();
+                }
+                else
+                {
+                    fragmentSize = children.Count;
+                }
+            }
+            else
+            {
+                fragmentSize = 0;
+            }
+
+
+            var rhs = "";
+            var probabilityLn = Math.Log(1.0); // 0, a neutral element (addition), to be returned if node has no descendants.
+
+            if (children.Count == 0)
+            {
+                return probabilityLn;
+            }
+
+            foreach (var child in children)
+            {
+                rhs += $"{child.STInfo} ";
+                if (!child.IsFragmentRoot)
+                {
+                    probabilityLn += FragmentProbabilityLnFromPCFGRules(child, out int subFragmentSize);
+                    fragmentSize += subFragmentSize;
+                }
+            }
+
+            rhs = rhs.Trim();
+            if (Rules.ContainsKey(kind) && Rules[kind].ContainsKey(rhs))
+            {
+                probabilityLn += Rules[kind][rhs].ProbabilityLn;
+            }
+
+            return probabilityLn;
+        }
+
+        #endregion
+
+        #region Output
+
+        /*
+         
         public SortedDictionary<string, double> GetRulesProbabilities()
         {
             SortedDictionary<string, double> probabilities = new SortedDictionary<string, double>();
@@ -165,7 +188,9 @@ namespace RoseLibML
 
             return probabilities;
         }
+        */
 
+        /*
         private string CreateRuleString(string lhs, string rhs)
         {
             string leftSide = lhs;
@@ -198,6 +223,22 @@ namespace RoseLibML
 
             return $"{leftSide} --> {rightSide}";
         }
+        */
+
+        public void PrintRules(StreamWriter stream)
+        {
+            foreach (var lhs in Rules.Keys)
+            {
+                foreach (var rhs in Rules[lhs].Keys)
+                {
+                    var output = $"{lhs} --> {rhs} {Rules[lhs][rhs].ProbabilityLn}";
+                    stream.WriteLine(output);
+                }
+            }
+
+            stream.Flush();
+            stream.Close();
+        }
 
         public void Serialize(string filePath)
         {
@@ -224,5 +265,7 @@ namespace RoseLibML
 
             return null;
         }
+
+        #endregion
     }
 }

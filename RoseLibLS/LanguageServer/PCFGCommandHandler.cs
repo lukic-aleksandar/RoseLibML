@@ -148,10 +148,10 @@ namespace RoseLibLS.LanguageServer
             // calculate probabilitites and save pCFG to file
             var pCFGComposer = new LabeledTreePCFGComposer(labeledTrees.ToList(), config);
 
-            pCFGComposer.CalculateProbabilities();
+            pCFGComposer.CalculateProbabilitiesLn();
             pCFGComposer.Serialize($"{arguments.OutputFolder}\\pcfg_{DateTime.Now.ToString("yyyyMMddHHmmss")}.bin");
 
-            return pCFGComposer.GetRulesProbabilities();
+            return null;//pCFGComposer.GetRulesProbabilities();
         }
 
         private LabeledTree[] CreateLabeledTrees(string sourceDirectory, string outputDirectory)

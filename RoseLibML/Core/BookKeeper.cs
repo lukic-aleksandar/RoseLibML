@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RoseLibML.Core.LabeledTrees;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -95,15 +96,15 @@ namespace RoseLibML
         public virtual void AddNodeType(LabeledNodeType type, LabeledNode node)
         {
 
-            if (!UsedTypes.ContainsKey(type.GetQuasiUniqueRepresentation()))
+            if (!UsedTypes.ContainsKey(type.GetTypeHash()))
             {
                 TypeNodes.Add(type, new List<LabeledNode>(10));
-                UsedTypes.Add(type.GetQuasiUniqueRepresentation(), type);
+                UsedTypes.Add(type.GetTypeHash(), type);
                 node.Type = type;
             }
             else
             {
-                node.Type = UsedTypes[type.GetQuasiUniqueRepresentation()];
+                node.Type = UsedTypes[type.GetTypeHash()];
             }
 
             TypeNodes[node.Type].Add(node);
@@ -125,52 +126,51 @@ namespace RoseLibML
             {
                 var currentType = zeroNodeTypes[i];
                 TypeNodes.Remove(currentType);
-                UsedTypes.Remove(currentType.GetQuasiUniqueRepresentation());
+                UsedTypes.Remove(currentType.GetTypeHash());
             }
         }
 
-        /*
-
-        public void Merge(BookKeeper bookKeeper)
+        public void RemoveZeroCountRootsAndFragments()
         {
-            MergeCountDictionaries(FragmentCounts, bookKeeper.FragmentCounts);
-            MergeCountDictionaries(RootCounts, bookKeeper.RootCounts);
-            MergeTypeNodes(bookKeeper.TypeNodes);
-        }
+            var zeroCountRootsKV = RootCounts.Where(kv => kv.Value == 0).ToList();
+            var zeroCountFragments = FragmentCounts.Where(kv => kv.Value == 0).ToList();
 
-        private void MergeCountDictionaries(Dictionary<string, int> first, Dictionary<string, int> second)
-        {
-            foreach (var keyValuePair in second)
+            for (var i = zeroCountRootsKV.Count() - 1; i >= 0; i--)
             {
-                if (!first.ContainsKey(keyValuePair.Key))
-                {
-                    first.Add(keyValuePair.Key, 0);
-                }
-
-                first[keyValuePair.Key] += keyValuePair.Value;
+                RootCounts.Remove(zeroCountRootsKV[i].Key);
             }
-        }
 
-        private void MergeTypeNodes(Dictionary<LabeledNodeType, List<LabeledNode>> second)
-        {
-            foreach (var keyValuePair in second)
+            for (var i = zeroCountFragments.Count() - 1; i >= 0; i--)
             {
-                if (!TypeNodes.ContainsKey(keyValuePair.Key))
-                {
-                    TypeNodes.Add(keyValuePair.Key, new List<LabeledNode>());
-                }
-
-                var existingType = TypeNodes.Keys.Where(k => k.Equals(keyValuePair.Key)).FirstOrDefault();
-
-                foreach (var node in keyValuePair.Value)
-                {
-                    node.Type = existingType;
-                }
-
-                TypeNodes[keyValuePair.Key].AddRange(keyValuePair.Value);
+                FragmentCounts.Remove(zeroCountFragments[i].Key);
             }
         }
 
-        */
+        public void RecordTreeData(LabeledTree labeledTree)
+        {
+            foreach (var child in labeledTree.Root.Children) // Skips the root
+            {
+                RecordRootsFragmentsTypes(child);
+            }
+        }
+
+        private void RecordRootsFragmentsTypes(LabeledNode node)
+        {
+            if (node.IsFragmentRoot)
+            {
+                IncrementRootCount(node.STInfo);
+                IncrementFragmentCount(LabeledNodeType.CalculateFragmentHash(node.GetFragmentString()));
+            }
+
+            if (node.CanHaveType)
+            {
+                AddNodeType(LabeledNode.GetType(node), node);
+            }
+
+            foreach (var child in node.Children)
+            {
+                RecordRootsFragmentsTypes(child);
+            }
+        }
     }
 }

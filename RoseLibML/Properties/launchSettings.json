@@ -2,7 +2,7 @@
   "profiles": {
     "RoseLibML": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\\\Users\\\\ntodo\\\\Desktop\\\\Doktorske\\\\evaluacija\\\\RoseLibML\\\\config.json\""
+      "commandLineArgs": "\"C:\\\\Users\\\\ntodo\\\\Desktop\\\\Doktorske\\\\evaluacija\\\\output\\\\ad astra\\\\regular\\\\config.json\""
     }
   }
 }
