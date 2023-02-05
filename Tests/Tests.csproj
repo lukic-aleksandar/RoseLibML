@@ -8,6 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestFiles\TestFile.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="TestFiles\TestFile.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="MathNet.Numerics" Version="5.0.0" />
     <PackageReference Include="MersenneTwister" Version="1.0.6" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" />
@@ -18,12 +28,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\RoseLibML\RoseLibML.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="TestFiles\TestFile.cs">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Compile>
   </ItemGroup>
 
 </Project>

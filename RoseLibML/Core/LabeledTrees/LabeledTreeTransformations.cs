@@ -22,16 +22,18 @@ namespace RoseLibML
                     var indexOfFirst = parent.Children.IndexOf(group.First());
                     parent.Children.RemoveRange(indexOfFirst, group.Count);
 
-                    var tempNode = nodeCreator.CreateTempNode();
-                    tempNode.Parent = parent;
+                    string? STInfo = null;
                     if (parent.STInfo.StartsWith("B_"))
                     {
-                        tempNode.STInfo = parent.STInfo;
+                        STInfo = parent.STInfo;
                     }
                     else
                     {
-                        tempNode.STInfo = "B_" + parent.STInfo;
+                        STInfo = "B_" + parent.STInfo;
                     }
+
+                    var tempNode = nodeCreator.CreateTempNode(STInfo);
+                    tempNode.Parent = parent;
 
                     var firstGroupChild = group.FirstOrDefault();
                     var restOfGroupChildren = group.ToList();

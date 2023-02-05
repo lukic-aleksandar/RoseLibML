@@ -8,6 +8,6 @@ namespace RoseLibML.Core.LabeledTrees
 {
     public abstract class NodeCreator
     {
-        public abstract LabeledNode CreateTempNode();
+        public abstract LabeledNode CreateTempNode(string STInfo);
     }
 }
