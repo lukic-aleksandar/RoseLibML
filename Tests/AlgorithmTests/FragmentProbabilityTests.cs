@@ -14,14 +14,14 @@ namespace Tests.AlgorithmTests
     {
         // nt - non-terminal, t - terminal, fr (fragment root)
         //                      
-        //                                           -- t1
+        //                                           -- t1 (leaf)
         //                                   -- nt2 - 
         //                      -- nt1 (fr) -
         //                                   -- nt2 ( -- empty)
         //  rootnt - nt1 (fr) -
         // 
         //                      -- nt2 -
-        //                              -- t1
+        //                              -- t1 (leaf)
         public CSTree CreateATree()
         {
             CSTree tree = new CSTree();
@@ -50,6 +50,7 @@ namespace Tests.AlgorithmTests
             t1_1.STInfo = "t1";
             t1_1.IsFragmentRoot = false;
             t1_1.CanHaveType = false;
+            t1_1.IsTreeLeaf = true;
             nt2_1.AddChild(t1_1);
 
             CSNode nt2_2 = new CSNode();
@@ -67,6 +68,7 @@ namespace Tests.AlgorithmTests
             t1_2.STInfo = "t1";
             t1_2.IsFragmentRoot = false;
             t1_2.CanHaveType = false;
+            t1_1.IsTreeLeaf = true;
             nt2_3.AddChild(t1_2);
 
             return tree;
@@ -79,7 +81,7 @@ namespace Tests.AlgorithmTests
             CSTree tree = CreateATree();
 
             var config = new RoseLibML.Util.Config();
-            var modelParams = new ModelParams() { P = 0.05 };
+            var modelParams = new ModelParams() { P = 0.05, ExcludeLeafsFromGeometric = false };
             config.ModelParams = modelParams;
             LabeledTreePCFGComposer pcfgComposer = new LabeledTreePCFGComposer(new List<LabeledTree>() { tree }, config);
             pcfgComposer.CalculateProbabilitiesLn();
@@ -110,7 +112,7 @@ namespace Tests.AlgorithmTests
             CSTree tree = CreateATree();
 
             var config = new RoseLibML.Util.Config();
-            var modelParams = new ModelParams() { P = 0.05 };
+            var modelParams = new ModelParams() { P = 0.05, ExcludeLeafsFromGeometric = false };
             config.ModelParams = modelParams;
             LabeledTreePCFGComposer pcfgComposer = new LabeledTreePCFGComposer(new List<LabeledTree>() { tree }, config);
             pcfgComposer.CalculateProbabilitiesLn();
@@ -120,6 +122,26 @@ namespace Tests.AlgorithmTests
             var probabilityLn = pcfgComposer.FragmentProbabilityLnFromPCFGRules(nt1_1, out int fragmentSize);
             Assert.AreEqual(Math.Log(0.5), probabilityLn);
             Assert.AreEqual(3, fragmentSize); // The initial fragment root should not be counted, only its descendants (but descendants that are fragment roots should) 
+        }
+
+        [Test]
+        public void TestFragmentProbabilitiesCalculationLeafsExcluded()
+        {
+            CSTree tree = CreateATree();
+
+            var config = new RoseLibML.Util.Config();
+            var modelParams = new ModelParams() { P = 0.05, ExcludeLeafsFromGeometric = true };
+            config.ModelParams = modelParams;
+            LabeledTreePCFGComposer pcfgComposer = new LabeledTreePCFGComposer(new List<LabeledTree>() { tree }, config);
+            pcfgComposer.CalculateProbabilitiesLn();
+
+            var nt1_2 = tree.Root.Children[0].Children[0];
+
+            var probabilityLn = pcfgComposer.FragmentProbabilityLnFromPCFGRules(nt1_2, out int fragmentSize);
+            Assert.AreEqual(Math.Log(0.5), probabilityLn);
+            // The initial fragment root should not be counted, only its descendants (but descendants that are fragment roots should).
+            // Tree leafs not counted in this test, because of ExcludeLeafsFromGeometric
+            Assert.AreEqual(2, fragmentSize); 
         }
     }
 }

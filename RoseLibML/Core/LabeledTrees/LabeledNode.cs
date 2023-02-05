@@ -17,6 +17,7 @@ namespace RoseLibML
     public abstract class LabeledNode
     {
         public abstract bool IsTreeRoot();
+        public bool IsFixed { get; set; } = false;
         public bool IsTreeLeaf { get; set; } = false; // In C# terms - a token
         public string STInfo { get; set; } // Syntax Tree Info - serves to hold Concrete Syntax type, some concrete value, or custom type.
         public LabeledNode Parent { get; set; }

@@ -130,6 +130,22 @@ namespace RoseLibML
             }
         }
 
+        public void RemoveZeroCountRootsAndFragments()
+        {
+            var zeroCountRootsKV = RootCounts.Where(kv => kv.Value == 0).ToList();
+            var zeroCountFragments = FragmentCounts.Where(kv => kv.Value == 0).ToList();
+
+            for (var i = zeroCountRootsKV.Count() - 1; i >= 0; i--)
+            {
+                RootCounts.Remove(zeroCountRootsKV[i].Key);
+            }
+
+            for (var i = zeroCountFragments.Count() - 1; i >= 0; i--)
+            {
+                FragmentCounts.Remove(zeroCountFragments[i].Key);
+            }
+        }
+
         public void RecordTreeData(LabeledTree labeledTree)
         {
             foreach (var child in labeledTree.Root.Children) // Skips the root

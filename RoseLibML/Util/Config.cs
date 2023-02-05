@@ -12,6 +12,7 @@ namespace RoseLibML.Util
         public ModelParams? ModelParams { get; set; }
         public Paths? Paths { get; set; }
         public RunParams? RunParams { get; set; }
+        public FixedNodeKinds? FixedNodeKinds { get; set; }
     }
 
     public class ModelParams
@@ -22,6 +23,7 @@ namespace RoseLibML.Util
         public double CutProbability { get; set; }
         [Range(0.0, 1.0)]
         public double P { get; set; }
+        public bool ExcludeLeafsFromGeometric { get; set; }
     }
 
     public class Paths
@@ -45,5 +47,12 @@ namespace RoseLibML.Util
         [Range(0.0, int.MaxValue)]
         public int Threshold { get; set; }
         public bool JustWriteTheFragments { get; set; }
+    }
+
+    public class FixedNodeKinds
+    {
+        public List<string>? FixedCutNodeKinds { get; set; }
+
+        public List<string>? FixedNonCutNodeKinds { get; set; }
     }
 }

@@ -64,7 +64,10 @@ namespace RoseLibML
 
         private void Fragmentation(LabeledNode node)
         {
-            node.IsFragmentRoot = Randoms.WellBalanced.NextDouble() < CutProbability;
+            if (!node.IsFixed)
+            {
+                node.IsFragmentRoot = Randoms.WellBalanced.NextDouble() < CutProbability;
+            }
 
             foreach (var child in node.Children)
             {
@@ -110,8 +113,9 @@ namespace RoseLibML
                 }
 
                 BookKeeper.RemoveZeroNodeTypes();
+                BookKeeper.RemoveZeroCountRootsAndFragments();
 
-                if(burnInIterations - 1 < iteration)
+                if (burnInIterations - 1 < iteration)
                 {
                     WriteFragments(fragmentCountTreshold, iteration);
                 }
@@ -130,6 +134,14 @@ namespace RoseLibML
 
         private void TypeBlockMove(int iteration, KeyValuePair<LabeledNodeType, List<LabeledNode>> typeKV)
         {
+            var typeNodes = typeKV.Value.ToList();
+            if (typeNodes != null && typeNodes.Count > 0)
+            {
+                if (typeNodes[0].IsFixed)
+                {
+                    return;
+                }
+            }
             var typeBlock = CreateTypeBlockAndAdjustCounts(typeKV.Value.ToList(), (short)iteration);
 
             var typeBlockCardinality = typeBlock.Count;
@@ -279,24 +291,25 @@ namespace RoseLibML
         #region Calculation and cut decision
         private List<double> CalculateTypeBlockMProbabilities(LabeledNodeType type, int typeCardinality)
         {
-            var results = new List<double>(new double[typeCardinality]);
+            var results = new List<double>(new double[typeCardinality + 1]);
 
             var gCalculationInfo = PrepareUnraisedFactors(type);
 
-            for (int m = 0; m <= typeCardinality; m++)
+            Parallel.ForEach(results, new ParallelOptions { MaxDegreeOfParallelism = 4 }, (result, state, index) =>
+            {
+                var m = (int)index;
+                var gm = CalculateG(m, typeCardinality, gCalculationInfo);
+                var combinationsWithoutRepetitions = MathFunctions.CombinationsWithoutRepetition(typeCardinality, m);
+                results[m] = Math.Exp(Math.Log(combinationsWithoutRepetitions) + Math.Log(gm));
+            });
+
+            /*for (int m = 0; m <= typeCardinality; m++)
             {
                 var gm = CalculateG(m, typeCardinality, gCalculationInfo);
                 var combinationsWithoutRepetitions = MathFunctions.CombinationsWithoutRepetition(typeCardinality, m);
-                results.Insert(m, combinationsWithoutRepetitions * gm);
+                results[m] = Math.Exp(Math.Log(combinationsWithoutRepetitions) + Math.Log(gm));
             }
-
-            /* Parallel.ForEach(results, new ParallelOptions { MaxDegreeOfParallelism = 2 }, (result, state, index) =>
-            {
-                var m = (int) index;
-                var gm = CalculateGOptimized(m, typeCardinality, gCalculationInfo);
-                var combinationsWithoutRepetitions = MathFunctions.CombinationsWithoutRepetition(typeCardinality, m);
-                results[m] = combinationsWithoutRepetitions * gm;
-            }); */
+            */
 
             List<double> normalizedResults = NormalizeResults(typeCardinality, results);
 
@@ -403,61 +416,65 @@ namespace RoseLibML
                 var wasFragmentRoot = node.IsFragmentRoot;
                 node.IsFragmentRoot = ones[j] == 1;
 
+                var fullFragmentRoot = node.FindFullFragmentRoot();
+
                 if (wasFragmentRoot == node.IsFragmentRoot)
                 {
                     isRedundantUpdate = true;
                 }
 
-                if(isRedundantUpdate) { continue; }
-
-                var allFullFragmentNodes = node.GetAllFullFragmentNodes();
-                var fullFragmentEdgeNodes = node.GetAllFullFragmentLeaves();
-                fullFragmentEdgeNodes.Add(allFullFragmentNodes[0]);
-
-                var innerFragmentNodes = allFullFragmentNodes
-                                            .GetRange(1, allFullFragmentNodes.Count - 1)
-                                            .Except(fullFragmentEdgeNodes)
-                                            .ToList();
-
-                if (node.IsFragmentRoot)
+                if (!isRedundantUpdate)
                 {
-                    if(cutFullFragmentInnerNodes != null && cutFullFragmentInnerNodes.Count > 0)
+
+                    var allFullFragmentNodes = node.GetAllFullFragmentNodes();
+                    var fullFragmentRoot2 = allFullFragmentNodes[0];
+                    var fullFragmentEdgeNodes = node.GetAllFullFragmentLeaves();
+                    fullFragmentEdgeNodes.Add(fullFragmentRoot2);
+
+                    var innerFragmentNodes = allFullFragmentNodes
+                                                .GetRange(1, allFullFragmentNodes.Count - 1)
+                                                .Except(fullFragmentEdgeNodes)
+                                                .ToList();
+
+                    if (node.IsFragmentRoot)
                     {
-                        CopyTypesFromExistingFragmentInnerNodes(cutFullFragmentInnerNodes, innerFragmentNodes, node);
-                        UpdateNodesOfFragment(fullFragmentEdgeNodes, node);
+                        if (cutFullFragmentInnerNodes != null && cutFullFragmentInnerNodes.Count > 0)
+                        {
+                            CopyTypesFromExistingFragmentInnerNodes(cutFullFragmentInnerNodes, innerFragmentNodes, node);
+                            UpdateNodesOfFragment(fullFragmentEdgeNodes, node);
+                        }
+                        else
+                        {
+                            cutFullFragmentInnerNodes = innerFragmentNodes;
+                            UpdateNodesOfFragment(allFullFragmentNodes, node);
+                        }
                     }
                     else
                     {
-                        cutFullFragmentInnerNodes = innerFragmentNodes;
-                        UpdateNodesOfFragment(allFullFragmentNodes, node);
+                        if (noncutFullFragmentInnerNodes != null && noncutFullFragmentInnerNodes.Count > 0)
+                        {
+                            CopyTypesFromExistingFragmentInnerNodes(noncutFullFragmentInnerNodes, innerFragmentNodes, node);
+                            UpdateNodesOfFragment(fullFragmentEdgeNodes, node);
+                        }
+                        else
+                        {
+                            noncutFullFragmentInnerNodes = innerFragmentNodes;
+                            UpdateNodesOfFragment(allFullFragmentNodes, node);
+                        }
                     }
                 }
-                else
-                {
-                    if (noncutFullFragmentInnerNodes != null && noncutFullFragmentInnerNodes.Count > 0)
-                    {
-                        CopyTypesFromExistingFragmentInnerNodes(noncutFullFragmentInnerNodes, innerFragmentNodes, node);
-                        UpdateNodesOfFragment(fullFragmentEdgeNodes, node);
-                    }
-                    else
-                    {
-                        noncutFullFragmentInnerNodes = innerFragmentNodes;
-                        UpdateNodesOfFragment(allFullFragmentNodes, node);
-                    }
-                }
-
 
                 if (ones[j] == 1)
                 {
                     BookKeeper.IncrementFragmentCount(node.Type.Part1Fragment);
                     BookKeeper.IncrementFragmentCount(node.Type.Part2Fragment);
                     BookKeeper.IncrementRootCount(node.STInfo);
-                    BookKeeper.IncrementRootCount(allFullFragmentNodes[0].STInfo);
+                    BookKeeper.IncrementRootCount(fullFragmentRoot.STInfo);
                 }
                 else
                 {
                     BookKeeper.IncrementFragmentCount(node.Type.FullFragment);
-                    BookKeeper.IncrementRootCount(allFullFragmentNodes[0].STInfo);
+                    BookKeeper.IncrementRootCount(fullFragmentRoot.STInfo);
                 }
             }
         }

@@ -23,6 +23,8 @@ namespace RoseLibML
         public List<LabeledTree> Trees { get => trees; set => trees = value; }
 
         public double P { get; set; }
+        public bool ExcludeLeafsFromGeometric { get; set; }
+
 
         public LabeledTreePCFGComposer(List<LabeledTree> trees, Config config)
         {
@@ -30,6 +32,7 @@ namespace RoseLibML
             Trees = trees;
 
             P = config.ModelParams.P;
+            ExcludeLeafsFromGeometric = config.ModelParams.ExcludeLeafsFromGeometric;
         }
 
         #region PCFG Calculation
@@ -120,7 +123,23 @@ namespace RoseLibML
         {
             var kind = node.STInfo;
             var children = node.Children;
-            fragmentSize = children.Count;
+
+            if (children != null && children.Count > 0)
+            {
+                if (ExcludeLeafsFromGeometric)
+                {
+                    fragmentSize = children.Where(c => c.IsTreeLeaf == false).Count();
+                }
+                else
+                {
+                    fragmentSize = children.Count;
+                }
+            }
+            else
+            {
+                fragmentSize = 0;
+            }
+
 
             var rhs = "";
             var probabilityLn = Math.Log(1.0); // 0, a neutral element (addition), to be returned if node has no descendants.
@@ -132,12 +151,11 @@ namespace RoseLibML
 
             foreach (var child in children)
             {
-                var childFragmentSize = 0;
                 rhs += $"{child.STInfo} ";
                 if (!child.IsFragmentRoot)
                 {
-                    probabilityLn += FragmentProbabilityLnFromPCFGRules(child, out childFragmentSize);
-                    fragmentSize += childFragmentSize;
+                    probabilityLn += FragmentProbabilityLnFromPCFGRules(child, out int subFragmentSize);
+                    fragmentSize += subFragmentSize;
                 }
             }
 

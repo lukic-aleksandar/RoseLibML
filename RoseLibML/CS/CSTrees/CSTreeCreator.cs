@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using RoseLibML.Core.LabeledTrees;
+using RoseLibML.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,10 +13,12 @@ namespace RoseLibML.CS.CSTrees
 {
     public class CSTreeCreator : TreeCreator
     {
-        public static CSTree CreateTree(FileInfo sourceInfo, string outDirectory)
+        public static CSTree CreateTree(FileInfo sourceInfo, string outDirectory, FixedNodeKinds? fixedNodeKinds = null)
         {
             using (StreamReader sr = new StreamReader(sourceInfo.FullName))
             {
+                CSNodeCreator csNodeCreator = new CSNodeCreator(fixedNodeKinds); 
+
                 var source = sr.ReadToEnd();
                 var syntaxTree = CSharpSyntaxTree.ParseText(source);
 
@@ -27,7 +30,7 @@ namespace RoseLibML.CS.CSTrees
                     tree.FilePath = $"{outDirectory}/{sourceInfo.Name}.bin";
                 }
 
-                tree.Root = CSNodeCreator.CreateNode(syntaxTree.GetRoot());
+                tree.Root = csNodeCreator.CreateNode(syntaxTree.GetRoot());
                 tree.Root.IsFragmentRoot = true;
                 tree.Root.CanHaveType = false;
 

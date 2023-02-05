@@ -8,6 +8,7 @@ using RoseLibML.CS.CSTrees;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using RoseLibML.Util;
 
 namespace Tests.TreeTransformation
 {
@@ -373,8 +374,9 @@ namespace Tests.TreeTransformation
         [Test]
         public void TestCSMethodBinarization()
         {
+            CSNodeCreator csNodeCreator = new CSNodeCreator();
             var method = CreateMethod();
-            CSNode csNode = CSNodeCreator.CreateNode(method);
+            CSNode csNode = csNodeCreator.CreateNode(method);
 
             LabeledTreeTransformations.Binarize(csNode, new CSNodeCreator());
             
