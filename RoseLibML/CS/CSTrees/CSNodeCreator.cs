@@ -73,19 +73,29 @@ namespace RoseLibML.CS.CSTrees
                     // So, just use this value when writing, don't bother finding a match.
                     else
                     {
-                        tokenNode.STInfo = child.AsToken()
+                        if(parent.Kind() == SyntaxKind.IdentifierName)
+                        {
+                            tokenNode.STInfo = child.AsToken().ValueText;
+                            tokenNode.UseRoslynMatchToWrite = false;
+                            tokenNode.CanHaveType = false;
+                            tokenNode.IsTreeLeaf = true;
+                        }
+                        else
+                        {
+                            tokenNode.STInfo = child.AsToken()
                                             .Kind()
                                             .ToString();
-                        tokenNode.UseRoslynMatchToWrite = false;
-                        tokenNode.CanHaveType = true;
+                            tokenNode.UseRoslynMatchToWrite = false;
+                            tokenNode.CanHaveType = true;
 
-                        var leaf = new CSNode();
-                        leaf.STInfo = child.AsToken().ValueText;
-                        leaf.UseRoslynMatchToWrite = false;
-                        leaf.CanHaveType = false;
-                        leaf.IsTreeLeaf = true;
+                            var leaf = new CSNode();
+                            leaf.STInfo = child.AsToken().ValueText;
+                            leaf.UseRoslynMatchToWrite = false;
+                            leaf.CanHaveType = false;
+                            leaf.IsTreeLeaf = true;
 
-                        tokenNode.AddChild(leaf);
+                            tokenNode.AddChild(leaf);
+                        }
                     }
 
                     node.AddChild(tokenNode);
