@@ -46,12 +46,15 @@ namespace RoseLibML.CS.CSTrees
             return false;
         }
 
+        // Only fields that could be interesting for calculation
         public override LabeledNode CreateSimpleDuplicate()
         {
             var simpleDuplicate = new CSNode();
             simpleDuplicate.STInfo = STInfo;
             simpleDuplicate.CanHaveType = CanHaveType;
             simpleDuplicate.IsFragmentRoot = IsFragmentRoot;
+            simpleDuplicate.IsTreeLeaf = IsTreeLeaf;
+            simpleDuplicate.IsFixed = IsFixed;
 
             return simpleDuplicate;
         }

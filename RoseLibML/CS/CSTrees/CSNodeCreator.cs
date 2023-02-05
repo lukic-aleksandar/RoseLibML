@@ -45,6 +45,10 @@ namespace RoseLibML.CS.CSTrees
             node.RoslynSpanStart = parent.Span.Start;
             node.RoslynSpanEnd = parent.Span.End;
 
+            if(children.Count == 0)
+            {
+                node.IsTreeLeaf= true;
+            }
             foreach (var child in children)
             {
                 if (child.IsNode)
