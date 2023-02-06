@@ -21,43 +21,34 @@ namespace RoseLibML.CS.CSTrees
                 this.fixedNodeKinds = fixedNodeKinds;
             }
         }
-        public override LabeledNode CreateTempNode()   
+        public override LabeledNode CreateTempNode(string STInfo)   
         {
             var node = new CSNode()
             {
-                UseRoslynMatchToWrite = true // This is on purpose, so it wouldn't get written
+                UseRoslynMatchToWrite = true, // This is on purpose, so it wouldn't get written
+                STInfo = STInfo,
             };
+
+            SetIsFixed(node);
+
             return node;
         }
         public CSNode CreateNode(SyntaxNode parent)
         {
             var children = parent.ChildNodesAndTokens();
             var node = new CSNode();
-             
+
             node.STInfo = ((ushort)parent.Kind()).ToString();
             node.UseRoslynMatchToWrite = false;
-
-            if (fixedNodeKinds != null
-                && fixedNodeKinds.FixedCutNodeKinds != null
-                && fixedNodeKinds.FixedCutNodeKinds.Contains(node.STInfo)
-                )
-            {
-                node.IsFixed = true;
-                node.IsFragmentRoot = true;
-            }
-
-            if (fixedNodeKinds != null
-                && fixedNodeKinds.FixedNonCutNodeKinds != null
-                && fixedNodeKinds.FixedNonCutNodeKinds.Contains(node.STInfo)
-                )
-            {
-                node.IsFixed = true;
-                node.IsFragmentRoot = false;
-            }
+            SetIsFixed(node);
 
             node.RoslynSpanStart = parent.Span.Start;
             node.RoslynSpanEnd = parent.Span.End;
 
+            if(children.Count == 0)
+            {
+                node.IsTreeLeaf= true;
+            }
             foreach (var child in children)
             {
                 if (child.IsNode)
@@ -86,19 +77,29 @@ namespace RoseLibML.CS.CSTrees
                     // So, just use this value when writing, don't bother finding a match.
                     else
                     {
-                        tokenNode.STInfo = child.AsToken()
+                        if(parent.Kind() == SyntaxKind.IdentifierName)
+                        {
+                            tokenNode.STInfo = child.AsToken().ValueText;
+                            tokenNode.UseRoslynMatchToWrite = false;
+                            tokenNode.CanHaveType = false;
+                            tokenNode.IsTreeLeaf = true;
+                        }
+                        else
+                        {
+                            tokenNode.STInfo = child.AsToken()
                                             .Kind()
                                             .ToString();
-                        tokenNode.UseRoslynMatchToWrite = false;
-                        tokenNode.CanHaveType = true;
+                            tokenNode.UseRoslynMatchToWrite = false;
+                            tokenNode.CanHaveType = true;
 
-                        var leaf = new CSNode();
-                        leaf.STInfo = child.AsToken().ValueText;
-                        leaf.UseRoslynMatchToWrite = false;
-                        leaf.CanHaveType = false;
-                        leaf.IsTreeLeaf = true;
+                            var leaf = new CSNode();
+                            leaf.STInfo = child.AsToken().ValueText;
+                            leaf.UseRoslynMatchToWrite = false;
+                            leaf.CanHaveType = false;
+                            leaf.IsTreeLeaf = true;
 
-                        tokenNode.AddChild(leaf);
+                            tokenNode.AddChild(leaf);
+                        }
                     }
 
                     node.AddChild(tokenNode);
@@ -106,6 +107,27 @@ namespace RoseLibML.CS.CSTrees
             }
 
             return node;
+        }
+
+        private void SetIsFixed(CSNode node)
+        {
+            if (fixedNodeKinds != null
+                            && fixedNodeKinds.FixedCutNodeKinds != null
+                            && fixedNodeKinds.FixedCutNodeKinds.Contains(node.STInfo)
+                            )
+            {
+                node.IsFixed = true;
+                node.IsFragmentRoot = true;
+            }
+
+            if (fixedNodeKinds != null
+                && fixedNodeKinds.FixedNonCutNodeKinds != null
+                && fixedNodeKinds.FixedNonCutNodeKinds.Contains(node.STInfo)
+                )
+            {
+                node.IsFixed = true;
+                node.IsFragmentRoot = false;
+            }
         }
     }
 }

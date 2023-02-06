@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using RoseLibML.Util;
+using System.IO;
 
 namespace Tests.TreeTransformation
 {
@@ -380,7 +381,18 @@ namespace Tests.TreeTransformation
 
             LabeledTreeTransformations.Binarize(csNode, new CSNodeCreator());
             
-            Assert.AreEqual(csNode.GetFragmentString(), "(8875 (8343) (8347) (8621 (8304)  ) (B_8875 (IdentifierToken (DidSucceed)  ) (B_8875 (8906 (8200) (8908 (8616 (IdentifierToken (int)  )  ) (IdentifierToken (repeatTimes)  )  ) (8216) (8908 (8616 (IdentifierToken (BigInteger)  )  ) (IdentifierToken (previousResult)  )  ) (8201)  ) (8792 (8205) (8206)  )  )  )  ) ");
+            Assert.AreEqual(csNode.GetFragmentString(), "(8875 (8343) (8347) (8621 (8304)  ) (B_8875 (IdentifierToken (DidSucceed)  ) (B_8875 (8906 (8200) (8908 (8616 (int)  ) (IdentifierToken (repeatTimes)  )  ) (8216) (8908 (8616 (BigInteger)  ) (IdentifierToken (previousResult)  )  ) (8201)  ) (8792 (8205) (8206)  )  )  )  ) ");
+        }
+
+        [Test]
+        public void TestClassBinarization() 
+        {
+
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles\\TestFile.cs");
+            var fileInfo = new FileInfo(path);
+            var tree = CSTreeCreator.CreateTree(fileInfo, null);
+
+            Assert.True(true);
         }
 
         public bool CheckIfRelationshipsAreOK(LabeledNode node)

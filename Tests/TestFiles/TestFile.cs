@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RoseLib
+﻿namespace RoseLib
 {
-    public class TestFile
+    public class TestFile : Object
     {
         public TestFile()
         {
