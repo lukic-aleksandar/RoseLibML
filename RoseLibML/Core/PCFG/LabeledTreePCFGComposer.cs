@@ -1,6 +1,6 @@
 ﻿using MathNet.Numerics.Distributions;
 using Microsoft.CodeAnalysis.CSharp;
-using RoseLib;
+using RoseLibML.Core.LabeledTrees;
 using RoseLibML.Util;
 using System;
 using System.Collections.Generic;
@@ -10,11 +10,11 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoseLibML
+namespace RoseLibML.Core.PCFG
 {
     [Serializable]
-    public class LabeledTreePCFGComposer 
-    { 
+    public class LabeledTreePCFGComposer
+    {
         public Dictionary<string, Dictionary<string, PCFGRHSData>> Rules { get; set; }
 
         [NonSerialized]
@@ -56,7 +56,7 @@ namespace RoseLibML
                 }
             }
         }
-     
+
         private void CountRulesInTrees(List<LabeledTree> trees)
         {
             foreach (var tree in trees)
@@ -79,7 +79,7 @@ namespace RoseLibML
 
             rhs = rhs.Trim();
 
-            if(rhs != "")
+            if (rhs != "")
             {
                 IncrementRuleCount(kind, rhs);
             }

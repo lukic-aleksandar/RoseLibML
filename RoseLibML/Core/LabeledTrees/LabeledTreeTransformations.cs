@@ -1,18 +1,17 @@
-﻿using RoseLibML.Core.LabeledTrees;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoseLibML
+namespace RoseLibML.Core.LabeledTrees
 {
     public class LabeledTreeTransformations
     {
 
         public static void Binarize(LabeledNode parent, NodeCreator nodeCreator)
         {
-            if(parent.Children.Count > 2)
+            if (parent.Children.Count > 2)
             {
                 var groups = FindSuccessiveNonLeavesGroups(parent.Children);
                 groups.Reverse();
@@ -48,12 +47,12 @@ namespace RoseLibML
                     parent.Children.Insert(indexOfFirst + 1, tempNode);
                 }
             }
-            
+
             foreach (var child in parent.Children)
             {
                 Binarize(child, nodeCreator);
             }
-            
+
         }
 
         private static List<List<LabeledNode>> FindSuccessiveNonLeavesGroups(List<LabeledNode> children)
@@ -61,7 +60,7 @@ namespace RoseLibML
             var retVal = new List<List<LabeledNode>>();
 
             var successive = new List<LabeledNode>();
-            for (int i = 0; i < children.Count; i++) 
+            for (int i = 0; i < children.Count; i++)
             {
                 if (!children[i].IsTreeLeaf)
                 {
@@ -69,7 +68,7 @@ namespace RoseLibML
                 }
                 else
                 {
-                    if(successive.Count > 2)
+                    if (successive.Count > 2)
                     {
                         var temp = new List<LabeledNode>(successive);
                         retVal.Add(temp);
@@ -78,7 +77,7 @@ namespace RoseLibML
                     successive.Clear();
                 }
             }
-            if(successive.Count > 2)
+            if (successive.Count > 2)
             {
                 retVal.Add(successive);
             }

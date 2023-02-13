@@ -1,16 +1,17 @@
-﻿using RoseLibML;
+﻿using RoseLibML.Core;
+using RoseLibML.Core.LabeledTrees;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Tests.AlgorithmTests.SupportingClasses
+namespace RoseLibMLTests.AlgorithmTests.SupportingClasses
 {
     public class ExtendedBookKeeper : BookKeeper
     {
         public override void AddNodeType(LabeledNodeType givenType, LabeledNode node)
         {
             var trueType = LabeledNode.GetType(node);
-            if(trueType.FullFragment != givenType.FullFragment ||
+            if (trueType.FullFragment != givenType.FullFragment ||
                     trueType.Part1Fragment != givenType.Part1Fragment ||
                     trueType.Part2Fragment != givenType.Part2Fragment)
             {

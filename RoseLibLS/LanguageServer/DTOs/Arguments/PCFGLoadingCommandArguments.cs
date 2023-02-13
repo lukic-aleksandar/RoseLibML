@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoseLibLS.LanguageServer
+namespace RoseLibLS.LanguageServer.DTOs.Arguments
 {
     public class PCFGLoadingCommandArguments
     {

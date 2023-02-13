@@ -9,9 +9,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using RoseLibML.Core.LabeledTrees;
 
-namespace RoseLibML
+namespace RoseLibML.Core.LabeledTrees
 {
     [Serializable]
     public abstract class LabeledNode

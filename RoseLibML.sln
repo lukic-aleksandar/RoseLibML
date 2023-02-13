@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{8A775295-89EC-435B-89DE-3127F43BBD7B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoseLibMLTests", "Tests\RoseLibMLTests.csproj", "{8A775295-89EC-435B-89DE-3127F43BBD7B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoseLibLS", "RoseLibLS\RoseLibLS.csproj", "{6549EA6C-390E-4001-BAAD-ED598CDADD9E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoseLibML", "RoseLibML\RoseLibML.csproj", "{2B3E8511-3A71-4026-BB48-BAA54E0C399D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPreprocessor", "DataPreprocessor\DataPreprocessor.csproj", "{9F2DA68C-A122-4B03-8313-B5A5A434DCF2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPreprocessorTests", "DataPreprocessorTests\DataPreprocessorTests.csproj", "{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +45,22 @@ Global
 		{2B3E8511-3A71-4026-BB48-BAA54E0C399D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2B3E8511-3A71-4026-BB48-BAA54E0C399D}.Release|x64.ActiveCfg = Release|Any CPU
 		{2B3E8511-3A71-4026-BB48-BAA54E0C399D}.Release|x64.Build.0 = Release|Any CPU
+		{9F2DA68C-A122-4B03-8313-B5A5A434DCF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F2DA68C-A122-4B03-8313-B5A5A434DCF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F2DA68C-A122-4B03-8313-B5A5A434DCF2}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9F2DA68C-A122-4B03-8313-B5A5A434DCF2}.Debug|x64.Build.0 = Debug|Any CPU
+		{9F2DA68C-A122-4B03-8313-B5A5A434DCF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F2DA68C-A122-4B03-8313-B5A5A434DCF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F2DA68C-A122-4B03-8313-B5A5A434DCF2}.Release|x64.ActiveCfg = Release|Any CPU
+		{9F2DA68C-A122-4B03-8313-B5A5A434DCF2}.Release|x64.Build.0 = Release|Any CPU
+		{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}.Debug|x64.Build.0 = Debug|Any CPU
+		{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}.Release|x64.ActiveCfg = Release|Any CPU
+		{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

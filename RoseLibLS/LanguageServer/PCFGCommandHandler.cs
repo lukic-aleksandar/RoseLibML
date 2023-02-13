@@ -1,8 +1,12 @@
 ﻿using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Workspace;
+using RoseLibLS.LanguageServer.DTOs.Arguments;
+using RoseLibLS.LanguageServer.DTOs.pCFG;
 using RoseLibLS.Util;
 using RoseLibML;
+using RoseLibML.Core.LabeledTrees;
+using RoseLibML.Core.PCFG;
 using RoseLibML.CS.CSTrees;
 using RoseLibML.Util;
 using Serilog;

@@ -3,7 +3,7 @@ using RoseLibML;
 using RoseLibML.Core.LabeledTrees;
 using RoseLibML.CS.CSTrees;
 
-namespace Tests.FragmentExtensions
+namespace RoseLibMLTests.FragmentExtensions
 {
     public class GetFragmentStringTests
     {

@@ -3,6 +3,7 @@ using Newtonsoft.Json.Linq;
 using OmniSharp.Extensions.LanguageServer.Protocol.Client.Capabilities;
 using OmniSharp.Extensions.LanguageServer.Protocol.Models;
 using OmniSharp.Extensions.LanguageServer.Protocol.Workspace;
+using RoseLibLS.LanguageServer.DTOs.Arguments;
 using RoseLibLS.Transformer;
 using Serilog;
 using System;

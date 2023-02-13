@@ -8,7 +8,7 @@ using MersenneTwister;
 using RoseLibML;
 using RoseLibML.Core;
 
-namespace Tests.AlgorithmTests.MathTests
+namespace RoseLibMLTests.AlgorithmTests.MathTests
 {
     class CombinationsTests
     {
