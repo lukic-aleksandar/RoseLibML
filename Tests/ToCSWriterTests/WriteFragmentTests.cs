@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using RoseLibML;
+using RoseLibML.Core.LabeledTrees;
+using RoseLibML.CS;
 using RoseLibML.CS.CSTrees;
 using System;
 using System.Collections.Generic;
@@ -7,7 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Tests.ToCSWriterTests
+namespace RoseLibMLTests.ToCSWriterTests
 {
     class WriteFragmentTests
     {
@@ -42,7 +44,7 @@ namespace Tests.ToCSWriterTests
 
         private LabeledNode FindMethod1(LabeledNode node)
         {
-            foreach(var child in node.Children)
+            foreach (var child in node.Children)
             {
                 if (child.STInfo == "Method1")
                 {

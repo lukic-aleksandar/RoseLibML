@@ -7,16 +7,17 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoseLibML
+namespace RoseLibML.Core
 {
     public class LabeledNodeType : IEquatable<LabeledNodeType>
     {
         private static MD5 md5Hasher = MD5.Create();
-        
+
         private int fullFragmentLength = 0;
         private string fullFragmentHash = null;
-        public string FullFragment { 
-            get { return fullFragmentHash; } 
+        public string FullFragment
+        {
+            get { return fullFragmentHash; }
             set
             {
                 fullFragmentLength = value.Length;
@@ -26,7 +27,7 @@ namespace RoseLibML
 
         private int part1FragmentLength = 0;
         private string part1FragmentHash = null;
-        public string Part1Fragment 
+        public string Part1Fragment
         {
             get { return part1FragmentHash; }
             set
@@ -35,10 +36,10 @@ namespace RoseLibML
                 part1FragmentHash = CalculateFragmentHash(value);
             }
         }
-        
+
         private int part2FragmentLength = 0;
         private string part2FragmentHash = null;
-        public string Part2Fragment 
+        public string Part2Fragment
         {
             get { return part2FragmentHash; }
             set
@@ -48,12 +49,12 @@ namespace RoseLibML
             }
         }
 
-        
-        
+
+
         private string typeHash = null;
         public string GetTypeHash()
         {
-            if(typeHash == null)
+            if (typeHash == null)
             {
                 var hash = GetMD5HashAsString(FullFragment + Part1Fragment + Part2Fragment);
                 typeHash = $"{hash}|{fullFragmentLength}|{part1FragmentLength}|{part2FragmentLength}";
@@ -62,7 +63,7 @@ namespace RoseLibML
             return typeHash;
         }
 
-        
+
         public static string GetMD5HashAsString(string content)
         {
             var hashed = md5Hasher.ComputeHash(Encoding.UTF8.GetBytes(content));
@@ -80,16 +81,16 @@ namespace RoseLibML
 
         public bool Equals(LabeledNodeType? other)
         {
-            if(other == null)
+            if (other == null)
             {
                 return false;
             }
-            
+
             if (GetTypeHash().Equals(other.GetTypeHash()))
             {
                 return true;
             }
-            
+
             return false;
         }
 
@@ -99,9 +100,9 @@ namespace RoseLibML
             {
                 return false;
             }
-            
+
             var objectAsLNT = other as LabeledNodeType;
-            if(objectAsLNT == null)
+            if (objectAsLNT == null)
             {
                 return false;
             }

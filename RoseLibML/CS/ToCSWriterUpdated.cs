@@ -1,6 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using RoseLibML.Core;
+using RoseLibML.Core.LabeledTrees;
 using RoseLibML.CS.CSTrees;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoseLibML
+namespace RoseLibML.CS
 {
     public class ToCSWriterUpdated : Writer
     {
@@ -21,7 +22,7 @@ namespace RoseLibML
 
         private int CurrentIteration { get; set; } = -1;
 
-        public Dictionary<int, List<String>> FragmentsPerIteration;
+        public Dictionary<int, List<string>> FragmentsPerIteration;
 
         public ToCSWriterUpdated(string outputFile)
         {
@@ -34,7 +35,7 @@ namespace RoseLibML
             BookKeeper = bookKeeper;
             Trees = trees;
 
-            (new FileInfo(OutputFile)).Directory.Create();
+            new FileInfo(OutputFile).Directory.Create();
             StreamWriter = new StreamWriter(OutputFile, true);
         }
 
@@ -64,7 +65,7 @@ namespace RoseLibML
         {
             // Looking for a node that will serve as a root node for writing
             // Using types to find such a node
-            
+
 
             // Finding it using a type that has Part2 equal to passed fragment seems easiest
             // Just take a node with such a type as a root
@@ -86,7 +87,7 @@ namespace RoseLibML
 
             foreach (var typeKV in typeKVFulls)
             {
-                var nonCuttingNode = typeKV.Value.Where(node => (node.IsFragmentRoot == false)).FirstOrDefault(); 
+                var nonCuttingNode = typeKV.Value.Where(node => node.IsFragmentRoot == false).FirstOrDefault();
                 if (nonCuttingNode != null)
                 {
                     var ancestor = nonCuttingNode.Parent; // Tree root node, which doesn't have a parent, can't have a type, so I'm not taking that case into consideration
@@ -108,8 +109,8 @@ namespace RoseLibML
 
             foreach (var typeKVPart1 in typeKVPart1s)
             {
-                var cuttingNode = typeKVPart1.Value.Where(node => (node.IsFragmentRoot == true)).FirstOrDefault();
-                if(cuttingNode != null)
+                var cuttingNode = typeKVPart1.Value.Where(node => node.IsFragmentRoot == true).FirstOrDefault();
+                if (cuttingNode != null)
                 {
                     if (cuttingNode.Parent != null)
                     {
@@ -123,7 +124,7 @@ namespace RoseLibML
                     }
                 }
             }
-            
+
 
             return null;
         }
@@ -139,7 +140,7 @@ namespace RoseLibML
             while (nodeStack.Count > 0)
             {
                 var node = nodeStack.Pop();
-                if(node.IsFragmentRoot || node.Children.Count == 0)
+                if (node.IsFragmentRoot || node.Children.Count == 0)
                 {
                     leaves.Add(node);
                 }
@@ -185,7 +186,7 @@ namespace RoseLibML
             {
                 foreach (var leaf in writableLeaves)
                 {
-                    if(leaf.IsExistingRoslynNode && leaf.UseRoslynMatchToWrite)
+                    if (leaf.IsExistingRoslynNode && leaf.UseRoslynMatchToWrite)
                     {
                         var roslynNode = FindCorrespondingRoslynNodeOrToken(roslynFragmentRoot.ChildNodesAndTokens(), leaf);
                         if (roslynNode != null)
@@ -198,13 +199,14 @@ namespace RoseLibML
                         var uShortSyntaxKind = ushort.Parse(leaf.STInfo);
                         strWriter.Write((SyntaxKind)uShortSyntaxKind);
                     }
-                    else {
+                    else
+                    {
                         // Zašto ovo nisam ni jednom video za TempNodove?
                         // Zato što na 59-oj izbaciš "sve koji nisu CouldBeWritten".
                         // Tu se krije caka. Da li bi najlakše bilo da tamo promenim? Koje su posledice?
-                        strWriter.Write($" {leaf.ToString()}");  
+                        strWriter.Write($" {leaf.ToString()}");
                     }
-                    
+
                 }
 
                 AnnounceNewFragment(strWriter.ToString());
@@ -241,10 +243,10 @@ namespace RoseLibML
                 }
                 else if (nodeOrToken.Span.Start <= forNode.RoslynSpanStart && forNode.RoslynSpanEnd <= nodeOrToken.Span.End)
                 {
-                    if(nodeOrToken.ChildNodesAndTokens().Count != 0)
+                    if (nodeOrToken.ChildNodesAndTokens().Count != 0)
                     {
                         return FindCorrespondingRoslynNodeOrToken(nodeOrToken.ChildNodesAndTokens(), forNode);
-                    }                    
+                    }
                 }
             }
 
@@ -306,7 +308,7 @@ namespace RoseLibML
         {
             if (!FragmentsPerIteration.ContainsKey(iteration))
             {
-                FragmentsPerIteration.Add(iteration, new List<String>());
+                FragmentsPerIteration.Add(iteration, new List<string>());
             }
 
             FragmentsPerIteration[iteration].Add(fragment);

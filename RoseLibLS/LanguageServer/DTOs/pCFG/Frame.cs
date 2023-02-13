@@ -4,7 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoseLibLS.LanguageServer { 
+namespace RoseLibLS.LanguageServer.DTOs.pCFG
+{
     class Frame<T>
     {
         public int FrameNumber { get; set; }

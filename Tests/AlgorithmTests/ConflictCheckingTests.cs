@@ -4,12 +4,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NUnit.Framework;
-using RoseLibML;
+using RoseLibML.CS;
+using RoseLibML.Core;
 using RoseLibML.Core.LabeledTrees;
 using RoseLibML.CS.CSTrees;
-using Tests.AlgorithmTests.SupportingClasses;
+using RoseLibMLTests.AlgorithmTests.SupportingClasses;
 
-namespace Tests.AlgorithmTests
+namespace RoseLibMLTests.AlgorithmTests
 {
     class ConflictCheckingTests
     {
@@ -91,12 +92,12 @@ namespace Tests.AlgorithmTests
         public void BookkeeperInitializationTest()
         {
             var testTree = CreateATreeWithConflictingSites();
-            TBSampler sampler = new TBSampler(new ToCSWriter("onlyatest1"), new RoseLibML.Util.Config {ModelParams = new RoseLibML.Util.ModelParams() });
+            TBSampler sampler = new TBSampler(new ToCSWriter("onlyatest1"), new RoseLibML.Util.Config { ModelParams = new RoseLibML.Util.ModelParams() });
             sampler.BookKeeper = new ExtendedBookKeeper();
             sampler.Initialize(null, new LabeledTree[] { testTree }, true);
 
             var nt1Count = sampler.BookKeeper.GetRootCount("nt1");
-            Assert.AreEqual(4, nt1Count); 
+            Assert.AreEqual(4, nt1Count);
         }
 
         [Test]
@@ -117,7 +118,7 @@ namespace Tests.AlgorithmTests
                                 .Where(kvp => kvp.Value.Count == 2 && kvp.Value[0].STInfo == "nt1")
                                 .First();
 
-            
+
             var typeBlock = sampler.CreateTypeBlockAndAdjustCounts(typeNodesKVP.Value, 1);
 
             Assert.AreEqual(1, typeBlock.Count);
@@ -160,13 +161,13 @@ namespace Tests.AlgorithmTests
                 Assert.AreEqual(-1, fullFragmentRoot.Parent.LastModified.iteration);
             }
 
-            foreach(var fragmentNode in fragmentNodes)
+            foreach (var fragmentNode in fragmentNodes)
             {
                 Assert.AreEqual(1, fragmentNode.LastModified.iteration);
             }
 
             var fragmentLeaves = pivot.GetAllFullFragmentLeaves();
-            foreach(var leaf in fragmentLeaves)
+            foreach (var leaf in fragmentLeaves)
             {
                 Assert.AreEqual(1, leaf.LastModified.iteration);
                 foreach (var leafsChild in leaf.Children)

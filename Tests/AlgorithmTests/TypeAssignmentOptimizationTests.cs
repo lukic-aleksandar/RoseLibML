@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using RoseLibML;
+using RoseLibML.Core.LabeledTrees;
 using RoseLibML.CS.CSTrees;
 using System;
 using System.Collections.Generic;
@@ -8,9 +8,9 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Tests.AlgorithmTests.SupportingClasses;
+using RoseLibMLTests.AlgorithmTests.SupportingClasses;
 
-namespace Tests.AlgorithmTests
+namespace RoseLibMLTests.AlgorithmTests
 {
     class TypeAssignmentOptimizationTests
     {

@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
-using RoseLibML;
+using RoseLibML.Core.LabeledTrees;
+using RoseLibML.Core.PCFG;
 using RoseLibML.CS.CSTrees;
 using RoseLibML.Util;
 using System;
@@ -8,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tests.AlgorithmTests
+namespace RoseLibMLTests.AlgorithmTests
 {
     class FragmentProbabilityTests
     {
@@ -80,7 +81,7 @@ namespace Tests.AlgorithmTests
         {
             CSTree tree = CreateATree();
 
-            var config = new RoseLibML.Util.Config();
+            var config = new Config();
             var modelParams = new ModelParams() { P = 0.05, ExcludeLeafsFromGeometric = false };
             config.ModelParams = modelParams;
             LabeledTreePCFGComposer pcfgComposer = new LabeledTreePCFGComposer(new List<LabeledTree>() { tree }, config);
@@ -105,13 +106,13 @@ namespace Tests.AlgorithmTests
             Assert.AreEqual(Math.Log(1), pcfgComposer.Rules["nt2"]["t1"].ProbabilityLn);
         }
 
-        
+
         [Test]
         public void TestFragmentProbabilitiesCalculation()
         {
             CSTree tree = CreateATree();
 
-            var config = new RoseLibML.Util.Config();
+            var config = new Config();
             var modelParams = new ModelParams() { P = 0.05, ExcludeLeafsFromGeometric = false };
             config.ModelParams = modelParams;
             LabeledTreePCFGComposer pcfgComposer = new LabeledTreePCFGComposer(new List<LabeledTree>() { tree }, config);
@@ -129,7 +130,7 @@ namespace Tests.AlgorithmTests
         {
             CSTree tree = CreateATree();
 
-            var config = new RoseLibML.Util.Config();
+            var config = new Config();
             var modelParams = new ModelParams() { P = 0.05, ExcludeLeafsFromGeometric = true };
             config.ModelParams = modelParams;
             LabeledTreePCFGComposer pcfgComposer = new LabeledTreePCFGComposer(new List<LabeledTree>() { tree }, config);
@@ -141,7 +142,7 @@ namespace Tests.AlgorithmTests
             Assert.AreEqual(Math.Log(0.5), probabilityLn);
             // The initial fragment root should not be counted, only its descendants (but descendants that are fragment roots should).
             // Tree leafs not counted in this test, because of ExcludeLeafsFromGeometric
-            Assert.AreEqual(2, fragmentSize); 
+            Assert.AreEqual(2, fragmentSize);
         }
     }
 }

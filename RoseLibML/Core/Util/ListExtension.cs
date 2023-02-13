@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using MersenneTwister;
 
-namespace RoseLibML.Util
+namespace RoseLibML.Core.Util
 {
     static class ListExtension
     {

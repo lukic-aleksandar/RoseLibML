@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoseLib
+namespace RoseLibML.Core.PCFG
 {
     [Serializable]
     public class PCFGRHSData

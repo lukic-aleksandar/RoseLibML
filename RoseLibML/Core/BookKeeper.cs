@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RoseLibML
+namespace RoseLibML.Core
 {
     public class BookKeeper
     {
@@ -122,7 +122,7 @@ namespace RoseLibML
         {
             var zeroNodeTypes = TypeNodes.Keys.Where(k => TypeNodes[k].Count == 0).ToList();
 
-            for(var i = zeroNodeTypes.Count() - 1; i >= 0; i--)
+            for (var i = zeroNodeTypes.Count() - 1; i >= 0; i--)
             {
                 var currentType = zeroNodeTypes[i];
                 TypeNodes.Remove(currentType);

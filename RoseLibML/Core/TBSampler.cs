@@ -5,11 +5,12 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using RoseLibML.Core.LabeledTrees;
-using RoseLibML.Core;
 using MersenneTwister;
 using System.Numerics;
+using RoseLibML.Core.PCFG;
+using RoseLibML.Core.Util;
 
-namespace RoseLibML
+namespace RoseLibML.Core
 {
     public class TBSampler
     {
@@ -53,7 +54,7 @@ namespace RoseLibML
                 }
                 BookKeeper.RecordTreeData(item.tree);
 
-                if(item.index % 100 == 0)
+                if (item.index % 100 == 0)
                 {
                     Console.WriteLine($"Initialization passed index {item.index}.");
                 }
@@ -74,7 +75,7 @@ namespace RoseLibML
                 Fragmentation(child);
             }
         }
-        
+
         public void Train()
         {
             int startIteration = Config.RunParams.StartIteration;
@@ -156,16 +157,16 @@ namespace RoseLibML
         public bool ConfirmSitesAreNotMessedUp()
         {
             var types = BookKeeper.TypeNodes.Keys;
-            foreach(var type in types )
+            foreach (var type in types)
             {
                 var typeNodes = BookKeeper.TypeNodes[type];
-                foreach(var node in typeNodes )
+                foreach (var node in typeNodes)
                 {
                     var calculatedType = LabeledNode.GetType(node);
                     var innerType = node.Type;
                     var bookkeeperType = type;
 
-                    if(!calculatedType.Equals(innerType) || !calculatedType.Equals(bookkeeperType))
+                    if (!calculatedType.Equals(innerType) || !calculatedType.Equals(bookkeeperType))
                     {
                         return false;
                     }
@@ -199,7 +200,7 @@ namespace RoseLibML
                         BookKeeper.DecrementRootCount(node.STInfo);
 
                         var part1Root = node.Parent.FindFragmentRoot();
-                        if(part1Root.Parent != null) // Tree roots not recorded as fragment roots. The clause not possible for complete trees, but still, for test purposes.
+                        if (part1Root.Parent != null) // Tree roots not recorded as fragment roots. The clause not possible for complete trees, but still, for test purposes.
                         {
                             BookKeeper.DecrementRootCount(part1Root.STInfo);
                         }
@@ -490,7 +491,7 @@ namespace RoseLibML
             }
         }
 
-        private void CopyTypesFromExistingFragmentInnerNodes(List<LabeledNode> sourceFullFragmentInnerNodes,  List<LabeledNode> destinationFullFragmentInnerNodes, LabeledNode pivot)
+        private void CopyTypesFromExistingFragmentInnerNodes(List<LabeledNode> sourceFullFragmentInnerNodes, List<LabeledNode> destinationFullFragmentInnerNodes, LabeledNode pivot)
         {
             if (destinationFullFragmentInnerNodes.Count != sourceFullFragmentInnerNodes.Count)
             {
@@ -585,7 +586,7 @@ namespace RoseLibML
 
         public void UpdateListeners(int iteration)
         {
-            foreach(var listener in listeners)
+            foreach (var listener in listeners)
             {
                 listener.Update(iteration);
             }

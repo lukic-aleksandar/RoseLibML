@@ -1,4 +1,5 @@
-using RoseLibML;
+using RoseLibML.Core.LabeledTrees;
+using RoseLibML.CS;
 using RoseLibML.CS.CSTrees;
 using RoseLibML.Util;
 using System;
@@ -7,8 +8,10 @@ using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using RoseLibML.Core;
+using RoseLibML.Core.PCFG;
 
-namespace RoseLib
+namespace RoseLibML
 {
     class Program
     {
@@ -58,7 +61,7 @@ namespace RoseLib
                 sampler.WriteFragments(threshold, iteration);
                 Console.WriteLine("Finished writing of fragments...");
             }
-            
+
 
             Console.ReadKey();
         }
@@ -94,7 +97,7 @@ namespace RoseLib
         }
 
         static LabeledTree[] CreateLabeledTrees(Config config)
-        { 
+        {
             var inputModelPresent = !string.IsNullOrEmpty(config?.Paths?.InModel);
             var directoryInfo = new DirectoryInfo(config?.Paths?.InData);
             var files = directoryInfo.GetFiles();
