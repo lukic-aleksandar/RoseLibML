@@ -1,0 +1,88 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="TestFiles\RoseLib\Composers\BaseComposer.cs" />
+    <Compile Remove="TestFiles\RoseLib\Composers\BlockComposer.cs" />
+    <Compile Remove="TestFiles\RoseLib\Composers\ClassComposer.cs" />
+    <Compile Remove="TestFiles\RoseLib\Composers\CompilationUnitComposer.cs" />
+    <Compile Remove="TestFiles\RoseLib\Composers\CSRTypeComposer.cs" />
+    <Compile Remove="TestFiles\RoseLib\Composers\EnumComposer.cs" />
+    <Compile Remove="TestFiles\RoseLib\Composers\FieldComposer.cs" />
+    <Compile Remove="TestFiles\RoseLib\Composers\InterfaceComposer.cs" />
+    <Compile Remove="TestFiles\RoseLib\Composers\MemberComposer.cs" />
+    <Compile Remove="TestFiles\RoseLib\Composers\MethodComposer.cs" />
+    <Compile Remove="TestFiles\RoseLib\Composers\NamespaceComposer.cs" />
+    <Compile Remove="TestFiles\RoseLib\Composers\PropertyComposer.cs" />
+    <Compile Remove="TestFiles\RoseLib\Composers\TypeComposer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.3.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Transformer\Transformer.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="TestFiles\knowledge_base.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="TestFiles\RoseLib\Composers\BaseComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\RoseLib\Composers\BlockComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\RoseLib\Composers\ClassComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\RoseLib\Composers\CompilationUnitComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\RoseLib\Composers\CSRTypeComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\RoseLib\Composers\EnumComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\RoseLib\Composers\FieldComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\RoseLib\Composers\InterfaceComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\RoseLib\Composers\MemberComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\RoseLib\Composers\MethodComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\RoseLib\Composers\NamespaceComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\RoseLib\Composers\PropertyComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\RoseLib\Composers\TypeComposer.cs">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

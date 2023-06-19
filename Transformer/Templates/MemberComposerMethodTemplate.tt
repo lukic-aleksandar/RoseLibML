@@ -1,0 +1,23 @@
+﻿<#@ template language="C#" #>
+
+{
+    CompositionGuard.ImmediateOrParentOfNodeIs(Visitor.CurrentNode, typeof(<#=composerNode#>));
+
+    var fragment = $<#Write(ToLiteral(fragment));#>.Replace('\r', ' ').Replace('\n', ' ');
+            
+    var member = SyntaxFactory.ParseMemberDeclaration(fragment);
+    if (member!.ContainsDiagnostics)
+    {
+        throw new Exception("Idiom filled with provided parameters not rendered as syntactically valid.");
+    }
+
+    var referenceNode = TryGetReferenceAndPopToPivot();
+    var newEnclosingNode = AddMemberToCurrentNode(member!, referenceNode); <# // Member addition specific #>
+    Visitor.ReplaceNodeAndAdjustState(Visitor.CurrentNode!, newEnclosingNode);
+
+
+    var navigator = BaseNavigator.CreateTempNavigator<CSRTypeNavigator>(Visitor); <# // Member addition specific, includes all members #>
+    navigator.Select<#=composerNode.Replace("Syntax", "")#>(name); <# // Convention specific. Always follow the convention for selection method names #>
+
+    return this;
+}

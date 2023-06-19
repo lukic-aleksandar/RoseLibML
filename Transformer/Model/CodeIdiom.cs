@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace RoseLibLS.Transformer
+namespace Transformer.Model
 {
     public class CodeIdiom
     {

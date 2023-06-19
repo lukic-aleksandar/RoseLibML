@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Transformer.Model;
 
-namespace RoseLibLS.Transformer
+namespace Transformer
 {
     interface IdiomTransformer
     {
-        Task<bool> Generate(List<OutputSnippet> outputSnippets);
+        Task Generate(List<OutputSnippet> outputSnippets);
         string TransformFragmentString(string fragment, List<MethodParameter> parameters, bool preview);
     }
 }

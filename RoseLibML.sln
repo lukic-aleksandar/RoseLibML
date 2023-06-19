@@ -9,9 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoseLibLS", "RoseLibLS\Rose
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoseLibML", "RoseLibML\RoseLibML.csproj", "{2B3E8511-3A71-4026-BB48-BAA54E0C399D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPreprocessor", "DataPreprocessor\DataPreprocessor.csproj", "{9F2DA68C-A122-4B03-8313-B5A5A434DCF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPreprocessor", "DataPreprocessor\DataPreprocessor.csproj", "{9F2DA68C-A122-4B03-8313-B5A5A434DCF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataPreprocessorTests", "DataPreprocessorTests\DataPreprocessorTests.csproj", "{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataPreprocessorTests", "DataPreprocessorTests\DataPreprocessorTests.csproj", "{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformer", "Transformer\Transformer.csproj", "{FC12F29E-948A-40BB-AB14-16EA8F007B21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransformerTests", "TransformerTests\TransformerTests.csproj", "{CADA1EEE-794A-4A08-8561-AF28BD791927}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +65,22 @@ Global
 		{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}.Release|x64.ActiveCfg = Release|Any CPU
 		{5A1517C4-8F37-4BDA-B6DC-7FA1C8351FFE}.Release|x64.Build.0 = Release|Any CPU
+		{FC12F29E-948A-40BB-AB14-16EA8F007B21}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FC12F29E-948A-40BB-AB14-16EA8F007B21}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FC12F29E-948A-40BB-AB14-16EA8F007B21}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{FC12F29E-948A-40BB-AB14-16EA8F007B21}.Debug|x64.Build.0 = Debug|Any CPU
+		{FC12F29E-948A-40BB-AB14-16EA8F007B21}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FC12F29E-948A-40BB-AB14-16EA8F007B21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FC12F29E-948A-40BB-AB14-16EA8F007B21}.Release|x64.ActiveCfg = Release|Any CPU
+		{FC12F29E-948A-40BB-AB14-16EA8F007B21}.Release|x64.Build.0 = Release|Any CPU
+		{CADA1EEE-794A-4A08-8561-AF28BD791927}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CADA1EEE-794A-4A08-8561-AF28BD791927}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CADA1EEE-794A-4A08-8561-AF28BD791927}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{CADA1EEE-794A-4A08-8561-AF28BD791927}.Debug|x64.Build.0 = Debug|Any CPU
+		{CADA1EEE-794A-4A08-8561-AF28BD791927}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CADA1EEE-794A-4A08-8561-AF28BD791927}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CADA1EEE-794A-4A08-8561-AF28BD791927}.Release|x64.ActiveCfg = Release|Any CPU
+		{CADA1EEE-794A-4A08-8561-AF28BD791927}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

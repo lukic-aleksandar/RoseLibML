@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace RoseLibLS.Transformer
+namespace Transformer.Model
 {
     public class OutputSnippet
     {
@@ -16,7 +16,8 @@ namespace RoseLibLS.Transformer
         public List<MethodParameter> MethodParameters { get; set; }
     }
 
-    public class MethodParameter {
+    public class MethodParameter
+    {
         [Required]
         public string Parameter { get; set; }
         [Required]

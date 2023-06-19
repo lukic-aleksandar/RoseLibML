@@ -6,39 +6,66 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.MSBuild;
-using RoseLibLS.Transformer.Templates;
+using Transformer.Templates;
 using Serilog;
+using System.IO;
+using System.Text;
+using Transformer.Model;
 
-namespace RoseLibLS.Transformer
+namespace Transformer
 {
-    class CSIdiomTransformer : IdiomTransformer
+    public class CSIdiomTransformer : IdiomTransformer
     {
         public KnowledgeBase KnowledgeBase { get; set; }
 
-        private const string folderName = "ComposersGenerated";
+        private Dictionary<string, string> composerFiles;
+
+
+        private const string folderName = "Generated";
 
         public CSIdiomTransformer(KnowledgeBase knowledgeBase)
         {
+            composerFiles = new Dictionary<string, string>();
             KnowledgeBase = knowledgeBase;
+            Init();
         }
 
-        public async Task<bool> Generate(List<OutputSnippet> outputSnippets)
+        private void Init()
         {
-            Dictionary<string, List<OutputSnippet>> composerSnippets = GroupSnippetsByComposers(outputSnippets);
+            
+            if (KnowledgeBase == null) { throw new Exception("Knowledge base must be provided."); }
 
-            var msWorkspace = MSBuildWorkspace.Create();
-            var solution = await msWorkspace.OpenSolutionAsync(KnowledgeBase.RoseLibPath);
+            foreach (string filePath in Directory.EnumerateFiles(KnowledgeBase.RoseLibPath, "*.cs", SearchOption.AllDirectories))
+            {
+                var fileName = Path.GetFileNameWithoutExtension(filePath);
+                composerFiles.Add(fileName, filePath);
+            }
+        }
+
+        public async Task Generate(List<OutputSnippet> outputSnippets)
+        {
+            var generatedComposersPath =  Path.Combine(
+                KnowledgeBase.RoseLibPath,
+                KnowledgeBase.ComposersPath,
+                folderName);
+
+            var directoryInfo = Directory.CreateDirectory(generatedComposersPath);
+            
+            Dictionary<string, List<OutputSnippet>> composerSnippets = GroupSnippetsByComposers(outputSnippets);
 
             foreach (KeyValuePair<string, List<OutputSnippet>> cs in composerSnippets)
             {
-                var document = await GenerateComposer(solution, cs.Key, cs.Value);
-
-                solution = document.Project.Solution;
+                await GenerateComposer(directoryInfo, cs.Key, cs.Value);
             }
 
-            return msWorkspace.TryApplyChanges(solution);
+            return;
         }
 
+        // Ova funkcija zaslužuje procenu.
+        // Dakle, 2 stvari koje su isplivale
+        // Rukovanje "
+        // Rukovanje {
+        // Kao da nisu obe baš dobre, let's test it out :)
         public string TransformFragmentString(string fragment, List<MethodParameter> parameters, bool preview = false)
         {
             string transformedFragment = fragment;
@@ -46,10 +73,10 @@ namespace RoseLibLS.Transformer
             if (!preview)
             {
                 // replace curly brackets
-                string openBracketsPattern = @"{(?=([^""]*""[^""]*"")*[^""]*$)";
+                string openBracketsPattern = @"{";//@"{(?=([^""]*""[^""]*"")*[^""]*$)";
                 transformedFragment = Regex.Replace(transformedFragment, openBracketsPattern, "{{");
 
-                string closeBracketsPattern = @"}(?=([^""]*""[^""]*"")*[^""]*$)";
+                string closeBracketsPattern = @"}"; //@"}(?=([^""]*""[^""]*"")*[^""]*$)";
                 transformedFragment = Regex.Replace(transformedFragment, closeBracketsPattern, "}}");
             }
 
@@ -92,37 +119,41 @@ namespace RoseLibLS.Transformer
             return composerSnippets;
         }
 
-        private async Task<Document> GenerateComposer(Solution solution, string composer, List<OutputSnippet> outputSnippets)
+        private async Task GenerateComposer(DirectoryInfo generationDirecory, string composer, List<OutputSnippet> outputSnippets)
         {
             var composerInfo = KnowledgeBase.ComposerInformationMapping[composer];
+            var composerFilePath = Path.Combine(generationDirecory.FullName, composerInfo.FileName);
 
-            List<MethodDeclarationSyntax> methods = GetMethodsFromOutputSnippets(outputSnippets);
 
-            // check if the document for the composer already exists
-            var document = solution.Projects.Select(pr => pr.Documents.Where(d => d.Name == composerInfo.FileName && d.Folders.Contains(folderName))).Single();
-            if (!document.Any())
+            List<MethodDeclarationSyntax> methods = GetMethodsForOutputSnippets(outputSnippets);
+            CompilationUnitSyntax? resultingCU = null;
+
+            if (!composerFiles.ContainsKey(composerInfo.FileName))
             {
-                Log.Logger.Debug($"Generate Command Handler | Create a new file for the {composer}");
-
                 // read the template for the composer file
                 BaseFileTemplate fileTemplate = new BaseFileTemplate(composer);
                 string fileContent = fileTemplate.TransformText();
 
                 var compilationUnit = await CSharpSyntaxTree.ParseText(fileContent).GetRootAsync();
-
-                var newCompilationUnit = AddMethodsToComposer(composer, compilationUnit as CompilationUnitSyntax, methods);
-
-                return solution.Projects.Single().AddDocument(composerInfo.FileName, newCompilationUnit, new List<string> { "RoseLib", folderName });
+                resultingCU = AddMethodsToComposer(composer, (compilationUnit as CompilationUnitSyntax)!, methods);
             }
             else
             {
-                Log.Logger.Debug($"Generate Command Handler | Editing an existing file for the {composer}");
+                using (var sr = new StreamReader(composerFilePath))
+                {
+                    var existingCode = sr.ReadToEnd();
+                    var st = CSharpSyntaxTree.ParseText(existingCode);
+                    var compilationUnit = st.GetRoot();
+                    resultingCU = AddMethodsToComposer(composer, (compilationUnit as CompilationUnitSyntax)!, methods);
+                }
+            }
 
-                var compilationUnit = await document.Single().GetSyntaxRootAsync();
+            using (var fileStream = File.Create(composerFilePath))
+            {
+                var utf8 = new UTF8Encoding();
 
-                var newCompilationUnit = AddMethodsToComposer(composer, compilationUnit as CompilationUnitSyntax, methods);
-
-                return document.Single().WithSyntaxRoot(newCompilationUnit);
+                fileStream.Write(utf8.GetBytes(resultingCU.ToFullString()));
+                fileStream.Flush();
             }
         }
 
@@ -138,7 +169,7 @@ namespace RoseLibLS.Transformer
             return newCompilationUnit.NormalizeWhitespace();
         }
 
-        private List<MethodDeclarationSyntax> GetMethodsFromOutputSnippets(List<OutputSnippet> outputSnippets)
+        private List<MethodDeclarationSyntax> GetMethodsForOutputSnippets(List<OutputSnippet> outputSnippets)
         {
             List<MethodDeclarationSyntax> methods = new List<MethodDeclarationSyntax>();
 
@@ -151,7 +182,7 @@ namespace RoseLibLS.Transformer
 
                 // set up method declaration syntax
                 TypeSyntax returnType = SyntaxFactory.ParseTypeName(snippet.Composer);
-                var method = SyntaxFactory.MethodDeclaration(returnType, $"Add{MakeFirstUppercase(snippet.MethodName)}")
+                var method = SyntaxFactory.MethodDeclaration(returnType, $"{MakeFirstUppercase(snippet.MethodName)}")
                     .AddModifiers(SyntaxFactory.Token(SyntaxKind.PublicKeyword));
 
                 var methodParameters = SyntaxFactory.ParameterList();
@@ -200,9 +231,9 @@ namespace RoseLibLS.Transformer
                     var methodTemplate = new MethodComposerTemplate(composer, fragment, composerNode, rootNodeType);
                     methodBody = methodTemplate.TransformText();
                     break;
-                case "ComposerTemplate":
-                    var otherTemplate = new ComposerTemplate(composer, fragment, composerNode, rootNodeType);
-                    methodBody = otherTemplate.TransformText();
+                case "ClassComposerTemplate":
+                    var memberTemplate = new MemberComposerMethodTemplate(composer, fragment, composerNode, rootNodeType);
+                    methodBody = memberTemplate.TransformText();
                     break;
                 default:
                     methodBody = "{}";

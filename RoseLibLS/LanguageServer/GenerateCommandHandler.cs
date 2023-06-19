@@ -10,7 +10,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using RoseLibLS.Transformer;
+using Transformer;
+using Transformer.Model;
 using Microsoft.Build.Locator;
 using RoseLibLS.Util;
 
@@ -52,13 +53,10 @@ namespace RoseLibLS.LanguageServer
             try
             {
                 CSIdiomTransformer transformer = new CSIdiomTransformer(knowledgeBase);
-                bool success = await transformer.Generate(outputSnippets);
+                await transformer.Generate(outputSnippets);
 
-                if (!success)
-                {
-                    Log.Logger.Error("Generate Command Handler | An error occurred while generating.");
-                    return new CommandResponse("An error occurred while generating.", true);
-                }
+                Log.Logger.Error("Generate Command Handler | An error occurred while generating.");
+                return new CommandResponse("An error occurred while generating.", true);
 
                 Log.Logger.Debug("Generate Command Handler | Generating succesfully done");
                 return new CommandResponse(null, "Generating succesfully done.", false);
