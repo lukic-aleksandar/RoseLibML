@@ -10,8 +10,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using RoseLibLS.Transformer;
-using Microsoft.Build.Locator;
+using Transformer;
+using Transformer.Model;
 using RoseLibLS.Util;
 
 namespace RoseLibLS.LanguageServer
@@ -24,8 +24,6 @@ namespace RoseLibLS.LanguageServer
 
         public GenerateCommandHandler()
         {
-            MSBuildLocator.RegisterDefaults();
-
             // load knowledge base
             using (StreamReader file = File.OpenText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"knowledge_base.json")))
             using (JsonTextReader reader = new JsonTextReader(file))
@@ -52,13 +50,10 @@ namespace RoseLibLS.LanguageServer
             try
             {
                 CSIdiomTransformer transformer = new CSIdiomTransformer(knowledgeBase);
-                bool success = await transformer.Generate(outputSnippets);
+                await transformer.Generate(outputSnippets);
 
-                if (!success)
-                {
-                    Log.Logger.Error("Generate Command Handler | An error occurred while generating.");
-                    return new CommandResponse("An error occurred while generating.", true);
-                }
+                Log.Logger.Error("Generate Command Handler | An error occurred while generating.");
+                return new CommandResponse("An error occurred while generating.", true);
 
                 Log.Logger.Debug("Generate Command Handler | Generating succesfully done");
                 return new CommandResponse(null, "Generating succesfully done.", false);

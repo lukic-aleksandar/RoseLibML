@@ -13,8 +13,11 @@ public class Program
             Console.WriteLine("You need to provide two arguments: an input and an output path");
             return;
         }
+
         string inputPath = args[0];
         string outputPath = args[1];
+
+        bool shouldGroup = args.Length == 3 ? ExtractShouldGroupFlagValue(args[2]) : false;
 
         bool inputExists = Directory.Exists(inputPath);
         bool outputExists = Directory.Exists(outputPath);
@@ -25,7 +28,7 @@ public class Program
         }
 
         ProjectAnalyser analyser = new ProjectAnalyser();
-        
+
         var componentGroups = analyser.AnalyseProject(inputPath);
         var multiMemberGroups = analyser.GetComponentGroupsWithoutBaseAndNonRepetative(3);
 
@@ -33,6 +36,20 @@ public class Program
 
         Console.WriteLine("Grouped, cleansed, and wrote all the files :)");
         Console.ReadKey();
+    }
+
+    private static bool ExtractShouldGroupFlagValue(string argument)
+    {
+        var flagParts = argument.Split('=');
+        if(flagParts.Length == 2)
+        {
+            if (flagParts[0] == "--group")
+            {
+                return bool.Parse(flagParts[1]);
+            }
+        }
+
+        throw new ArgumentException("Unknown argument: " + argument);
     }
 
     public static void WriteButRemoveCommentsAndUsings(string outputPath, Dictionary<string, List<Tuple<FileInfo, string>>> componentGroups)

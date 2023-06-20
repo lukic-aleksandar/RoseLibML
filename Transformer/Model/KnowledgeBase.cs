@@ -1,18 +1,13 @@
 ﻿using System.Collections.Generic;
 
-namespace RoseLibLS.Transformer
+namespace Transformer.Model
 {
-    class KnowledgeBase
+    public class KnowledgeBase
     {
         public string RoseLibPath { get; set; }
+        public string ComposersPath { get; set; }
         public Dictionary<string, List<string>> RootTypeToComposerMapping { get; set; }
         public Dictionary<string, ComposerInformation> ComposerInformationMapping { get; set; }
     }
 
-    class ComposerInformation
-    {
-        public string Template { get; set; }
-        public string Node { get; set; }
-        public string FileName { get; set; }
-    }
 }

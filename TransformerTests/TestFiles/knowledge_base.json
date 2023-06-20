@@ -1,0 +1,44 @@
+{
+  "rootTypeToComposerMapping": {
+    "UsingDirective": [ "CompilationUnitComposer", "NamespaceComposer" ],
+    "NamespaceDeclaration": [ "CompilationUnitComposer", "NamespaceComposer" ],
+    "ClassDeclaration": [ "CompilationUnitComposer", "NamespaceComposer", "ClassComposer" ],
+    "StructDeclaration": [ "CompilationUnitComposer", "NamespaceComposer", "ClassComposer" ],
+    "InterfaceDeclaration": [ "CompilationUnitComposer", "NamespaceComposer", "ClassComposer" ],
+    "EnumDeclaration": [ "CompilationUnitComposer", "NamespaceComposer", "ClassComposer" ],
+    "DelegateDeclaration": [ "CompilationUnitComposer", "NamespaceComposer", "ClassComposer" ],
+    "FieldDeclaration": [ "ClassComposer" ],
+    "PropertyDeclaration": [ "ClassComposer" ],
+    "MethodDeclaration": [ "ClassComposer" ],
+    "ConstructorDeclaration": [ "ClassComposer" ],
+    "DestructorDeclaration": [ "ClassComposer" ],
+    "Block": [ "MethodComposer" ],
+    "LocalDeclarationStatement": [ "MethodComposer" ],
+    "ExpressionStatement": [ "MethodComposer" ],
+    "IfStatement": [ "MethodComposer" ]
+  },
+  "composerInformationMapping": {
+    "CompilationUnitComposer": {
+      "FileName": "CompilationUnitComposerGenerated.cs",
+      "Template": "ComposerTemplate",
+      "Node": "CompilationUnitSyntax"
+    },
+    "ClassComposer": {
+      "FileName": "ClassComposerGenerated.cs",
+      "Template": "ClassComposerTemplate",
+      "Node": "ClassDeclarationSyntax"
+    },
+    "NamespaceComposer": {
+      "FileName": "NamespaceComposerGenerated.cs",
+      "Template": "ComposerTemplate",
+      "Node": "NamespaceDeclarationSyntax"
+    },
+    "MethodComposer": {
+      "FileName": "MethodComposerGenerated.cs",
+      "Template": "MethodComposerTemplate",
+      "Node": "MethodDeclarationSyntax"
+    }
+  },
+  "roseLibPath": "Testfiles/RoseLib",
+  "composersPath": "Composers"
+}
