@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Transformer;
 using Transformer.Model;
-using Microsoft.Build.Locator;
 using RoseLibLS.Util;
 
 namespace RoseLibLS.LanguageServer
@@ -25,8 +24,6 @@ namespace RoseLibLS.LanguageServer
 
         public GenerateCommandHandler()
         {
-            MSBuildLocator.RegisterDefaults();
-
             // load knowledge base
             using (StreamReader file = File.OpenText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"knowledge_base.json")))
             using (JsonTextReader reader = new JsonTextReader(file))
