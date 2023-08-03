@@ -28,6 +28,16 @@
       "Template": "ClassComposerTemplate",
       "Node": "ClassDeclarationSyntax"
     },
+    "InterfaceComposer": {
+      "FileName": "InterfaceComposerGenerated.cs",
+      "Template": "InterfaceComposerTemplate",
+      "Node": "InterfaceDeclarationSyntax"
+    },
+    "StructComposer": {
+      "FileName": "StructComposerGenerated.cs",
+      "Template": "StructComposerTemplate",
+      "Node": "StructDeclarationSyntax"
+    },
     "NamespaceComposer": {
       "FileName": "NamespaceComposerGenerated.cs",
       "Template": "NamespaceComposerTemplate",

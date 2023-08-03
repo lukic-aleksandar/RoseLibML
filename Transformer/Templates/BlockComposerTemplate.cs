@@ -33,7 +33,7 @@ Write(ToLiteral(fragment));
             
             #line default
             #line hidden
-            this.Write(@".Replace('\r', ' ').Replace('\n', ' ');
+            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
 
     var block = Visitor.CurrentNode as BlockSyntax;
     var currentStatements = block!.Statements;

@@ -228,6 +228,8 @@ namespace Transformer
                     methodBody = bodyMethodTemplate.TransformText();
                     break;
                 case "ClassComposerTemplate":
+                case "StructComposerTemplate":
+                case "InterfaceComposerTemplate":
                     var memberMethodTemplate = new MemberComposerMethodTemplate(composer, fragment, composerNode, rootNodeType);
                     methodBody = memberMethodTemplate.TransformText();
                     break;

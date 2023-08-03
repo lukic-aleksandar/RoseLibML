@@ -25,7 +25,7 @@ namespace Transformer.Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("\r\n{\r\n    CompositionGuard.ImmediateOrParentOfNodeIs(Visitor.CurrentNode, typeof(");
+            this.Write("\r\n{\r\n    CompositionGuard.NodeOrParentIs(Visitor.CurrentNode, typeof(");
             
             #line 4 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(composerNode));
@@ -39,7 +39,7 @@ Write(ToLiteral(fragment));
             
             #line default
             #line hidden
-            this.Write(@".Replace('\r', ' ').Replace('\n', ' ');
+            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
             
     var member = SyntaxFactory.ParseMemberDeclaration(fragment);
     if (member!.ContainsDiagnostics)

@@ -36,10 +36,10 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Templates\CompilationUnitMethodTemplate.cs">
+    <Compile Update="Templates\CompilationUnitComposerMethodTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>CompilationUnitMethodTemplate.tt</DependentUpon>
+      <DependentUpon>CompilationUnitComposerMethodTemplate.tt</DependentUpon>
     </Compile>
     <Compile Update="Templates\MemberComposerMethodTemplate.cs">
       <DesignTime>True</DesignTime>
@@ -64,9 +64,9 @@
       <LastGenOutput>BaseFileTemplate.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
-    <None Update="Templates\CompilationUnitMethodTemplate.tt">
+    <None Update="Templates\CompilationUnitComposerMethodTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
-      <LastGenOutput>CompilationUnitMethodTemplate.cs</LastGenOutput>
+      <LastGenOutput>CompilationUnitComposerMethodTemplate.cs</LastGenOutput>
     </None>
     <None Update="Templates\MemberComposerMethodTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>

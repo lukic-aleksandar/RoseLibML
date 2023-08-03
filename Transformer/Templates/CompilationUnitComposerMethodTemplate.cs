@@ -15,9 +15,9 @@ namespace Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\CompilationUnitMethodTemplate.tt"
+    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\CompilationUnitComposerMethodTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
-    public partial class CompilationUnitComposerMethodTemplate : CompilationUnitMethodTemplateBase
+    public partial class CompilationUnitComposerMethodTemplate : CompilationUnitComposerMethodTemplateBase
     {
 #line hidden
         /// <summary>
@@ -30,12 +30,12 @@ namespace Transformer.Templates
                     "mpilationUnit = (Visitor.CurrentNode as CompilationUnitSyntax)!;\r\n\r\n    var frag" +
                     "ment = $");
             
-            #line 9 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\CompilationUnitMethodTemplate.tt"
+            #line 9 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\CompilationUnitComposerMethodTemplate.tt"
 Write(ToLiteral(fragment));
             
             #line default
             #line hidden
-            this.Write(@".Replace('\r', ' ').Replace('\n', ' ');
+            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
 
     var parsedCU = SyntaxFactory.ParseSyntaxTree(fragment).GetRoot();
     if (parsedCU!.ContainsDiagnostics)
@@ -70,7 +70,7 @@ Write(ToLiteral(fragment));
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
-    public class CompilationUnitMethodTemplateBase
+    public class CompilationUnitComposerMethodTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

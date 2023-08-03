@@ -112,7 +112,7 @@ namespace Transformer.Templates
             this.rootNodeType = rootNodeType;
         }
 
-        private static string ToLiteral(string input)
+        public static string ToLiteral(string input)
         {
             using (var writer = new StringWriter())
             {
