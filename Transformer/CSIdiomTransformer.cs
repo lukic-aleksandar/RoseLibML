@@ -61,11 +61,6 @@ namespace Transformer
             return;
         }
 
-        // Ova funkcija zaslužuje procenu.
-        // Dakle, 2 stvari koje su isplivale
-        // Rukovanje "
-        // Rukovanje {
-        // Kao da nisu obe baš dobre, let's test it out :)
         public string TransformFragmentString(string fragment, List<MethodParameter> parameters, bool preview = false)
         {
             string transformedFragment = fragment;
@@ -84,14 +79,15 @@ namespace Transformer
             foreach (var parameter in parameters)
             {
                 int position = transformedFragment.IndexOf(parameter.Metavariable);
-                if (position < 0)
+
+                while (position > -1)
                 {
-                    continue;
+                    string paramString = preview ? parameter.Parameter : "{" + parameter.Parameter + "}";
+
+                    transformedFragment = transformedFragment.Substring(0, position) + paramString + transformedFragment.Substring(position + parameter.Metavariable.Length);
+
+                    position = transformedFragment.IndexOf(parameter.Metavariable);
                 }
-
-                string paramString = preview ? parameter.Parameter : "{" + parameter.Parameter + "}";
-
-                transformedFragment = transformedFragment.Substring(0, position) + paramString + transformedFragment.Substring(position + parameter.Metavariable.Length);
             }
 
             return transformedFragment;
@@ -227,13 +223,21 @@ namespace Transformer
 
             switch (templateClass)
             {
-                case "MethodComposerTemplate":
-                    var methodTemplate = new MethodComposerTemplate(composer, fragment, composerNode, rootNodeType);
-                    methodBody = methodTemplate.TransformText();
+                case "BlockComposerTemplate":
+                    var bodyMethodTemplate = new BlockComposerTemplate(composer, fragment, composerNode, rootNodeType);
+                    methodBody = bodyMethodTemplate.TransformText();
                     break;
                 case "ClassComposerTemplate":
-                    var memberTemplate = new MemberComposerMethodTemplate(composer, fragment, composerNode, rootNodeType);
-                    methodBody = memberTemplate.TransformText();
+                    var memberMethodTemplate = new MemberComposerMethodTemplate(composer, fragment, composerNode, rootNodeType);
+                    methodBody = memberMethodTemplate.TransformText();
+                    break;
+                case "NamespaceComposerTemplate":
+                    var namespaceMethodTemplate = new NamespaceComposerMethodTemplate(composer, fragment, composerNode, rootNodeType);
+                    methodBody = namespaceMethodTemplate.TransformText();
+                    break;
+                case "CompilationUnitTemplate":
+                    var compilationUnitMethodTemplate = new CompilationUnitComposerMethodTemplate(composer, fragment, composerNode, rootNodeType);
+                    methodBody = compilationUnitMethodTemplate.TransformText();
                     break;
                 default:
                     methodBody = "{}";

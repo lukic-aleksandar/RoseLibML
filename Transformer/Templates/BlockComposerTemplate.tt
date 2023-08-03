@@ -1,0 +1,23 @@
+﻿<#@ template language="C#" #>
+
+{
+    CompositionGuard.NodeIs(Visitor.CurrentNode, typeof(BlockSyntax));
+            
+    string fragment = $<#Write(ToLiteral(fragment));#>.Replace('\r', ' ').Replace('\n', ' ');
+
+    var block = Visitor.CurrentNode as BlockSyntax;
+    var currentStatements = block!.Statements;
+    var newStatements = CreateStatementList(new string[] { fragment });
+
+    var allStatements = currentStatements.AddRange(newStatements);
+
+    var updatedBlock = block.WithStatements(allStatements);
+
+    Visitor.ReplaceNodeAndAdjustState(Visitor.CurrentNode!, updatedBlock);
+
+    var blockNavigator = BaseNavigator.CreateTempNavigator<BlockNavigator>(Visitor);
+    blockNavigator.SelectLastStatementDeclaration();
+
+    return this;
+
+}

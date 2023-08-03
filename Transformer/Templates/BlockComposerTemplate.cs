@@ -15,9 +15,9 @@ namespace Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
+    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\BlockComposerTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
-    public partial class MethodComposerTemplate : MethodComposerTemplateBase
+    public partial class BlockComposerTemplate : BlockComposerTemplateBase
     {
 #line hidden
         /// <summary>
@@ -25,31 +25,32 @@ namespace Transformer.Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("\r\n{\r\n    if (!IsAtRoot())\r\n    {\r\n        throw new Exception(\"A ");
+            this.Write("\r\n{\r\n    CompositionGuard.NodeIs(Visitor.CurrentNode, typeof(BlockSyntax));\r\n    " +
+                    "        \r\n    string fragment = $");
             
-            #line 6 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(composer.Replace("Composer", "").ToLower()));
-            
-            #line default
-            #line hidden
-            this.Write(" must be selected (which is also a root to the composer)\");\r\n    }\r\n\r\n    string " +
-                    "fragment = $\"");
-            
-            #line 9 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(fragment));
+            #line 6 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\BlockComposerTemplate.tt"
+Write(ToLiteral(fragment));
             
             #line default
             #line hidden
-            this.Write("\";\r\n\r\n    var statement = SyntaxFactory.ParseStatement(fragment);\r\n\r\n    var newN" +
-                    "ode = (CurrentNode as ");
-            
-            #line 13 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(composerNode));
-            
-            #line default
-            #line hidden
-            this.Write(").AddBodyStatements(statement);\r\n\r\n    Replace(CurrentNode, newNode, null);\r\n\r\n  " +
-                    "  return this;\r\n}");
+            this.Write(@".Replace('\r', ' ').Replace('\n', ' ');
+
+    var block = Visitor.CurrentNode as BlockSyntax;
+    var currentStatements = block!.Statements;
+    var newStatements = CreateStatementList(new string[] { fragment });
+
+    var allStatements = currentStatements.AddRange(newStatements);
+
+    var updatedBlock = block.WithStatements(allStatements);
+
+    Visitor.ReplaceNodeAndAdjustState(Visitor.CurrentNode!, updatedBlock);
+
+    var blockNavigator = BaseNavigator.CreateTempNavigator<BlockNavigator>(Visitor);
+    blockNavigator.SelectLastStatementDeclaration();
+
+    return this;
+
+}");
             return this.GenerationEnvironment.ToString();
         }
     }
@@ -61,7 +62,7 @@ namespace Transformer.Templates
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
-    public class MethodComposerTemplateBase
+    public class BlockComposerTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;
@@ -75,7 +76,7 @@ namespace Transformer.Templates
         /// <summary>
         /// The string builder that generation-time code is using to assemble generated output
         /// </summary>
-        protected System.Text.StringBuilder GenerationEnvironment
+        public System.Text.StringBuilder GenerationEnvironment
         {
             get
             {

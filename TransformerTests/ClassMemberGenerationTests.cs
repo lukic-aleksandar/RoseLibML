@@ -5,7 +5,7 @@ using Transformer.Model;
 
 namespace TransformerTests
 {
-    public class MemberGenerationTests
+    public class ClassMemberGenerationTests
     {
 
         [Test]
