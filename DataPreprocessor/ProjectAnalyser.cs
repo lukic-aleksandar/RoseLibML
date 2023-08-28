@@ -176,7 +176,7 @@ namespace DataPreprocessor
             }
             return cus.Members[0]
                 .DescendantNodes()
-                .Where((member) => member is ClassDeclarationSyntax && member.Parent is NamespaceDeclarationSyntax)
+                .Where((member) => member is ClassDeclarationSyntax)
                 .Cast<ClassDeclarationSyntax>()
                 .ToList();
         }
@@ -227,7 +227,7 @@ namespace DataPreprocessor
 
                     if (genericName != null)
                     {
-                        baseTypes.Add(genericName.ToString());
+                        baseTypes.Add(genericName.Identifier.ToString());
                     }
                     else
                     {
@@ -253,15 +253,5 @@ namespace DataPreprocessor
 
             return baseTypes;
         }
-    }
-
-    interface ID 
-    {
-
-    }
-
-    interface ID2 : ID
-    {
-
     }
 }

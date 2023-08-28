@@ -8,10 +8,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="TestFiles\ProfilesController.cs" />
     <Compile Remove="TestFiles\TestFile.cs" />
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="TestFiles\ProfilesController.cs" />
     <None Include="TestFiles\TestFile.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
