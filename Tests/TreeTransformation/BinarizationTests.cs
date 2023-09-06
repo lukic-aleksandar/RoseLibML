@@ -355,21 +355,21 @@ namespace RoseLibMLTests.TreeTransformation
         /// <summary>
         /// This is the output of the binarization, explained
         /// (8875 - Method
-        ///     (8343) - 'public' (a token, attached to the method)
-        ///     (8347) - 'static' (a token, attached to the method)
-        ///     (8621 (8304)  ) - (PredefinedType (bool)), a first child of the method
+        ///     (public) (a token, attached to the method)
+        ///     (static) (a token, attached to the method)
+        ///     (8621 (bool)  ) - (PredefinedType (bool)), a first child of the method
         ///     (B_8875 - a binarization node
         ///         (IdentifierToken (DidSucceed)  ) - a name of the method, first child of the binarization node
         ///         (B_8875 - a binarization node 
         ///             (8906 - ParametersList -  a first child of the binarization node
-        ///                 (8200) - '(', a token attached to the method
+        ///                 (() - a token attached to the method
         ///                 (8908 (8616 (IdentifierToken (int)  )  ) (IdentifierToken (repeatTimes)  )  ) - a first successive child of ParametersList
         ///                 (8216) - ',', a token attached to the method
         ///                 (8908 (8616 (IdentifierToken (BigInteger)  )  ) (IdentifierToken (previousResult)  )  ) - a second, but first successive child of ParametersList
-        ///                 (8201)  ) - ')', a token attached to the method
+        ///                 ())  ) - ')', a token attached to the method
         ///             (8792 - Block, the method's body
-        ///                 (8205) - '{', a token attached to the body
-        ///                 (8206)  )  )  )  )  - '}',a token attached to the body
+        ///                 ({) - '{', a token attached to the body
+        ///                 (})  )  )  )  )  - '}',a token attached to the body
         /// </summary>
         [Test]
         public void TestCSMethodBinarization()
@@ -380,7 +380,8 @@ namespace RoseLibMLTests.TreeTransformation
 
             LabeledTreeTransformations.Binarize(csNode, new CSNodeCreator());
 
-            Assert.AreEqual(csNode.GetFragmentString(), "(8875 (8343) (8347) (8621 (8304)  ) (B_8875 (IdentifierToken (DidSucceed)  ) (B_8875 (8906 (8200) (8908 (8616 (int)  ) (IdentifierToken (repeatTimes)  )  ) (8216) (8908 (8616 (BigInteger)  ) (IdentifierToken (previousResult)  )  ) (8201)  ) (8792 (8205) (8206)  )  )  )  ) ");
+            Assert.AreEqual(csNode.GetFragmentString(), "(8875 (public) (static) (8621 (bool)  ) (B_8875 (IdentifierToken (DidSucceed)  ) (B_8875 (8906 (() (8908 (8616 (int)  ) (IdentifierToken (repeatTimes)  )  ) (,) (8908 (8616 (BigInteger)  ) (IdentifierToken (previousResult)  )  ) ())  ) (8792 ({) (})  )  )  )  ) ");
+        
         }
 
         [Test]

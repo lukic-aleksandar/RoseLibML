@@ -63,9 +63,7 @@ namespace RoseLibML.CS.CSTrees
                     // match in the rosyn tree, and use it as a basis for writing.
                     if (child.AsToken().Kind() != SyntaxKind.IdentifierToken)
                     {
-                        tokenNode.STInfo = ((ushort)child.AsToken()
-                                            .Kind())
-                                            .ToString();
+                        tokenNode.STInfo = child.AsToken().ValueText;
                         tokenNode.RoslynSpanStart = child.Span.Start;
                         tokenNode.RoslynSpanEnd = child.Span.End;
                         tokenNode.UseRoslynMatchToWrite = true;

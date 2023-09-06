@@ -2,7 +2,7 @@
   "profiles": {
     "DataPreprocessor": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\bcgov jag-lcrb-carla-public develop cllc-public-app preprocessed\\8Migration\" \"C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\bcgov jag-lcrb-carla-public develop cllc-public-app preprocessed\\8Migration preprocessed\" --group=true"
+      "commandLineArgs": "\"C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\ag-pssg-sdlc\\backend\" \"C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\ag-pssg-sdlc\\backend preprocessed\" --group=true"
     }
   }
 }

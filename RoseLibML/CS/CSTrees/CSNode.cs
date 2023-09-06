@@ -12,7 +12,7 @@ namespace RoseLibML.CS.CSTrees
     {
         public bool IsExistingRoslynNode
         {
-            get { return ushort.TryParse(this.STInfo, out ushort result); }
+            get { return ushort.TryParse(this.STInfo, out ushort result) || this.IsTreeLeaf; }
         }
         public bool UseRoslynMatchToWrite { get; set; }
         public int RoslynSpanStart { get; set; }

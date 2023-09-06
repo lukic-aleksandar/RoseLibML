@@ -17,6 +17,7 @@
         "startIteration": 0,
         "burnIn": 55,
         "totalIterations": 90,
-        "threshold": 2
+        "threshold": 2,
+        "idiomLengthThreshold": 5
     }
 }

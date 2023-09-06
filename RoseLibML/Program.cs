@@ -22,6 +22,12 @@ namespace RoseLibML
             {
                 return;
             }
+            if(config.Paths == null || config.Paths.OutIdioms == null)
+            {
+                return;
+            }
+
+            ConfigWriter.WriteConfig(args[0], config.Paths.OutIdioms);
 
             var loadModel = !string.IsNullOrEmpty(config.Paths.InModel);
             var justWriteTheFragments = config.RunParams.JustWriteTheFragments;
@@ -36,7 +42,7 @@ namespace RoseLibML
             pCFGComposer.CalculateProbabilitiesLn();
 
 
-            ToCSWriter writer = new ToCSWriter(config.Paths.OutIdioms);
+            ToCSWriter writer = new ToCSWriter(config.Paths.OutIdioms, config.RunParams.IdiomLengthThreshold);
 
             var sampler = new TBSampler(writer, config);
 

@@ -17,7 +17,7 @@ namespace RoseLibMLTests.ToCSWriterTests
         public void FindRootMatchAndWriteFragmentTest()
         {
             var outPath = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles\\TestOutputFile.txt");
-            var toCSWriter = new ToCSWriter(outPath);
+            var toCSWriter = new ToCSWriter(outPath, 1);
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles\\TestFile.cs");
             var fileInfo = new FileInfo(path);

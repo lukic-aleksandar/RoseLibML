@@ -61,12 +61,12 @@ namespace Tests
         {
             ProjectAnalyser projectAnalyser = new ProjectAnalyser();
 
-            string expectedKey1 = "IRepository<TEntity>";
+            string expectedKey1 = "IRepository";
             FileInfo fileInfo1 = new FileInfo(@".\\TestFiles\\Generic\\EntityRepository.txt");
             projectAnalyser.AnalyseFileAndGroup(fileInfo1);
 
-            string expectedKey2 = "List<T>";
-            string expectedKey3 = "IPagedList<T>";
+            string expectedKey2 = "List";
+            string expectedKey3 = "IPagedList";
             FileInfo fileInfo2 = new FileInfo(@".\\TestFiles\\Generic\\PagedList.txt");
             projectAnalyser.AnalyseFileAndGroup(fileInfo2);
 
