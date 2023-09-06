@@ -3,13 +3,13 @@
         "alpha": 1,
         "cutProbability": 0.9,
         "p": 0.1,
-        "excludeLeafsFromGeometric": false
+        "excludeLeafsFromGeometric": true
     },
     
     "paths":{
-        "inData": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\nopCommerce Cleansed\\60BaseAdminController",
-        "outModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\model",
-        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\output\\60BaseAdminController\\001idioms.txt"
+        "inData": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded2",
+        "outModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded2\\model",
+        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded2\\001idioms.txt"
     },
 
     "runParams":{
@@ -17,6 +17,7 @@
         "startIteration": 0,
         "burnIn": 55,
         "totalIterations": 90,
-        "threshold": 3
+        "threshold": 2,
+        "idiomLengthThreshold": 5
     }
 }

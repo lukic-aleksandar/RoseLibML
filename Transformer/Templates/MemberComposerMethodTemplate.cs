@@ -25,7 +25,7 @@ namespace Transformer.Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("\r\n{\r\n    CompositionGuard.ImmediateOrParentOfNodeIs(Visitor.CurrentNode, typeof(");
+            this.Write("\r\n{\r\n    CompositionGuard.NodeOrParentIs(Visitor.CurrentNode, typeof(");
             
             #line 4 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(composerNode));
@@ -39,7 +39,7 @@ Write(ToLiteral(fragment));
             
             #line default
             #line hidden
-            this.Write(@".Replace('\r', ' ').Replace('\n', ' ');
+            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
             
     var member = SyntaxFactory.ParseMemberDeclaration(fragment);
     if (member!.ContainsDiagnostics)
@@ -67,14 +67,14 @@ Write(ToLiteral(fragment));
             this.Write("    navigator.Select");
             
             #line 20 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(composerNode.Replace("Syntax", "")));
+            this.Write(this.ToStringHelper.ToStringWithCulture(rootNodeType.Replace("Syntax", "")));
             
             #line default
             #line hidden
             this.Write("(name); ");
             
             #line 20 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
- // Convention specific. Always follow the convention for selection method names 
+ // Convention specific. Always follow the convention for selection of a member by its name. 
             
             #line default
             #line hidden
@@ -104,7 +104,7 @@ Write(ToLiteral(fragment));
         /// <summary>
         /// The string builder that generation-time code is using to assemble generated output
         /// </summary>
-        protected System.Text.StringBuilder GenerationEnvironment
+        public System.Text.StringBuilder GenerationEnvironment
         {
             get
             {

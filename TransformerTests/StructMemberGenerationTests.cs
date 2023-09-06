@@ -5,11 +5,11 @@ using Transformer.Model;
 
 namespace TransformerTests
 {
-    public class MemberGenerationTests
+    public class StructMemberGenerationTests
     {
 
         [Test]
-        public async Task TestAddingGetOneToClassComposer()
+        public async Task TestAddingSimpleMethodToStructComposer()
         {
             using (StreamReader file = File.OpenText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"TestFiles/knowledge_base.json")))
             using (JsonTextReader reader = new JsonTextReader(file))
@@ -23,11 +23,11 @@ namespace TransformerTests
 
                 CSIdiomTransformer csIdiomTransformer = new CSIdiomTransformer(knowledgeBase);
                 OutputSnippet outputSnippet = new OutputSnippet();
-                outputSnippet.Fragment = "[Route(\"{id:int}\")]   public $returnType $name(int id) {​ return _context.getOne(id);​ }";
-                outputSnippet.MethodName = "AddGetOne";
+                outputSnippet.Fragment = "public void $name() {​ return;​ }";
+                outputSnippet.MethodName = "AddSimpleMethod";
                 outputSnippet.RootNodeType = "MethodDeclarationSyntax";
-                outputSnippet.Composer = "ClassComposer";
-                outputSnippet.MethodParameters = new List<MethodParameter> { new MethodParameter() { Metavariable = "$name", Parameter = "name" }, new MethodParameter() { Metavariable = "$returnType", Parameter = "returnType" } };
+                outputSnippet.Composer = "StructComposer";
+                outputSnippet.MethodParameters = new List<MethodParameter> { new MethodParameter() { Metavariable = "$name", Parameter = "name" } };
 
                 await csIdiomTransformer.Generate(new List<OutputSnippet> { outputSnippet });
 

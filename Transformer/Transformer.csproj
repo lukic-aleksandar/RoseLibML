@@ -7,12 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Templates\MethodComposerTemplate.tt" />
+    <None Remove="Templates\BlockComposerTemplate.tt" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="Templates\MethodComposerTemplate.tt">
-      <LastGenOutput>MethodComposerTemplate.cs</LastGenOutput>
+    <Content Include="Templates\BlockComposerTemplate.tt">
+      <LastGenOutput>BlockComposerTemplate.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </Content>
   </ItemGroup>
@@ -31,15 +31,25 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
-    <Compile Update="Templates\MethodComposerTemplate.cs">
-      <DependentUpon>MethodComposerTemplate.tt</DependentUpon>
+    <Compile Update="Templates\BlockComposerTemplate.cs">
+      <DependentUpon>BlockComposerTemplate.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Templates\CompilationUnitComposerMethodTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CompilationUnitComposerMethodTemplate.tt</DependentUpon>
     </Compile>
     <Compile Update="Templates\MemberComposerMethodTemplate.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>MemberComposerMethodTemplate.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Templates\NamespaceComposerMethodTemplate.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>NamespaceComposerMethodTemplate.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 
@@ -54,9 +64,17 @@
       <LastGenOutput>BaseFileTemplate.cs</LastGenOutput>
       <Generator>TextTemplatingFilePreprocessor</Generator>
     </None>
+    <None Update="Templates\CompilationUnitComposerMethodTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>CompilationUnitComposerMethodTemplate.cs</LastGenOutput>
+    </None>
     <None Update="Templates\MemberComposerMethodTemplate.tt">
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>MemberComposerMethodTemplate.cs</LastGenOutput>
+    </None>
+    <None Update="Templates\NamespaceComposerMethodTemplate.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>NamespaceComposerMethodTemplate.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

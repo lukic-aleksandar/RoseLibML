@@ -6,12 +6,19 @@
 //     and will be lost if the code is regenerated.
 // ------------------------------------------------------------------------------
 
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.CSharp;
+using RoseLib.Guards;
+using RoseLib.Traversal.Navigators;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using RoseLib.Traversal;
+using System.Text.RegularExpressions;
 
-namespace RoseLibApp.RoseLib.Composers
+namespace RoseLib.Composers
 {
     public partial class <#=composer#>
     {

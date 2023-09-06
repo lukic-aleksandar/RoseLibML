@@ -20,11 +20,14 @@ namespace RoseLibML.CS
         private StreamWriter StreamWriter { get; set; }
         private int CurrentIteration { get; set; } = -1;
 
+        private int lengthThreshold;
+
         public Dictionary<int, List<string>> FragmentsPerIteration;
 
-        public ToCSWriter(string outputFile)
+        public ToCSWriter(string outputFile, int lengthThreshold)
         {
             OutputFile = outputFile;
+            this.lengthThreshold = lengthThreshold;
 
             FragmentsPerIteration = new Dictionary<int, List<string>>();
         }
@@ -190,23 +193,37 @@ namespace RoseLibML.CS
                 {
                     if (leaf.IsExistingRoslynNode && leaf.UseRoslynMatchToWrite)
                     {
-                        var roslynNode = FindCorrespondingRoslynNodeOrToken(roslynFragmentRoot.ChildNodesAndTokens(), leaf);
-                        if (roslynNode != null)
+                        if(leaf.IsTreeLeaf)
                         {
-                            strWriter.Write(roslynNode.ToFullString());
+                            strWriter.Write($" {leaf.STInfo} ");
+                        }
+                        else
+                        {
+                            var roslynNode = FindCorrespondingRoslynNodeOrToken(roslynFragmentRoot.ChildNodesAndTokens(), leaf);
+                            if (roslynNode != null)
+                            {
+                                strWriter.Write(roslynNode.ToFullString());
+                            }
                         }
                     }
                     else if (leaf.IsExistingRoslynNode)
                     {
-                        var uShortSyntaxKind = ushort.Parse(leaf.STInfo);
-                        strWriter.Write($" ${(SyntaxKind)uShortSyntaxKind} ");
+                        if (leaf.IsTreeLeaf)
+                        {
+                            strWriter.Write($" {leaf.STInfo} ");
+                        }
+                        else
+                        {
+                            var uShortSyntaxKind = ushort.Parse(leaf.STInfo);
+                            strWriter.Write($" ${(SyntaxKind)uShortSyntaxKind} ");
+                        }
                     }
                     else if (leaf.UseRoslynMatchToWrite)
                     {
                         if (leaf.STInfo.StartsWith("B_"))
                         {
                             var uShortSyntaxKindOfMeta = ushort.Parse(leaf.STInfo.Substring("B_".Length));
-                            strWriter.Write($" ${(SyntaxKind)uShortSyntaxKindOfMeta}");
+                            strWriter.Write($" ${(SyntaxKind)uShortSyntaxKindOfMeta} ");
                         }
                         else
                         {
@@ -217,22 +234,25 @@ namespace RoseLibML.CS
                     {
                         if (leaf.ToString() == "IdentifierToken")
                         {
-                            strWriter.Write($"${leaf.ToString()} ");
+                            strWriter.Write($" ${leaf.ToString()} ");
 
                         }
                         else
                         {
-                            strWriter.Write($"{leaf.ToString()} ");
-
+                            strWriter.Write($" {leaf.ToString()} ");
                         }
                     }
 
                 }
 
-                AnnounceNewFragment(roslynFragmentRoot, strWriter.ToString());
+                var fragment = strWriter.ToString();
+                if(fragment.Length >= lengthThreshold)
+                {
+                    AnnounceNewFragment(roslynFragmentRoot, fragment);
 
-                // in order to show in the extension
-                AddFragmentToDictionary(CurrentIteration, strWriter.ToString());
+                    // in order to show in the vs code extension
+                    AddFragmentToDictionary(CurrentIteration, strWriter.ToString());
+                }
             }
         }
 
@@ -312,13 +332,15 @@ namespace RoseLibML.CS
             {
                 strWriter.WriteLine();
                 strWriter.WriteLine();
-                strWriter.WriteLine($"~~~ Fragment (Root {roslynFragmentRoot.Kind()}) in iteration {CurrentIteration} ~~~");
+                strWriter.WriteLine($"~~~ Fragment with root {roslynFragmentRoot.Kind()} in iteration {CurrentIteration} ~~~");
                 strWriter.WriteLine();
+
 
 
                 StreamWriter.Write(strWriter.ToString());
 
-                StreamWriter.Write(fragment);
+                var json = $"{{ \n\t\"root\": \"{roslynFragmentRoot.Kind()}\", \n\t\"fragment\": \"\n{fragment}\n\" }}";
+                StreamWriter.Write(json);
                 StreamWriter.Flush();
 
                 //Console.Write(strWriter.ToString());

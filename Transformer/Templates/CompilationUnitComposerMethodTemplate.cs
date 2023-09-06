@@ -15,9 +15,9 @@ namespace Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
+    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\CompilationUnitComposerMethodTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
-    public partial class MethodComposerTemplate : MethodComposerTemplateBase
+    public partial class CompilationUnitComposerMethodTemplate : CompilationUnitComposerMethodTemplateBase
     {
 #line hidden
         /// <summary>
@@ -25,31 +25,40 @@ namespace Transformer.Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("\r\n{\r\n    if (!IsAtRoot())\r\n    {\r\n        throw new Exception(\"A ");
+            this.Write("\r\n{\r\n    CompositionGuard.NodeOrParentIs(Visitor.CurrentNode, typeof(CompilationU" +
+                    "nitSyntax));\r\n\r\n    Visitor.PopUntil(typeof(CompilationUnitSyntax));\r\n    var co" +
+                    "mpilationUnit = (Visitor.CurrentNode as CompilationUnitSyntax)!;\r\n\r\n    var frag" +
+                    "ment = $");
             
-            #line 6 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(composer.Replace("Composer", "").ToLower()));
-            
-            #line default
-            #line hidden
-            this.Write(" must be selected (which is also a root to the composer)\");\r\n    }\r\n\r\n    string " +
-                    "fragment = $\"");
-            
-            #line 9 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(fragment));
+            #line 9 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\CompilationUnitComposerMethodTemplate.tt"
+Write(ToLiteral(fragment));
             
             #line default
             #line hidden
-            this.Write("\";\r\n\r\n    var statement = SyntaxFactory.ParseStatement(fragment);\r\n\r\n    var newN" +
-                    "ode = (CurrentNode as ");
-            
-            #line 13 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MethodComposerTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(composerNode));
-            
-            #line default
-            #line hidden
-            this.Write(").AddBodyStatements(statement);\r\n\r\n    Replace(CurrentNode, newNode, null);\r\n\r\n  " +
-                    "  return this;\r\n}");
+            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
+
+    var parsedCU = SyntaxFactory.ParseSyntaxTree(fragment).GetRoot();
+    if (parsedCU!.ContainsDiagnostics)
+    {
+        throw new Exception(""Idiom filled with provided parameters not rendered as syntactically valid."");
+    }
+
+    var @namespace = BaseNavigator
+        .CreateTempNavigator<CompilationUnitNavigator>(parsedCU)
+        .SelectNamespace()
+        .AsVisitor
+        .CurrentNode as NamespaceDeclarationSyntax;
+
+    CompilationUnitSyntax newCompilationUnit = compilationUnit.AddMembers(@namespace!);
+
+    Visitor.SetHead(newCompilationUnit);
+
+    var memberName = RoslynHelper.GetMemberName(@namespace!);
+    CompilationUnitNavigator.CreateTempNavigator(Visitor).SelectNamespace(memberName!);
+
+    return this;
+}
+");
             return this.GenerationEnvironment.ToString();
         }
     }
@@ -61,7 +70,7 @@ namespace Transformer.Templates
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
-    public class MethodComposerTemplateBase
+    public class CompilationUnitComposerMethodTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;
@@ -75,7 +84,7 @@ namespace Transformer.Templates
         /// <summary>
         /// The string builder that generation-time code is using to assemble generated output
         /// </summary>
-        protected System.Text.StringBuilder GenerationEnvironment
+        public System.Text.StringBuilder GenerationEnvironment
         {
             get
             {

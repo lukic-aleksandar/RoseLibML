@@ -15,9 +15,9 @@ namespace Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\BaseFileTemplate.tt"
+    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\BlockComposerTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
-    public partial class BaseFileTemplate : BaseFileTemplateBase
+    public partial class BlockComposerTemplate : BlockComposerTemplateBase
     {
 #line hidden
         /// <summary>
@@ -25,42 +25,32 @@ namespace Transformer.Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("// ------------------------------------------------------------------------------" +
-                    "\r\n//     This file was generated on ");
+            this.Write("\r\n{\r\n    CompositionGuard.NodeIs(Visitor.CurrentNode, typeof(BlockSyntax));\r\n    " +
+                    "        \r\n    string fragment = $");
             
-            #line 3 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\BaseFileTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DateTime.Now));
-            
-            #line default
-            #line hidden
-            this.Write(@".
-//  
-//     Changes to this file may cause incorrect behavior
-//     and will be lost if the code is regenerated.
-// ------------------------------------------------------------------------------
-
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.CSharp;
-using RoseLib.Guards;
-using RoseLib.Traversal.Navigators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RoseLib.Traversal;
-using System.Text.RegularExpressions;
-
-namespace RoseLib.Composers
-{
-    public partial class ");
-            
-            #line 23 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\BaseFileTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(composer));
+            #line 6 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\BlockComposerTemplate.tt"
+Write(ToLiteral(fragment));
             
             #line default
             #line hidden
-            this.Write("\r\n    {\r\n\r\n    }\r\n}");
+            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
+
+    var block = Visitor.CurrentNode as BlockSyntax;
+    var currentStatements = block!.Statements;
+    var newStatements = CreateStatementList(new string[] { fragment });
+
+    var allStatements = currentStatements.AddRange(newStatements);
+
+    var updatedBlock = block.WithStatements(allStatements);
+
+    Visitor.ReplaceNodeAndAdjustState(Visitor.CurrentNode!, updatedBlock);
+
+    var blockNavigator = BaseNavigator.CreateTempNavigator<BlockNavigator>(Visitor);
+    blockNavigator.SelectLastStatementDeclaration();
+
+    return this;
+
+}");
             return this.GenerationEnvironment.ToString();
         }
     }
@@ -72,7 +62,7 @@ namespace RoseLib.Composers
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
-    public class BaseFileTemplateBase
+    public class BlockComposerTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

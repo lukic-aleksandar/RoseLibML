@@ -92,7 +92,7 @@ namespace RoseLibMLTests.AlgorithmTests
         public void BookkeeperInitializationTest()
         {
             var testTree = CreateATreeWithConflictingSites();
-            TBSampler sampler = new TBSampler(new ToCSWriter("onlyatest1"), new RoseLibML.Util.Config { ModelParams = new RoseLibML.Util.ModelParams() });
+            TBSampler sampler = new TBSampler(new ToCSWriter("onlyatest1", 1), new RoseLibML.Util.Config { ModelParams = new RoseLibML.Util.ModelParams() });
             sampler.BookKeeper = new ExtendedBookKeeper();
             sampler.Initialize(null, new LabeledTree[] { testTree }, true);
 
@@ -108,7 +108,7 @@ namespace RoseLibMLTests.AlgorithmTests
             // Retrieve the type where these two conflicting are recorded
             // Invoke conflict detection and labeling
             var testTree = CreateATreeWithConflictingSites();
-            TBSampler sampler = new TBSampler(new ToCSWriter("onlyatest2"), new RoseLibML.Util.Config { ModelParams = new RoseLibML.Util.ModelParams() });
+            TBSampler sampler = new TBSampler(new ToCSWriter("onlyatest2", 1), new RoseLibML.Util.Config { ModelParams = new RoseLibML.Util.ModelParams() });
             sampler.BookKeeper = new ExtendedBookKeeper();
             sampler.Initialize(null, new LabeledTree[] { testTree }, true);
 
@@ -137,7 +137,7 @@ namespace RoseLibMLTests.AlgorithmTests
             // Retrieve the type where these two conflicting are recorded
             // Invoke conflict detection and labeling
             var testTree = CreateATreeWithConflictingSites();
-            TBSampler sampler = new TBSampler(new ToCSWriter("onlyatest3"), new RoseLibML.Util.Config { ModelParams = new RoseLibML.Util.ModelParams() });
+            TBSampler sampler = new TBSampler(new ToCSWriter("onlyatest3", 1), new RoseLibML.Util.Config { ModelParams = new RoseLibML.Util.ModelParams() });
             sampler.BookKeeper = new ExtendedBookKeeper();
             sampler.Initialize(null, new LabeledTree[] { testTree }, true);
 

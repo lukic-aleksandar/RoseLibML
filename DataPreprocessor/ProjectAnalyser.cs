@@ -94,13 +94,12 @@ namespace DataPreprocessor
             {
                 return;
             }
-            if (classes.Count > 1)
-            {
-                Console.WriteLine($"WARNING: Skipping a file with multiple classes. File path {filePath}");
-                return;
-            }
 
-            var @class = classes.First();
+
+            ClassDeclarationSyntax? @class;
+            @class = classes.Where(cl => cl.BaseList != null).FirstOrDefault();
+
+            @class ??= classes.First();
             List<string> baseTypes = ExtractBaseTypes(@class.BaseList, @class.Identifier.Text);
             if (baseTypes.Count == 0)
             {
@@ -176,7 +175,7 @@ namespace DataPreprocessor
             }
             return cus.Members[0]
                 .DescendantNodes()
-                .Where((member) => member is ClassDeclarationSyntax && member.Parent is NamespaceDeclarationSyntax)
+                .Where((member) => member is ClassDeclarationSyntax)
                 .Cast<ClassDeclarationSyntax>()
                 .ToList();
         }
@@ -227,7 +226,7 @@ namespace DataPreprocessor
 
                     if (genericName != null)
                     {
-                        baseTypes.Add(genericName.ToString());
+                        baseTypes.Add(genericName.Identifier.ToString());
                     }
                     else
                     {
@@ -253,15 +252,5 @@ namespace DataPreprocessor
 
             return baseTypes;
         }
-    }
-
-    interface ID 
-    {
-
-    }
-
-    interface ID2 : ID
-    {
-
     }
 }

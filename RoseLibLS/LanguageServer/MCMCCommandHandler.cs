@@ -115,7 +115,7 @@ namespace RoseLibLS.LanguageServer
             // read pCFG from file
             LabeledTreePCFGComposer pCFGComposer = LabeledTreePCFGComposer.Deserialize(arguments.PCFGFile);
 
-            ToCSWriter writer = new ToCSWriter(arguments.OutputFolder + $"\\idioms__{DateTime.Now.ToString("yyyyMMddHHmmss")}.txt");
+            ToCSWriter writer = new ToCSWriter(arguments.OutputFolder + $"\\idioms__{DateTime.Now.ToString("yyyyMMddHHmmss")}.txt", 1);
 
             Config config = new Config()
             {

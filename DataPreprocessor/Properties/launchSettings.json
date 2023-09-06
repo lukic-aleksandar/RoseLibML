@@ -2,7 +2,7 @@
   "profiles": {
     "DataPreprocessor": {
       "commandName": "Project",
-      "commandLineArgs": "folder1 folder2 --group=true"
+      "commandLineArgs": "\"C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\ag-pssg-sdlc\\backend\" \"C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\ag-pssg-sdlc\\backend preprocessed\" --group=true"
     }
   }
 }

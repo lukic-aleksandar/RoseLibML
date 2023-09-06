@@ -15,9 +15,9 @@ namespace Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\BaseFileTemplate.tt"
+    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
-    public partial class BaseFileTemplate : BaseFileTemplateBase
+    public partial class NamespaceComposerMethodTemplate : NamespaceComposerMethodTemplateBase
     {
 #line hidden
         /// <summary>
@@ -25,42 +25,44 @@ namespace Transformer.Templates
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("// ------------------------------------------------------------------------------" +
-                    "\r\n//     This file was generated on ");
+            this.Write("\r\n{\r\n    CompositionGuard.NodeOrParentIs(Visitor.CurrentNode, typeof(NamespaceDec" +
+                    "larationSyntax));\r\n\r\n    var fragment = $");
             
-            #line 3 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\BaseFileTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(DateTime.Now));
-            
-            #line default
-            #line hidden
-            this.Write(@".
-//  
-//     Changes to this file may cause incorrect behavior
-//     and will be lost if the code is regenerated.
-// ------------------------------------------------------------------------------
-
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.CSharp;
-using RoseLib.Guards;
-using RoseLib.Traversal.Navigators;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using RoseLib.Traversal;
-using System.Text.RegularExpressions;
-
-namespace RoseLib.Composers
-{
-    public partial class ");
-            
-            #line 23 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\BaseFileTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(composer));
+            #line 6 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
+Write(ToLiteral(fragment));
             
             #line default
             #line hidden
-            this.Write("\r\n    {\r\n\r\n    }\r\n}");
+            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
+
+    var member = SyntaxFactory.ParseMemberDeclaration(fragment);
+    if (member!.ContainsDiagnostics)
+    {
+        throw new Exception(""Idiom filled with provided parameters not rendered as syntactically valid."");
+    }
+
+    var referenceNode = TryGetReferenceAndPopToPivot();
+    var newEnclosingNode = AddMemberToCurrentNode(member!, referenceNode);
+    Visitor.ReplaceNodeAndAdjustState(Visitor.CurrentNode!, newEnclosingNode);
+
+
+    var navigator = BaseNavigator.CreateTempNavigator<NamespaceNavigator>(Visitor); 
+    var name = RoslynHelper.GetMemberName(member);
+    navigator.Select");
+            
+            #line 21 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(rootNodeType.Replace("Syntax", "")));
+            
+            #line default
+            #line hidden
+            this.Write("(name); ");
+            
+            #line 21 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
+ // Convention specific. Always follow the convention for selection of a member by its name. 
+            
+            #line default
+            #line hidden
+            this.Write("\r\n    return this;\r\n}\r\n\r\n\r\n");
             return this.GenerationEnvironment.ToString();
         }
     }
@@ -72,7 +74,7 @@ namespace RoseLib.Composers
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
-    public class BaseFileTemplateBase
+    public class NamespaceComposerMethodTemplateBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;
