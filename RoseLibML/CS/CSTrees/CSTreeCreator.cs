@@ -38,6 +38,19 @@ namespace RoseLibML.CS.CSTrees
             }
         }
 
+        public static CSTree CreateTree(string sourceCode, FixedNodeKinds? fixedNodeKinds = null)
+        {
+            CSNodeCreator csNodeCreator = new CSNodeCreator(fixedNodeKinds);
+            var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
+
+            var tree = new CSTree();
+
+            tree.Root = csNodeCreator.CreateNode(syntaxTree.GetRoot());
+            tree.Root.IsFragmentRoot = true;
+            tree.Root.CanHaveType = false;
+
+            return tree;
+        }
         private static string Extension { get; set; } = ".bin";
         // in and out model paths are directories
         public static CSTree Deserialize( FileInfo sourceInfo, string inModelPath, string outModelPath) 

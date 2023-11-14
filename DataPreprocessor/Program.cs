@@ -1,6 +1,7 @@
 ﻿using DataPreprocessor;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis;
+using System.Text;
 
 public class Program
 {
@@ -54,7 +55,6 @@ public class Program
 
     public static void WriteButRemoveCommentsAndUsings(string outputPath, Dictionary<string, List<Tuple<FileInfo, string>>> componentGroups)
     {
-
         foreach (var key in componentGroups.Keys)
         {
             string keyWithoutLessMoreThan = key.Replace('<', 'T').Replace('>', 'T');
@@ -62,14 +62,27 @@ public class Program
             Directory.CreateDirectory(keyOutPath);
             List<Tuple<FileInfo, string>> tuples = componentGroups[key];
 
-            foreach(var tuple in tuples)
+            Dictionary<string, int> fileNameCount = new Dictionary<string, int>();
+            foreach (var tuple in tuples)
             {
                 var fileInfo = tuple.Item1;
                 string fileText = File.ReadAllText(fileInfo.FullName);
                 SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(fileText);
-                var codeWithoutCommentsAndUsings = new CommentsUsingsAndRegionRemover().Visit(syntaxTree.GetRoot()).ToString();
+                var codeWithoutCommentsAndUsings = new CommentsUsingsAndRegionRemover().Visit(syntaxTree.GetRoot().NormalizeWhitespace()).ToString();
 
-                string fullOutPath = Path.Combine(keyOutPath, fileInfo.Name);
+                string fullOutPath;
+                if (!fileNameCount.ContainsKey(fileInfo.Name))
+                {
+                    fullOutPath = Path.Combine(keyOutPath, fileInfo.Name);
+
+                    fileNameCount.Add(fileInfo.Name, 1);
+                }
+                else
+                {
+                    fullOutPath = Path.Combine(keyOutPath, Path.GetFileNameWithoutExtension(fileInfo.Name) + fileNameCount[fileInfo.Name] + Path.GetExtension(fileInfo.Name));
+                    fileNameCount[fileInfo.Name] = fileNameCount[fileInfo.Name] + 1;
+
+                }
                 File.WriteAllText(fullOutPath, codeWithoutCommentsAndUsings);
             }
 

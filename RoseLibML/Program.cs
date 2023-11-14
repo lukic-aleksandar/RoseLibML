@@ -1,4 +1,4 @@
-using RoseLibML.Core.LabeledTrees;
+﻿using RoseLibML.Core.LabeledTrees;
 using RoseLibML.CS;
 using RoseLibML.CS.CSTrees;
 using RoseLibML.Util;
@@ -22,10 +22,12 @@ namespace RoseLibML
             {
                 return;
             }
-            if(config.Paths == null || config.Paths.OutIdioms == null)
+            if (config.Paths == null || config.Paths.OutIdioms == null)
             {
                 return;
             }
+
+            Directory.CreateDirectory(Path.GetDirectoryName(config.Paths.OutIdioms)!);
 
             ConfigWriter.WriteConfig(args[0], config.Paths.OutIdioms);
 
@@ -54,6 +56,8 @@ namespace RoseLibML
 
                 if (saveModel)
                 {
+                    Directory.CreateDirectory(config.Paths.OutModel);
+
                     foreach (var tree in sampler.Trees)
                     {
                         tree.Serialize();

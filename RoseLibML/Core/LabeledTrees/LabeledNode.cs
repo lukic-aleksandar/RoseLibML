@@ -22,6 +22,21 @@ namespace RoseLibML.Core.LabeledTrees
         public LabeledNode Parent { get; set; }
         public List<LabeledNode> Children { get; set; } = new List<LabeledNode>();
 
+        public LabeledNode RootAncestor { get
+            {
+                if (Parent == null)
+                {
+                    return this;
+                }
+
+                var currentNode = Parent;
+                while(currentNode.Parent != null) { 
+                    currentNode = currentNode.Parent;
+                }
+
+                return currentNode;
+            } 
+        }
 
         public bool CanHaveType { get; set; } = true;
 
@@ -125,5 +140,7 @@ namespace RoseLibML.Core.LabeledTrees
 
             return null;
         }
+
+        public string IdiomMark { get; set; }
     }
 }

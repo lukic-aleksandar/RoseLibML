@@ -81,6 +81,8 @@ namespace RoseLibML.CS.CSTrees
                             tokenNode.UseRoslynMatchToWrite = false;
                             tokenNode.CanHaveType = false;
                             tokenNode.IsTreeLeaf = true;
+                            tokenNode.RoslynSpanStart = child.Span.Start;
+                            tokenNode.RoslynSpanEnd = child.Span.End;
                         }
                         else
                         {
@@ -93,6 +95,8 @@ namespace RoseLibML.CS.CSTrees
                             var leaf = new CSNode();
                             leaf.STInfo = child.AsToken().ValueText;
                             leaf.UseRoslynMatchToWrite = false;
+                            leaf.RoslynSpanStart = child.Span.Start;
+                            leaf.RoslynSpanEnd = child.Span.End;
                             leaf.CanHaveType = false;
                             leaf.IsTreeLeaf = true;
 
