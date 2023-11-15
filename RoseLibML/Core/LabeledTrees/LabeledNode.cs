@@ -141,6 +141,9 @@ namespace RoseLibML.Core.LabeledTrees
             return null;
         }
 
+        // Currently used only for HTML Vizualization
+        #region HTMLVizualization
         public string IdiomMark { get; set; }
+        #endregion
     }
 }
