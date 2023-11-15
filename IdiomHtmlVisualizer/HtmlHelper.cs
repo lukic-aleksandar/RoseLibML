@@ -10,9 +10,10 @@ namespace IdiomHtmlVisualizer
 {
     public static class HtmlHelper
     {
+        private static ColorHelper colorHelper = new ColorHelper();
+
         public static void PrintHTML(string fileName, SyntaxTree syntaxTree, Dictionary<uint, string> dictionary)
         {
-            ColorHelper colorHelper = new ColorHelper();
 
             var tokens = syntaxTree.GetRoot().DescendantTokens();
             using (var streamWriter = new StreamWriter(fileName))
