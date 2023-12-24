@@ -22,7 +22,7 @@ namespace RoseLibMLTests.ToCSWriterTests
             var path = Path.Combine(Directory.GetCurrentDirectory(), "TestFiles\\TestFile.cs");
             var fileInfo = new FileInfo(path);
             var tree = CSTreeCreator.CreateTree(fileInfo, null);
-            toCSWriter.Initialize(null, new LabeledTree[] { tree });
+            toCSWriter.InitializeForSampler(null, new LabeledTree[] { tree });
 
             var method1 = FindMethod1(tree.Root);
             Assert.IsNotNull(method1);
