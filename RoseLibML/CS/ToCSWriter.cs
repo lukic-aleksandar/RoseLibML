@@ -22,7 +22,8 @@ namespace RoseLibML.CS
 
         private int lengthThreshold;
 
-        public Dictionary<int, List<string>> FragmentsPerIteration;
+        public Dictionary<int, List<string>> FragmentsPerIteration = new Dictionary<int, List<string>>();
+        private bool areAnnouncementsNeeded = true;
 
         public ToCSWriter(string outputFile, int lengthThreshold)
         {
@@ -32,13 +33,24 @@ namespace RoseLibML.CS
             FragmentsPerIteration = new Dictionary<int, List<string>>();
         }
 
-        public void Initialize(BookKeeper bookKeeper, LabeledTree[] trees)
+        public ToCSWriter()
+        {
+        }
+
+        public void InitializeForSampler(BookKeeper bookKeeper, LabeledTree[] trees)
         {
             BookKeeper = bookKeeper;
             Trees = trees;
 
             new FileInfo(OutputFile).Directory.Create();
             StreamWriter = new StreamWriter(OutputFile, true);
+        }
+
+        public void InitializeForSingleIdiomUsage(LabeledTree[] trees)
+        {
+            Trees = trees;
+            StreamWriter = new StreamWriter(new MemoryStream());
+            areAnnouncementsNeeded = false;
         }
 
         public void SetIteration(int iteration)
@@ -62,6 +74,20 @@ namespace RoseLibML.CS
                 FindRootMatchAndWriteFragment(rootNode, leaves);
                 //FindRootMatchAndWriteFragment(rootNode, leaves.Where(l => l.CouldBeWritten));
             }
+        }
+
+        public string SingleFragmentToString(CSNode rootNode)
+        {
+            var leaves = RetrieveFragmentLeaves(rootNode);
+
+            var anyLeavesToWrite = leaves.Any(l => l.CouldBeWritten);
+            var anyLeavesWithAMatch = leaves.Any(l => l.IsExistingRoslynNode && l.UseRoslynMatchToWrite);
+            if (anyLeavesToWrite && anyLeavesWithAMatch)
+            {
+                FindRootMatchAndWriteFragment(rootNode, leaves);
+            }
+
+            return Encoding.ASCII.GetString((StreamWriter.BaseStream as MemoryStream)!.ToArray());
         }
 
         private CSNode RetrieveFragmentRootNode(string fragmentInTreebankNotation)
@@ -164,6 +190,7 @@ namespace RoseLibML.CS
             return leaves;
         }
 
+
         public void FindRootMatchAndWriteFragment(CSNode fragmentRootNode, IEnumerable<CSNode> fragmentLeaves)
         {
             var withCorrespondingNode = RetrieveOneWithCoressponding(fragmentRootNode);
@@ -248,7 +275,7 @@ namespace RoseLibML.CS
                 var fragment = strWriter.ToString();
                 if(fragment.Length >= lengthThreshold)
                 {
-                    AnnounceNewFragment(roslynFragmentRoot, fragment);
+                    AnnounceAndWriteNewFragment(roslynFragmentRoot, fragment);
 
                     // in order to show in the vs code extension
                     AddFragmentToDictionary(CurrentIteration, strWriter.ToString());
@@ -326,18 +353,19 @@ namespace RoseLibML.CS
             }
         }
 
-        private void AnnounceNewFragment(SyntaxNodeOrToken roslynFragmentRoot, string fragment)
+        private void AnnounceAndWriteNewFragment(SyntaxNodeOrToken roslynFragmentRoot, string fragment)
         {
             using (StringWriter strWriter = new StringWriter())
             {
-                strWriter.WriteLine();
-                strWriter.WriteLine();
-                strWriter.WriteLine($"~~~ Fragment with root {roslynFragmentRoot.Kind()} in iteration {CurrentIteration} ~~~");
-                strWriter.WriteLine();
+                if(areAnnouncementsNeeded)
+                {
+                    strWriter.WriteLine();
+                    strWriter.WriteLine();
+                    strWriter.WriteLine($"~~~ Fragment with root {roslynFragmentRoot.Kind()} in iteration {CurrentIteration} ~~~");
+                    strWriter.WriteLine();
 
-
-
-                StreamWriter.Write(strWriter.ToString());
+                    StreamWriter.Write(strWriter.ToString());
+                }
 
                 var json = $"{{ \n\t\"root\": \"{roslynFragmentRoot.Kind()}\", \n\t\"fragment\": \"\n{fragment}\n\" }}";
                 StreamWriter.Write(json);

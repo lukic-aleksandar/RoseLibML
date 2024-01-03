@@ -19,7 +19,7 @@ namespace RoseLibML.Core
         public BookKeeper BookKeeper { get; set; }
         public LabeledTreePCFGComposer PCFG { get; set; }
         public LabeledTree[] Trees { get; set; }
-        public double Alpha { get; set; }
+        public double DefaultAlpha { get; set; }
         public double CutProbability { get; set; }
 
         Writer Writer { get; set; }
@@ -35,7 +35,7 @@ namespace RoseLibML.Core
             Writer = writer;
             BookKeeper = new BookKeeper();
 
-            Alpha = config.ModelParams.Alpha;
+            DefaultAlpha = config.ModelParams.DefaultAlpha;
             CutProbability = config.ModelParams.CutProbability;
 
             Config = config;
@@ -60,7 +60,7 @@ namespace RoseLibML.Core
                 }
             }
 
-            Writer.Initialize(BookKeeper, Trees);
+            Writer.InitializeForSampler(BookKeeper, Trees);
         }
 
         private void Fragmentation(LabeledNode node)
@@ -325,21 +325,31 @@ namespace RoseLibML.Core
             gCalculationInfo.Triplet = triplet;
 
 
-            gCalculationInfo.FfNumeratorUnraised = Alpha * PCFG.CalculateFragmentProbability(triplet.full) + BookKeeper.GetFragmentCount(node.Type.FullFragment);
-            gCalculationInfo.P1fNumeratorUnraised = Alpha * PCFG.CalculateFragmentProbability(triplet.part1) + BookKeeper.GetFragmentCount(node.Type.Part1Fragment);
-            gCalculationInfo.P2fNumeratorUnraised = Alpha * PCFG.CalculateFragmentProbability(triplet.part2) + BookKeeper.GetFragmentCount(node.Type.Part2Fragment);
+            gCalculationInfo.FfNumeratorUnraised = GetAlphaForNodeSTInfo(triplet.full.STInfo) * PCFG.CalculateFragmentProbability(triplet.full) + BookKeeper.GetFragmentCount(node.Type.FullFragment);
+            gCalculationInfo.P1fNumeratorUnraised = GetAlphaForNodeSTInfo(triplet.part1.STInfo) * PCFG.CalculateFragmentProbability(triplet.part1) + BookKeeper.GetFragmentCount(node.Type.Part1Fragment);
+            gCalculationInfo.P2fNumeratorUnraised = GetAlphaForNodeSTInfo(triplet.part2.STInfo) * PCFG.CalculateFragmentProbability(triplet.part2) + BookKeeper.GetFragmentCount(node.Type.Part2Fragment);
 
             if (!gCalculationInfo.Triplet.full.STInfo.Equals(gCalculationInfo.Triplet.part2.STInfo))
             {
-                gCalculationInfo.Ffp1DenominatorUnraised = Alpha + BookKeeper.GetRootCount(triplet.full.STInfo);
-                gCalculationInfo.P2DenominatorUnraised = Alpha + BookKeeper.GetRootCount(triplet.part2.STInfo);
+                gCalculationInfo.Ffp1DenominatorUnraised = GetAlphaForNodeSTInfo(triplet.full.STInfo) + BookKeeper.GetRootCount(triplet.full.STInfo);
+                gCalculationInfo.P2DenominatorUnraised = GetAlphaForNodeSTInfo(triplet.part2.STInfo) + BookKeeper.GetRootCount(triplet.part2.STInfo);
             }
             else
             {
-                gCalculationInfo.Ffp1p2DenominatorUnraised = Alpha + BookKeeper.GetRootCount(triplet.full.STInfo);
+                gCalculationInfo.Ffp1p2DenominatorUnraised = GetAlphaForNodeSTInfo(triplet.full.STInfo) + BookKeeper.GetRootCount(triplet.full.STInfo);
             }
 
             return gCalculationInfo;
+        }
+
+        private double GetAlphaForNodeSTInfo(string STInfo)
+        {
+            var nodeSpecificAlphas = Config.ModelParams.NodeSpecificAlphas;
+            if (STInfo != null && nodeSpecificAlphas.ContainsKey(STInfo))
+            {
+                return Config.ModelParams.NodeSpecificAlphas[STInfo];
+            }
+            return DefaultAlpha;
         }
 
         private double CalculateG(int m, int typeCardinality, GCalculationInfo gCalculationInfo)

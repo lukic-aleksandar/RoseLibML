@@ -1,23 +1,32 @@
 {
     "modelParams": {
-        "alpha": 1,
-        "cutProbability": 0.9,
-        "p": 0.1,
+        "defaultAlpha": 5,
+        "nodeSpecificAlphas": {
+            "8805": 100
+        },
+        "cutProbability": 0.85,
+        "p": 0.025,
         "excludeLeafsFromGeometric": true
     },
     
     "paths":{
-        "inData": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded2",
-        "outModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded2\\model",
-        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded2\\001idioms.txt"
+        "inData": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded3",
+        "inModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded3\\model",
+        "outModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded3\\model",
+        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded3\\idioms\\002idioms.txt"
     },
 
     "runParams":{
         "justWriteTheFragments": false,
-        "startIteration": 0,
-        "burnIn": 55,
-        "totalIterations": 90,
+        "startIteration": 91,
+        "burnIn": 90,
+        "totalIterations": 92,
         "threshold": 2,
         "idiomLengthThreshold": 5
+    },
+
+    "fixedNodeKinds": {
+        "fixedCutNodeKinds": ["8842", "8855", "8875", "8873", "8878", "8892"],
+        "fixedNonCutNodeKinds": ["8906", "B_8875", "8792", "8826", "8847", "8895", "8827", "8636", "8619", "8850"]
     }
 }

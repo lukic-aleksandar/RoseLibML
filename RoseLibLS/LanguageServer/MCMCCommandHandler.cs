@@ -128,7 +128,7 @@ namespace RoseLibLS.LanguageServer
                 },
                 ModelParams = new ModelParams()
                 {
-                    Alpha = arguments.Alpha,
+                    DefaultAlpha = arguments.Alpha,
                     CutProbability = arguments.InitialCutProbability,
                 }
             };

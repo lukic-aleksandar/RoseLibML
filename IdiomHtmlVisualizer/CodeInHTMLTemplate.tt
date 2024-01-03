@@ -1,0 +1,308 @@
+﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Web" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="IdiomHtmlVisualizer" #>
+<#@ import namespace="IdiomHtmlVisualizer.Model" #>
+<#@ import namespace="Microsoft.CodeAnalysis" #>
+
+<html>
+<head>
+	<style>span {white-space: pre ; font-family:'Courier New';}</style>
+	<style>
+		#tooltip {
+		  background-color: #333;
+		  color: white;
+		  padding: 5px 10px;
+		  border-radius: 4px;
+		  font-size: 13px;
+		  display: none;
+		}
+
+		#arrow,
+		#arrow::before {
+			position: absolute;
+			width: 8px;
+			height: 8px;
+			background: inherit;
+		}
+
+		#arrow {
+			visibility: hidden;
+		}
+
+		#arrow::before {
+			visibility: visible;
+			content: '';
+			transform: rotate(45deg);
+		}
+
+		#tooltip[data-popper-placement^='top'] > #arrow {
+			bottom: -4px;
+		}
+
+		#tooltip[data-popper-placement^='bottom'] > #arrow {
+			top: -4px;
+		}
+
+		#tooltip[data-popper-placement^='left'] > #arrow {
+			right: -4px;
+		}
+
+		#tooltip[data-popper-placement^='right'] > #arrow {
+			left: -4px;
+		}
+
+		#tooltip[data-show] {
+			display: block;
+		}
+	</style>
+	<style>
+
+		#details-popup {
+		  position: fixed;
+		  top: 0;
+		  bottom: 0;
+		  left: 0;
+		  right: 0;
+		  background: rgba(0, 0, 0, 0.7);
+		  transition: opacity 500ms;
+		  visibility: hidden;
+		  opacity: 0;
+		  overflow-y:scroll;
+		}
+
+		#details-popup-content {
+		  margin: 70px auto;
+		  padding: 20px;
+		  background: #fff;
+		  border-radius: 5px;
+		  width: 30%;
+		  position: relative;
+		  transition: all 5s ease-in-out;
+		}
+
+		#details-popup-content h2 {
+		  margin: 0;
+		  color: #333;
+		  font-family: Tahoma, Arial, sans-serif;
+		}
+		#details-popup-close {
+		  position: absolute;
+		  top: 20px;
+		  right: 30px;
+		  transition: all 200ms;
+		  font-size: 30px;
+		  font-weight: bold;
+		  text-decoration: none;
+		  color: #555;
+		}
+		#details-popup-close:hover {
+		  color: #111;
+		  cursor: pointer;
+		}
+		#details-popup-content-body {
+		  max-height: 30%;
+		  overflow: auto;
+		  font-family: Tahoma, Arial, sans-serif;
+		  white-space: pre;
+		}
+
+		#details-popup-content-text {
+		  margin: 0;
+		}
+
+		@media screen and (max-width: 700px){
+		  #details-popup-content{
+			width: 70%;
+		  }
+		}
+	</style>
+	<script>
+		function highlight(x, sameIdiomsNo, sameSubtreesNo) {
+			let className = x.className;
+			let previousColor = x.style.backgroundColor;
+
+			localStorage.setItem('previousColor', previousColor);
+
+			let idiomElements = document.getElementsByClassName(className);
+
+			for(var i=0;i<idiomElements.length;i++){
+				idiomElements[i].style.backgroundColor = '#257AFD';
+			}
+
+			const idiomMarkText = document.querySelector('#idiom-mark');
+			const idiomsSameText = document.querySelector('#idioms-same');
+			const subtreesSameText = document.querySelector('#subtrees-same');            
+			
+			idiomMarkText.textContent = 'mark: ' + className.substring(0,8);
+			idiomsSameText.textContent = '\nsame idioms: ' + sameIdiomsNo;
+			
+			let sameSubtrees = sameSubtreesNo > 0 ? sameSubtreesNo : '-';
+			subtreesSameText.textContent = '\nsame subtrees: ' + sameSubtrees;
+
+
+			const tooltip = document.querySelector('#tooltip');
+			Popper.createPopper(x, tooltip , {
+				modifiers: [
+					{
+					name: 'offset',
+					options: {
+						offset: [0, 8],
+					},
+					},
+				],
+			});
+			tooltip.setAttribute('data-show', '');
+		}
+
+		function unhighlight(x) {
+			let className = x.className;
+
+			var previousColor = localStorage.getItem('previousColor', previousColor);
+
+			let idiomElements = document.getElementsByClassName(className);
+
+			for(var i=0;i<idiomElements.length;i++){
+				idiomElements[i].style.backgroundColor = previousColor;
+			}
+
+			const tooltip = document.querySelector('#tooltip');
+			tooltip.removeAttribute('data-show' );
+		}
+		
+		function selectIdiom(x, sameIdiomsNo, sameSubtreesNo, idiomCodeEncoded, filesThatHaveIt) {
+			let className = x.className;
+
+			let overlay = document.getElementById("details-popup");
+			overlay.style.visibility = 'visible'; 
+			overlay.style.opacity = 1;
+
+			let content = document.getElementById("details-popup-content-text");
+
+			content.textContent = ''; // Clear everything
+			content.textContent += '\nsame idioms: ' + sameIdiomsNo;
+			
+			let sameSubtrees = sameSubtreesNo > 0 ? sameSubtreesNo : '-';
+			content.textContent += '\nsame subtrees: ' + sameSubtrees;
+
+			content.textContent += '\n\nidiom json: ' + atob(idiomCodeEncoded);
+
+			let listWithLinks = document.getElementById("details-popup-content-links");
+			listWithLinks.innerHTML = '';
+			
+			for (const file of filesThatHaveIt) {
+				let createdLI = createListItemAnchor('./' + file + '#' + className, `Idiom in ${file}`);
+				listWithLinks.append(createdLI);
+			}
+		}
+
+		function createListItemAnchor(link, text) {
+			let li = document.createElement('li');
+			let a = document.createElement('a'); 
+				
+			let linkText = document.createTextNode(text);
+			
+			
+			a.appendChild(linkText); 
+			a.href = link; 
+				
+			li.appendChild(a);
+			
+			return li;
+		}
+
+		function deselectIdiom(x) {
+			let overlay = document.getElementById("details-popup")
+			overlay.style.visibility = 'hidden'; 
+			overlay.style.opacity = 0;
+		}
+	</script>
+</head>
+<body>
+<# 
+	var alreadySeenMarks = new List<string>();
+	var previousTokenMark = string.Empty;
+	foreach (var token in Tokens)
+	{
+		var nodeHashValue = NodeHasher.CalculateNodeHash(token.ValueText, token.Span.Start, token.Span.End);
+
+		var tokenMark = VisualizationData.Source2TargetMapping.GetValueOrDefault(nodeHashValue);
+		if (tokenMark == null)
+		{
+			throw new DataMisalignedException("For some reason, tokenGuid not found :(");
+		}
+
+		if (tokenMark == previousTokenMark)
+		{
+#><#= HttpUtility.HtmlEncode(token.ToFullString()) #><#		
+		}
+		else 
+		{
+			if (previousTokenMark != string.Empty)
+			{
+#></span><#
+			}
+			var idiomHandler = VisualizationData.IdiomHandler;
+			var idiom = idiomHandler.MarksIdiomsMap[tokenMark];
+			var sameIdiomsNo = idiomHandler.IdiomRoots[idiom].Count;
+
+			var sameSubtreesNo = 0;
+			if (idiomHandler.IdenticalSubtreeRoots.ContainsKey(idiom))
+			{
+				sameSubtreesNo = idiomHandler.IdenticalSubtreeRoots[idiom].Count;
+			}
+
+			var codeFragment = idiomHandler.MarksIdiomCodeMap[tokenMark];
+			var codeFragmentBinary = Encoding.UTF8.GetBytes(codeFragment);
+			var codeFragmentEncoded = Convert.ToBase64String(codeFragmentBinary);
+
+			previousTokenMark = tokenMark;
+
+			var shouldAddId = false;
+			if(!alreadySeenMarks.Contains(tokenMark))
+			{
+				shouldAddId = true;
+				alreadySeenMarks.Add(tokenMark);
+			}
+
+			var treeBankIdiom = idiomHandler.MarksIdiomsMap[tokenMark];
+			var containingFiles = idiomHandler.IdiomsInFiles[treeBankIdiom].ToList().Select(s => s + ".htm").ToList();
+
+
+#><span style="background-color:<#= ColorHelper.GetIdiomColor(tokenMark) #>;" class="<#= tokenMark #>" <# if(shouldAddId) { Write($"id=\"{tokenMark}\"");} #> onmouseover="highlight(this,<#= sameIdiomsNo #>, <#= sameSubtreesNo #>)" onmouseout="unhighlight(this)" onclick="selectIdiom(this,<#= sameIdiomsNo #>,<#= sameSubtreesNo #>, '<#= codeFragmentEncoded #>', [ <#= string.Join(",", containingFiles.Select(cf => "'" + cf + "'").ToList()) #> ])"> <#= HttpUtility.HtmlEncode(token.ToFullString()) #><#		
+		}
+	}	
+#></span>
+<div id="tooltip" role="tooltip">
+	<span id="idiom-mark"></span>
+	<span id="idioms-same"></span>
+	<span id="subtrees-same"></span>
+	<div id="arrow" data-popper-arrow></div>
+</div>
+
+<div id="details-popup">
+	<div id="details-popup-content">
+		<h2>Details</h2>
+		<a id="details-popup-close" onclick="deselectIdiom()">&times;</a>
+		<div id="details-popup-content-body">
+			<p id="details-popup-content-text">
+			</p>
+			<ul style="padding-left: 0px;" id="details-popup-content-links">
+			</ul>
+		</div>
+	</div>
+</div>
+<script src="https://unpkg.com/@popperjs/core@2/dist/umd/popper.js"></script>
+</body>
+</html>
+
+<#+   
+	
+	public ColorHelper ColorHelper { get; set; }
+	public VisualizationData VisualizationData { get; set; }
+	public IEnumerable<SyntaxToken> Tokens { get; set; }
+	
+#>

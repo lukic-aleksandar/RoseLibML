@@ -34,5 +34,32 @@ namespace DataPreprocessor
             return null;
         }
 
+        public override SyntaxNode? VisitClassDeclaration(ClassDeclarationSyntax node)
+        {
+
+            var attributeLists = SortAttributeLists(node.AttributeLists);
+
+            node = node.WithAttributeLists(attributeLists);
+            return base.VisitClassDeclaration(node);
+        }
+
+        public override SyntaxNode? VisitMethodDeclaration(MethodDeclarationSyntax node)
+        {
+            var attributeLists = SortAttributeLists(node.AttributeLists);
+
+            node = node.WithAttributeLists(attributeLists);
+            return base.VisitMethodDeclaration(node);
+        }
+
+
+        public SyntaxList<AttributeListSyntax> SortAttributeLists(SyntaxList<AttributeListSyntax> attributeLists)
+        {
+            var asList = attributeLists.ToList();
+            asList.Sort((a, b) => a.ToString().CompareTo(b.ToString()));
+
+
+            return new SyntaxList<AttributeListSyntax>().AddRange(asList);
+        }
+
     }
 }

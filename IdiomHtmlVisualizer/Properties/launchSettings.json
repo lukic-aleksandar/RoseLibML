@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "IdiomHtmlVisualizer": {
+      "commandName": "Project",
+      "commandLineArgs": "\"C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded3\" \"C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded3\\model\" \"C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded3\" -c 5"
+    }
+  }
+}

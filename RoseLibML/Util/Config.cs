@@ -18,7 +18,10 @@ namespace RoseLibML.Util
     public class ModelParams
     {
         [Range(0.0, double.MaxValue)]
-        public double Alpha { get; set; }
+        public double DefaultAlpha { get; set; }
+        
+        public Dictionary<string, double> NodeSpecificAlphas { get; set; } = new Dictionary<string, double>();
+
         [Range(0.0, 1.0)]
         public double CutProbability { get; set; }
         [Range(0.0, 1.0)]

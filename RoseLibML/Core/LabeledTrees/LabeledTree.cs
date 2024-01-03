@@ -15,6 +15,11 @@ namespace RoseLibML.Core.LabeledTrees
         public string SourceFilePath { get; set; }
         public string FilePath { get; set; }
 
+        #region For HTML visualization
+        // Without an extension
+        public string FileName { get; set; }
+
+        #endregion
         public void Serialize()
         {
             Root.Serialize(FilePath);

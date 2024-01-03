@@ -38,9 +38,22 @@ namespace RoseLibML.CS.CSTrees
             }
         }
 
+        public static CSTree CreateTree(string sourceCode, FixedNodeKinds? fixedNodeKinds = null)
+        {
+            CSNodeCreator csNodeCreator = new CSNodeCreator(fixedNodeKinds);
+            var syntaxTree = CSharpSyntaxTree.ParseText(sourceCode);
+
+            var tree = new CSTree();
+
+            tree.Root = csNodeCreator.CreateNode(syntaxTree.GetRoot());
+            tree.Root.IsFragmentRoot = true;
+            tree.Root.CanHaveType = false;
+
+            return tree;
+        }
         private static string Extension { get; set; } = ".bin";
         // in and out model paths are directories
-        public static CSTree Deserialize( FileInfo sourceInfo, string inModelPath, string outModelPath) 
+        public static CSTree Deserialize(FileInfo sourceInfo, string inModelPath, string outModelPath) 
         {
             var inTreeFullPath = Path.Combine(inModelPath, sourceInfo.Name + Extension);
             bool inTreeExists = File.Exists(inTreeFullPath);
@@ -54,6 +67,21 @@ namespace RoseLibML.CS.CSTrees
                 {
                     tree.FilePath = $"{outModelPath}/{sourceInfo.Name}{Extension}";
                 }
+                return tree;
+            }
+
+            return null;
+        }
+
+        public static CSTree Deserialize(string csSource, string binSource, string fileName)
+        {
+            bool inTreeExists = File.Exists(binSource);
+            if (inTreeExists)
+            {
+                var tree = new CSTree();
+                tree.Root = CSNode.Deserialize(binSource);
+                tree.SourceFilePath = csSource;
+                tree.FileName = fileName;
                 return tree;
             }
 
