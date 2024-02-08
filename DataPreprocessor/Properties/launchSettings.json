@@ -2,7 +2,7 @@
   "profiles": {
     "DataPreprocessor": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\ag-pssg-sdlc\\backend\" \"C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\ag-pssg-sdlc\\backend preprocessed\" --group=true"
+      "commandLineArgs": "\"C:\\Users\\ntodo\\Desktop\\len\\Doktorske\\evaluacija\\popijto\\bcgov schoolbus Server-SchoolBusAPI\" \"C:\\Users\\ntodo\\Desktop\\len\\Doktorske\\evaluacija\\popijto\\bcgov schoolbus Server-SchoolBusAPI preprocessed\" --group=true"
     }
   }
 }

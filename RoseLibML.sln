@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Transformer", "Transformer\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TransformerTests", "TransformerTests\TransformerTests.csproj", "{CADA1EEE-794A-4A08-8561-AF28BD791927}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdiomFileGrouper", "IdiomFileGrouper\IdiomFileGrouper.csproj", "{D2575542-9A52-40B6-A31A-DBD391E64F37}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdiomFileHandler", "IdiomFileHandler\IdiomFileHandler.csproj", "{D2575542-9A52-40B6-A31A-DBD391E64F37}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IdiomHtmlVisualizer", "IdiomHtmlVisualizer\IdiomHtmlVisualizer.csproj", "{628E3CA8-8454-48D9-84A2-BC3F8E47AAA4}"
 EndProject
