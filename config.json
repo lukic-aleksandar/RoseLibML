@@ -10,10 +10,9 @@
     },
     
     "paths":{
-        "inData": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded3",
-        "inModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded3\\model",
-        "outModel": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded3\\model",
-        "outIdioms": "C:\\Users\\ntodo\\Desktop\\Doktorske\\evaluacija\\popijto\\scaffolded3\\idioms\\002idioms.txt"
+        "inData": "C:\\Users\\ntodo\\Desktop\\len\\Doktorske\\evaluacija\\popijto\\bcgov schoolbus Server-SchoolBusAPI preprocessed\\17ControllerBase",
+        "outModel": "C:\\Users\\ntodo\\Desktop\\len\\Doktorske\\evaluacija\\popijto\\bcgov schoolbus Server-SchoolBusAPI preprocessed\\17ControllerBase\\output\\model",
+        "outIdioms": "C:\\Users\\ntodo\\Desktop\\len\\Doktorske\\evaluacija\\popijto\\bcgov schoolbus Server-SchoolBusAPI preprocessed\\17ControllerBase\\output\\idioms\\idioms1.txt"
     },
 
     "runParams":{

@@ -13,21 +13,6 @@ using IdiomHtmlVisualizer.Model;
 
 namespace IdiomHtmlVisualizer
 {
-    // Dobro... Dodao si popup, čist HTML-CSS popup
-    // Ostaje ti da rešiš po koju drugu stvar!
-    // Info koji će se u tom popupu prikazivati
-    // Imaš po koju kontekstnu info - broj idioma, broj podstabala
-    // Ostaju ti linkovi
-    // Tu je mala zavrzlama :o 
-    // Ta zavrzlama je sledeća! Id do elementa
-    // Ideja je da rešiš pomoću konvencije, idiom mark + id
-    // Uh, ovo neće raditi za tree fragmente :o nemaš ništa što ih jedinstveno određuje
-    // Ali na isti način bi mogao i njih da rešiš, ja bih rekao :) Mada, uh, nije tako lako :D Pogotovo zbog ID-a...
-    // Nema veze, rešiš za idiome i kraj, gotovo :) Ne moraš baš sve da rešiš...
-    // Tako da, samo idiomi
-    // Potreban ti je ukupan broj tog idioma po fajlu. To je malo zeznuto, koja struktura to da čuva.
-    // Huh, an idea popped up! :) string.Concat(idiomMark, fileName) 
-
     internal class Program
     {
 
