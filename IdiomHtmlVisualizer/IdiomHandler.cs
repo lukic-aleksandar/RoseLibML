@@ -23,7 +23,7 @@ namespace IdiomHtmlVisualizer
         public Dictionary<string, string> MarksIdiomCodeMap = new Dictionary<string, string>();
 
 
-        private List<LabeledTree> labeledTrees;
+        public List<LabeledTree> labeledTrees;
         public IdiomHandler(List<LabeledTree> labeledTrees)
         {
             this.labeledTrees = labeledTrees;

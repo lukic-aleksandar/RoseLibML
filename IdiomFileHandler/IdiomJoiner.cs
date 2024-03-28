@@ -15,13 +15,41 @@ namespace IdiomFileHandler
             ValidateInput(binFilesPath, idiomMarksCSV);
             var fileToTreeList = LoadTrees(binFilesPath);
 
-            var marksToReplace = idiomMarksCSV.Split(',');
+            var marksToReplace = idiomMarksCSV.Split(',').Select(m => m.Trim()).ToArray();
             var newMark = new Guid().ToString();
 
             foreach (var tuple in fileToTreeList)
             {
                 TraverseToOverwriteIdiomMarks(tuple.Item2.Root, marksToReplace, newMark);
+                TraverseToJoinIdioms(tuple.Item2.Root, newMark);
                 SaveChangedTree(tuple.Item2, tuple.Item1);
+            }
+        }
+
+        private static void TraverseToJoinIdioms(LabeledNode node, string newMark)
+        {
+            if(node == null)
+            {
+                return;
+            }
+
+            if(node.IsTreeLeaf)
+            {
+                return;
+            }
+
+            if (node.IdiomMark == newMark)
+            {
+                if(node.Parent.IdiomMark == newMark)
+                {
+                    node.IsFragmentRoot = false;
+                }
+            }
+
+            var children = node.Children;
+            foreach (var child in children)
+            {
+                TraverseToJoinIdioms(child, newMark);
             }
         }
 

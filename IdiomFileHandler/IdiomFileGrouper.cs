@@ -12,7 +12,10 @@ namespace IdiomFileGrouper
 {
     public class IdiomFileGrouper
     {
-        public static List<FileInfo> GroupFilesBasedOnIdiomMark(string binFilesPath, string idiomMark)
+        public static List<FileInfo> GroupFilesBasedOnIdiomMark(
+            string binFilesPath,
+            string idiomMark
+        )
         {
             List<FileInfo> matchingFilesGroup = new List<FileInfo>();
 
@@ -151,7 +154,7 @@ namespace IdiomFileGrouper
                 sameSTInfoNodes.Add(node);
             }
 
-            if (node.Children == null || node.Children.Count > 0)
+            if (node.Children == null || node.Children.Count == 0)
             {
                 return;
             }
@@ -180,7 +183,7 @@ namespace IdiomFileGrouper
                 resultingList.Add(firstElement);
                 listToProcess.RemoveAt(0);
 
-                if (!(firstElement.IsFragmentRoot || firstElement.IsTreeLeaf))
+                if (!(firstElement.IsFragmentRoot || firstElement.IsTreeLeaf) || firstElement == idiomRootNode)
                 {
                     if (firstElement.Children != null && firstElement.Children.Count > 0)
                     {

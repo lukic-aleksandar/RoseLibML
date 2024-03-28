@@ -2,7 +2,7 @@
   "profiles": {
     "IdiomHtmlVisualizer": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\\\Users\\\\ntodo\\\\Desktop\\\\len\\\\Doktorske\\\\evaluacija\\\\popijto\\\\bcgov schoolbus Server-SchoolBusAPI preprocessed\\\\28Migration\" \"C:\\\\Users\\\\ntodo\\\\Desktop\\\\len\\\\Doktorske\\\\evaluacija\\\\popijto\\\\bcgov schoolbus Server-SchoolBusAPI preprocessed\\\\28Migration\\\\output\\\\model\" \"C:\\\\Users\\\\ntodo\\\\Desktop\\\\len\\\\Doktorske\\\\evaluacija\\\\popijto\\\\bcgov schoolbus Server-SchoolBusAPI preprocessed\\\\28Migration\\\\output\\\\visualization\" -c 5"
+      "commandLineArgs": "\"C:\\Users\\ntodo\\Desktop\\len\\SAGED\\SAGED\\Eval\\SchoolBusAPI evaluation\\17ControllerBase\\input\" \"C:\\Users\\ntodo\\Desktop\\len\\SAGED\\SAGED\\Eval\\SchoolBusAPI evaluation\\17ControllerBase\\eval results\\model\" \"C:\\Users\\ntodo\\Desktop\\len\\SAGED\\SAGED\\Eval\\SchoolBusAPI evaluation\\17ControllerBase\\eval results\\vizualization\" -c 5"
     }
   }
 }

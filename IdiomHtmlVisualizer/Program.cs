@@ -47,7 +47,18 @@ namespace IdiomHtmlVisualizer
             LoadCounterpartsTrees();
 
 
-            PrepareDataGenerateHtmlFiles(outputPath, provideComprehensiveReport, idiomLengthThreshold);
+            var idiomHandler = PrepareDataGenerateHtmlFiles(outputPath, provideComprehensiveReport, idiomLengthThreshold);
+
+            PersistAlteredBinTrees(idiomHandler);
+        }
+
+        private static void PersistAlteredBinTrees(IdiomHandler idiomHandler)
+        {
+            var binTrees = idiomHandler.labeledTrees;
+            foreach(var tree in binTrees)
+            {
+                tree.Serialize();
+            }
         }
 
         private static bool EnsurePathArguments(string[] args)
@@ -156,7 +167,7 @@ namespace IdiomHtmlVisualizer
             }
         }
 
-        private static void PrepareDataGenerateHtmlFiles(string outputDir, bool provideComprehensiveReport, int idiomLengthThreshold)
+        private static IdiomHandler PrepareDataGenerateHtmlFiles(string outputDir, bool provideComprehensiveReport, int idiomLengthThreshold)
         {
             if (!Directory.Exists(outputDir))
             {
@@ -186,6 +197,8 @@ namespace IdiomHtmlVisualizer
                     );
                 HtmlGenerator.GenerateHTML(visualizationData);
             }
+
+            return idiomHandler;
         }
     }
 }

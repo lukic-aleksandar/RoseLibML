@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
+
 namespace IdiomHtmlVisualizer
 {
     public class ColorHelper
@@ -13,9 +15,16 @@ namespace IdiomHtmlVisualizer
         {
             var colorNumber = idiomColorNumbers.GetValueOrDefault(idiomMark);
             if (colorNumber == 0)
-            {
+            {   
+                // Try to add twice, to lower the possibility of encountering duplicate keys
                 colorNumber = (ushort)new Random().NextInt64();
-                idiomColorNumbers.Add(idiomMark, colorNumber);
+                var added = idiomColorNumbers.TryAdd(idiomMark, colorNumber);
+
+                if (!added)
+                {
+                    colorNumber = (ushort)new Random().NextInt64();
+                    idiomColorNumbers.Add(idiomMark, colorNumber);
+                }
             }
 
             return colorNumber;

@@ -22,7 +22,7 @@ namespace IdiomHtmlVisualizer
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+    #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class CodeInHTMLTemplate : CodeInHTMLTemplateBase
     {
@@ -32,73 +32,79 @@ namespace IdiomHtmlVisualizer
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("\r\n<html>\r\n<head>\r\n\t<style>span {white-space: pre ; font-family:\'Courier New\';}</s" +
-                    "tyle>\r\n\t<style>\r\n\t\t#tooltip {\r\n\t\t  background-color: #333;\r\n\t\t  color: white;\r\n\t" +
-                    "\t  padding: 5px 10px;\r\n\t\t  border-radius: 4px;\r\n\t\t  font-size: 13px;\r\n\t\t  displa" +
-                    "y: none;\r\n\t\t}\r\n\r\n\t\t#arrow,\r\n\t\t#arrow::before {\r\n\t\t\tposition: absolute;\r\n\t\t\twidth" +
-                    ": 8px;\r\n\t\t\theight: 8px;\r\n\t\t\tbackground: inherit;\r\n\t\t}\r\n\r\n\t\t#arrow {\r\n\t\t\tvisibili" +
-                    "ty: hidden;\r\n\t\t}\r\n\r\n\t\t#arrow::before {\r\n\t\t\tvisibility: visible;\r\n\t\t\tcontent: \'\';" +
-                    "\r\n\t\t\ttransform: rotate(45deg);\r\n\t\t}\r\n\r\n\t\t#tooltip[data-popper-placement^=\'top\'] " +
-                    "> #arrow {\r\n\t\t\tbottom: -4px;\r\n\t\t}\r\n\r\n\t\t#tooltip[data-popper-placement^=\'bottom\']" +
-                    " > #arrow {\r\n\t\t\ttop: -4px;\r\n\t\t}\r\n\r\n\t\t#tooltip[data-popper-placement^=\'left\'] > #" +
-                    "arrow {\r\n\t\t\tright: -4px;\r\n\t\t}\r\n\r\n\t\t#tooltip[data-popper-placement^=\'right\'] > #a" +
-                    "rrow {\r\n\t\t\tleft: -4px;\r\n\t\t}\r\n\r\n\t\t#tooltip[data-show] {\r\n\t\t\tdisplay: block;\r\n\t\t}\r" +
-                    "\n\t</style>\r\n\t<style>\r\n\r\n\t\t#details-popup {\r\n\t\t  position: fixed;\r\n\t\t  top: 0;\r\n\t" +
-                    "\t  bottom: 0;\r\n\t\t  left: 0;\r\n\t\t  right: 0;\r\n\t\t  background: rgba(0, 0, 0, 0.7);\r" +
-                    "\n\t\t  transition: opacity 500ms;\r\n\t\t  visibility: hidden;\r\n\t\t  opacity: 0;\r\n\t\t  o" +
-                    "verflow-y:scroll;\r\n\t\t}\r\n\r\n\t\t#details-popup-content {\r\n\t\t  margin: 70px auto;\r\n\t\t" +
-                    "  padding: 20px;\r\n\t\t  background: #fff;\r\n\t\t  border-radius: 5px;\r\n\t\t  width: 30%" +
-                    ";\r\n\t\t  position: relative;\r\n\t\t  transition: all 5s ease-in-out;\r\n\t\t}\r\n\r\n\t\t#detai" +
-                    "ls-popup-content h2 {\r\n\t\t  margin: 0;\r\n\t\t  color: #333;\r\n\t\t  font-family: Tahoma" +
-                    ", Arial, sans-serif;\r\n\t\t}\r\n\t\t#details-popup-close {\r\n\t\t  position: absolute;\r\n\t\t" +
-                    "  top: 20px;\r\n\t\t  right: 30px;\r\n\t\t  transition: all 200ms;\r\n\t\t  font-size: 30px;" +
-                    "\r\n\t\t  font-weight: bold;\r\n\t\t  text-decoration: none;\r\n\t\t  color: #555;\r\n\t\t}\r\n\t\t#" +
-                    "details-popup-close:hover {\r\n\t\t  color: #111;\r\n\t\t  cursor: pointer;\r\n\t\t}\r\n\t\t#det" +
-                    "ails-popup-content-body {\r\n\t\t  max-height: 30%;\r\n\t\t  overflow: auto;\r\n\t\t  font-f" +
-                    "amily: Tahoma, Arial, sans-serif;\r\n\t\t  white-space: pre;\r\n\t\t}\r\n\r\n\t\t#details-popu" +
-                    "p-content-text {\r\n\t\t  margin: 0;\r\n\t\t}\r\n\r\n\t\t@media screen and (max-width: 700px){" +
-                    "\r\n\t\t  #details-popup-content{\r\n\t\t\twidth: 70%;\r\n\t\t  }\r\n\t\t}\r\n\t</style>\r\n\t<script>\r" +
-                    "\n\t\tfunction highlight(x, sameIdiomsNo, sameSubtreesNo) {\r\n\t\t\tlet className = x.c" +
-                    "lassName;\r\n\t\t\tlet previousColor = x.style.backgroundColor;\r\n\r\n\t\t\tlocalStorage.se" +
-                    "tItem(\'previousColor\', previousColor);\r\n\r\n\t\t\tlet idiomElements = document.getEle" +
-                    "mentsByClassName(className);\r\n\r\n\t\t\tfor(var i=0;i<idiomElements.length;i++){\r\n\t\t\t" +
-                    "\tidiomElements[i].style.backgroundColor = \'#257AFD\';\r\n\t\t\t}\r\n\r\n\t\t\tconst idiomMark" +
-                    "Text = document.querySelector(\'#idiom-mark\');\r\n\t\t\tconst idiomsSameText = documen" +
-                    "t.querySelector(\'#idioms-same\');\r\n\t\t\tconst subtreesSameText = document.querySele" +
-                    "ctor(\'#subtrees-same\');            \r\n\t\t\t\r\n\t\t\tidiomMarkText.textContent = \'mark: " +
-                    "\' + className.substring(0,8);\r\n\t\t\tidiomsSameText.textContent = \'\\nsame idioms: \'" +
-                    " + sameIdiomsNo;\r\n\t\t\t\r\n\t\t\tlet sameSubtrees = sameSubtreesNo > 0 ? sameSubtreesNo" +
-                    " : \'-\';\r\n\t\t\tsubtreesSameText.textContent = \'\\nsame subtrees: \' + sameSubtrees;\r\n" +
-                    "\r\n\r\n\t\t\tconst tooltip = document.querySelector(\'#tooltip\');\r\n\t\t\tPopper.createPopp" +
-                    "er(x, tooltip , {\r\n\t\t\t\tmodifiers: [\r\n\t\t\t\t\t{\r\n\t\t\t\t\tname: \'offset\',\r\n\t\t\t\t\toptions:" +
-                    " {\r\n\t\t\t\t\t\toffset: [0, 8],\r\n\t\t\t\t\t},\r\n\t\t\t\t\t},\r\n\t\t\t\t],\r\n\t\t\t});\r\n\t\t\ttooltip.setAttri" +
-                    "bute(\'data-show\', \'\');\r\n\t\t}\r\n\r\n\t\tfunction unhighlight(x) {\r\n\t\t\tlet className = x" +
-                    ".className;\r\n\r\n\t\t\tvar previousColor = localStorage.getItem(\'previousColor\', prev" +
-                    "iousColor);\r\n\r\n\t\t\tlet idiomElements = document.getElementsByClassName(className)" +
-                    ";\r\n\r\n\t\t\tfor(var i=0;i<idiomElements.length;i++){\r\n\t\t\t\tidiomElements[i].style.bac" +
-                    "kgroundColor = previousColor;\r\n\t\t\t}\r\n\r\n\t\t\tconst tooltip = document.querySelector" +
-                    "(\'#tooltip\');\r\n\t\t\ttooltip.removeAttribute(\'data-show\' );\r\n\t\t}\r\n\t\t\r\n\t\tfunction se" +
-                    "lectIdiom(x, sameIdiomsNo, sameSubtreesNo, idiomCodeEncoded, filesThatHaveIt) {\r" +
-                    "\n\t\t\tlet className = x.className;\r\n\r\n\t\t\tlet overlay = document.getElementById(\"de" +
-                    "tails-popup\");\r\n\t\t\toverlay.style.visibility = \'visible\'; \r\n\t\t\toverlay.style.opac" +
-                    "ity = 1;\r\n\r\n\t\t\tlet content = document.getElementById(\"details-popup-content-text" +
-                    "\");\r\n\r\n\t\t\tcontent.textContent = \'\'; // Clear everything\r\n\t\t\tcontent.textContent " +
-                    "+= \'\\nsame idioms: \' + sameIdiomsNo;\r\n\t\t\t\r\n\t\t\tlet sameSubtrees = sameSubtreesNo " +
-                    "> 0 ? sameSubtreesNo : \'-\';\r\n\t\t\tcontent.textContent += \'\\nsame subtrees: \' + sam" +
-                    "eSubtrees;\r\n\r\n\t\t\tcontent.textContent += \'\\n\\nidiom json: \' + atob(idiomCodeEncod" +
-                    "ed);\r\n\r\n\t\t\tlet listWithLinks = document.getElementById(\"details-popup-content-li" +
-                    "nks\");\r\n\t\t\tlistWithLinks.innerHTML = \'\';\r\n\t\t\t\r\n\t\t\tfor (const file of filesThatHa" +
-                    "veIt) {\r\n\t\t\t\tlet createdLI = createListItemAnchor(\'./\' + file + \'#\' + className," +
-                    " `Idiom in ${file}`);\r\n\t\t\t\tlistWithLinks.append(createdLI);\r\n\t\t\t}\r\n\t\t}\r\n\r\n\t\tfunc" +
-                    "tion createListItemAnchor(link, text) {\r\n\t\t\tlet li = document.createElement(\'li\'" +
-                    ");\r\n\t\t\tlet a = document.createElement(\'a\'); \r\n\t\t\t\t\r\n\t\t\tlet linkText = document.c" +
-                    "reateTextNode(text);\r\n\t\t\t\r\n\t\t\t\r\n\t\t\ta.appendChild(linkText); \r\n\t\t\ta.href = link; " +
-                    "\r\n\t\t\t\t\r\n\t\t\tli.appendChild(a);\r\n\t\t\t\r\n\t\t\treturn li;\r\n\t\t}\r\n\r\n\t\tfunction deselectIdi" +
-                    "om(x) {\r\n\t\t\tlet overlay = document.getElementById(\"details-popup\")\r\n\t\t\toverlay.s" +
-                    "tyle.visibility = \'hidden\'; \r\n\t\t\toverlay.style.opacity = 0;\r\n\t\t}\r\n\t</script>\r\n</" +
-                    "head>\r\n<body>\r\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n\n<html>\n<head>\n\t<style>span {white-space: pre ; font-family:\'Courier New\';}</sty" +
+                    "le>\n\t<style>\n\t\t#tooltip {\n\t\t  background-color: #333;\n\t\t  color: white;\n\t\t  padd" +
+                    "ing: 5px 10px;\n\t\t  border-radius: 4px;\n\t\t  font-size: 13px;\n\t\t  display: none;\n\t" +
+                    "\t}\n\n\t\t#arrow,\n\t\t#arrow::before {\n\t\t\tposition: absolute;\n\t\t\twidth: 8px;\n\t\t\theight" +
+                    ": 8px;\n\t\t\tbackground: inherit;\n\t\t}\n\n\t\t#arrow {\n\t\t\tvisibility: hidden;\n\t\t}\n\n\t\t#ar" +
+                    "row::before {\n\t\t\tvisibility: visible;\n\t\t\tcontent: \'\';\n\t\t\ttransform: rotate(45deg" +
+                    ");\n\t\t}\n\n\t\t#tooltip[data-popper-placement^=\'top\'] > #arrow {\n\t\t\tbottom: -4px;\n\t\t}" +
+                    "\n\n\t\t#tooltip[data-popper-placement^=\'bottom\'] > #arrow {\n\t\t\ttop: -4px;\n\t\t}\n\n\t\t#t" +
+                    "ooltip[data-popper-placement^=\'left\'] > #arrow {\n\t\t\tright: -4px;\n\t\t}\n\n\t\t#tooltip" +
+                    "[data-popper-placement^=\'right\'] > #arrow {\n\t\t\tleft: -4px;\n\t\t}\n\n\t\t#tooltip[data-" +
+                    "show] {\n\t\t\tdisplay: block;\n\t\t}\n\t</style>\n\t<style>\n\n\t\t#details-popup {\n\t\t  positi" +
+                    "on: fixed;\n\t\t  top: 0;\n\t\t  bottom: 0;\n\t\t  left: 0;\n\t\t  right: 0;\n\t\t  background:" +
+                    " rgba(0, 0, 0, 0.7);\n\t\t  transition: opacity 500ms;\n\t\t  visibility: hidden;\n\t\t  " +
+                    "opacity: 0;\n\t\t  overflow-y:scroll;\n\t\t}\n\n\t\t#details-popup-content {\n\t\t  margin: 7" +
+                    "0px auto;\n\t\t  padding: 20px;\n\t\t  background: #fff;\n\t\t  border-radius: 5px;\n\t\t  w" +
+                    "idth: 30%;\n\t\t  position: relative;\n\t\t  transition: all 5s ease-in-out;\n\t\t}\n\n\t\t#d" +
+                    "etails-popup-content h2 {\n\t\t  margin: 0;\n\t\t  color: #333;\n\t\t  font-family: Tahom" +
+                    "a, Arial, sans-serif;\n\t\t}\n\t\t#details-popup-close {\n\t\t  position: absolute;\n\t\t  t" +
+                    "op: 20px;\n\t\t  right: 30px;\n\t\t  transition: all 200ms;\n\t\t  font-size: 30px;\n\t\t  f" +
+                    "ont-weight: bold;\n\t\t  text-decoration: none;\n\t\t  color: #555;\n\t\t}\n\t\t#details-pop" +
+                    "up-close:hover {\n\t\t  color: #111;\n\t\t  cursor: pointer;\n\t\t}\n\t\t#details-popup-cont" +
+                    "ent-body {\n\t\t  max-height: 30%;\n\t\t  overflow: auto;\n\t\t  font-family: Tahoma, Ari" +
+                    "al, sans-serif;\n\t\t  white-space: pre;\n\t\t}\n\n\t\t#details-popup-content-text {\n\t\t  m" +
+                    "argin: 0;\n\t\t}\n\n\t\t@media screen and (max-width: 700px){\n\t\t  #details-popup-conten" +
+                    "t{\n\t\t\twidth: 70%;\n\t\t  }\n\t\t}\n\t</style>\n\t<script>\n\t\tfunction highlight(x, sameIdio" +
+                    "msNo, sameSubtreesNo) {\n\t\t\tlet className = x.className;\n\t\t\tlet previousColor = x" +
+                    ".style.backgroundColor;\n\n\t\t\tlocalStorage.setItem(\'previousColor\', previousColor)" +
+                    ";\n\n\t\t\tlet idiomElements = document.getElementsByClassName(className);\n\n\t\t\tfor(va" +
+                    "r i=0;i<idiomElements.length;i++){\n\t\t\t\tidiomElements[i].style.backgroundColor = " +
+                    "\'#257AFD\';\n\t\t\t}\n\n\t\t\tconst idiomMarkText = document.querySelector(\'#idiom-mark\');" +
+                    "\n\t\t\tconst idiomsSameText = document.querySelector(\'#idioms-same\');\n\t\t\tconst subt" +
+                    "reesSameText = document.querySelector(\'#subtrees-same\');            \n\t\t\t\n\t\t\tidio" +
+                    "mMarkText.textContent = \'mark: \' + className.substring(0,8);\n\t\t\tidiomsSameText.t" +
+                    "extContent = \'\\nsame idioms: \' + sameIdiomsNo;\n\t\t\t\n\t\t\tlet sameSubtrees = sameSub" +
+                    "treesNo > 0 ? sameSubtreesNo : \'-\';\n\t\t\tsubtreesSameText.textContent = \'\\nsame su" +
+                    "btrees: \' + sameSubtrees;\n\n\n\t\t\tconst tooltip = document.querySelector(\'#tooltip\'" +
+                    ");\n\t\t\tPopper.createPopper(x, tooltip , {\n\t\t\t\tmodifiers: [\n\t\t\t\t\t{\n\t\t\t\t\tname: \'off" +
+                    "set\',\n\t\t\t\t\toptions: {\n\t\t\t\t\t\toffset: [0, 8],\n\t\t\t\t\t},\n\t\t\t\t\t},\n\t\t\t\t],\n\t\t\t});\n\t\t\ttoo" +
+                    "ltip.setAttribute(\'data-show\', \'\');\n\t\t}\n\n\t\tfunction unhighlight(x) {\n\t\t\tlet clas" +
+                    "sName = x.className;\n\n\t\t\tvar previousColor = localStorage.getItem(\'previousColor" +
+                    "\', previousColor);\n\n\t\t\tlet idiomElements = document.getElementsByClassName(class" +
+                    "Name);\n\n\t\t\tfor(var i=0;i<idiomElements.length;i++){\n\t\t\t\tidiomElements[i].style.b" +
+                    "ackgroundColor = previousColor;\n\t\t\t}\n\n\t\t\tconst tooltip = document.querySelector(" +
+                    "\'#tooltip\');\n\t\t\ttooltip.removeAttribute(\'data-show\' );\n\t\t}\n\t\t\n\t\tfunction selectI" +
+                    "diom(x, sameIdiomsNo, sameSubtreesNo, idiomCodeEncoded, filesThatHaveIt) {\n\t\t\tle" +
+                    "t className = x.className;\n\n\t\t\tlet overlay = document.getElementById(\"details-po" +
+                    "pup\");\n\t\t\toverlay.style.visibility = \'visible\'; \n\t\t\toverlay.style.opacity = 1;\n\n" +
+                    "\t\t\tlet content = document.getElementById(\"details-popup-content-text\");\n\n\t\t\tcont" +
+                    "ent.textContent = \'\'; // Clear everything\n\t\t\tcontent.textContent = \'idiom mark: " +
+                    "\' + className;\n\t\t\tcontent.textContent += \'\\nsame idioms: \' + sameIdiomsNo;\n\t\t\t\n\t" +
+                    "\t\tlet sameSubtrees = sameSubtreesNo > 0 ? sameSubtreesNo : \'-\';\n\t\t\tcontent.textC" +
+                    "ontent += \'\\nsame subtrees: \' + sameSubtrees;\n\n\t\t\tcontent.textContent += \'\\n\\nid" +
+                    "iom json: \' + atob(idiomCodeEncoded);\n\n\t\t\tlet listWithLinks = document.getElemen" +
+                    "tById(\"details-popup-content-links\");\n\t\t\tlistWithLinks.innerHTML = \'\';\n\t\t\t\n\t\t\tfo" +
+                    "r (const file of filesThatHaveIt) {\n\t\t\t\tlet createdLI = createListItemAnchor(\'./" +
+                    "\' + file + \'#\' + className, `Idiom in ${file}`);\n\t\t\t\tlistWithLinks.append(create" +
+                    "dLI);\n\t\t\t}\n\t\t}\n\n\t\tfunction createListItemAnchor(link, text) {\n\t\t\tlet li = docume" +
+                    "nt.createElement(\'li\');\n\t\t\tlet a = document.createElement(\'a\'); \n\t\t\t\t\n\t\t\tlet lin" +
+                    "kText = document.createTextNode(text);\n\t\t\t\n\t\t\t\n\t\t\ta.appendChild(linkText); \n\t\t\ta" +
+                    ".href = link; \n\t\t\t\t\n\t\t\tli.appendChild(a);\n\t\t\t\n\t\t\treturn li;\n\t\t}\n\n\t\tfunction dese" +
+                    "lectIdiom(x) {\n\t\t\tlet overlay = document.getElementById(\"details-popup\")\n\t\t\tover" +
+                    "lay.style.visibility = \'hidden\'; \n\t\t\toverlay.style.opacity = 0;\n\t\t}\n\t</script>\n<" +
+                    "/head>\n<body>\n");
             
-            #line 225 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
  
 	var alreadySeenMarks = new List<string>();
 	var previousTokenMark = string.Empty;
@@ -119,13 +125,13 @@ namespace IdiomHtmlVisualizer
             #line default
             #line hidden
             
-            #line 240 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(HttpUtility.HtmlEncode(token.ToFullString())));
             
             #line default
             #line hidden
             
-            #line 240 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
 		
 		}
 		else 
@@ -138,7 +144,7 @@ namespace IdiomHtmlVisualizer
             #line hidden
             this.Write("</span>");
             
-            #line 246 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
 
 			}
 			var idiomHandler = VisualizationData.IdiomHandler;
@@ -174,76 +180,76 @@ namespace IdiomHtmlVisualizer
             #line hidden
             this.Write("<span style=\"background-color:");
             
-            #line 275 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(ColorHelper.GetIdiomColor(tokenMark)));
             
             #line default
             #line hidden
             this.Write(";\" class=\"");
             
-            #line 275 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tokenMark));
             
             #line default
             #line hidden
             this.Write("\" ");
             
-            #line 275 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
  if(shouldAddId) { Write($"id=\"{tokenMark}\"");} 
             
             #line default
             #line hidden
             this.Write(" onmouseover=\"highlight(this,");
             
-            #line 275 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sameIdiomsNo));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 275 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sameSubtreesNo));
             
             #line default
             #line hidden
             this.Write(")\" onmouseout=\"unhighlight(this)\" onclick=\"selectIdiom(this,");
             
-            #line 275 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sameIdiomsNo));
             
             #line default
             #line hidden
             this.Write(",");
             
-            #line 275 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(sameSubtreesNo));
             
             #line default
             #line hidden
             this.Write(", \'");
             
-            #line 275 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(codeFragmentEncoded));
             
             #line default
             #line hidden
             this.Write("\', [ ");
             
-            #line 275 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(string.Join(",", containingFiles.Select(cf => "'" + cf + "'").ToList())));
             
             #line default
             #line hidden
             this.Write(" ])\"> ");
             
-            #line 275 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(HttpUtility.HtmlEncode(token.ToFullString())));
             
             #line default
             #line hidden
             
-            #line 275 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+            #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
 		
 		}
 	}	
@@ -279,7 +285,7 @@ namespace IdiomHtmlVisualizer
             return this.GenerationEnvironment.ToString();
         }
         
-        #line 302 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
+        #line 1 "C:\Users\ntodo\Desktop\SAGED\RoseLibML-master\IdiomHtmlVisualizer\CodeInHTMLTemplate.tt"
    
 	
 	public ColorHelper ColorHelper { get; set; }

@@ -2,7 +2,7 @@
   "profiles": {
     "RoseLibML": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\ntodo\\Desktop\\len\\Doktorske\\evaluacija\\popijto\\config.json\""
+      "commandLineArgs": "\"C:\\Users\\ntodo\\Desktop\\len\\SAGED\\SAGED\\Eval\\SchoolBusAPI evaluation\\17ControllerBase\\config.json\""
     }
   }
 }

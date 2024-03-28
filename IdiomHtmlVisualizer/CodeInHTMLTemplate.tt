@@ -183,6 +183,7 @@
 			let content = document.getElementById("details-popup-content-text");
 
 			content.textContent = ''; // Clear everything
+			content.textContent = 'idiom mark: ' + className;
 			content.textContent += '\nsame idioms: ' + sameIdiomsNo;
 			
 			let sameSubtrees = sameSubtreesNo > 0 ? sameSubtreesNo : '-';

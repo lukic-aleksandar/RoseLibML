@@ -81,6 +81,7 @@ namespace RoseLibML.CS.CSTrees
                 var tree = new CSTree();
                 tree.Root = CSNode.Deserialize(binSource);
                 tree.SourceFilePath = csSource;
+                tree.FilePath = binSource;
                 tree.FileName = fileName;
                 return tree;
             }

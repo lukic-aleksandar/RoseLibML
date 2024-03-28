@@ -2,7 +2,7 @@
   "profiles": {
     "DataPreprocessor": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Users\\ntodo\\Desktop\\len\\Doktorske\\evaluacija\\popijto\\bcgov schoolbus Server-SchoolBusAPI\" \"C:\\Users\\ntodo\\Desktop\\len\\Doktorske\\evaluacija\\popijto\\bcgov schoolbus Server-SchoolBusAPI preprocessed\" --group=true"
+      "commandLineArgs": "\"C:\\Users\\ntodo\\Desktop\\len\\SAGED\\SAGED\\Eval\\SchoolBusAPI\" \"C:\\Users\\ntodo\\Desktop\\len\\SAGED\\SAGED\\Eval\\SchoolBusAPI evaluation repeat\" --group=true"
     }
   }
 }

@@ -32,7 +32,7 @@ namespace IdiomFileGrouper
                     ProcessIdiomJoining();
                     break;
                 case '2':
-                    Console.WriteLine("Not implemented yet..");
+                    ProcessIdiomFileGrouping();
                     break;
                 default:
                     return;
@@ -49,13 +49,56 @@ namespace IdiomFileGrouper
                 Console.WriteLine();
                 Console.WriteLine("To join different idioms together, please provide the following:");
                 Console.Write("Binary files path: "); path = Console.ReadLine();
-                Console.Write("(Adjacent) Idiom marks separated by a comma : "); idiomMarksCSV = Console.ReadLine();
+                Console.Write("Two (adjacent) idiom marks separated by a comma : "); idiomMarksCSV = Console.ReadLine();
 
                 Console.WriteLine($"The input was: {path}, {idiomMarksCSV}");
             } while (string.IsNullOrEmpty(path) || string.IsNullOrEmpty(idiomMarksCSV));
 
             IdiomJoiner.JoinIdioms(path, idiomMarksCSV);
             
+        }
+
+        private static void ProcessIdiomFileGrouping()
+        {
+            var binPath = "";
+            var csPath = "";
+            var idiomMark = "";
+            var outPath = "";
+
+            do
+            {
+                Console.WriteLine();
+                Console.WriteLine("To group files based on an idiom, please provide the following:");
+                Console.Write("Binary files path: "); binPath = Console.ReadLine();
+                Console.Write("CS files path: "); csPath = Console.ReadLine();
+                Console.Write("Idiom's mark: "); idiomMark = Console.ReadLine();
+                Console.Write("Output files path: "); outPath = Console.ReadLine();
+
+            } while (
+                string.IsNullOrEmpty(binPath) || 
+                string.IsNullOrEmpty(csPath) ||
+                string.IsNullOrEmpty(idiomMark) ||
+                string.IsNullOrEmpty(outPath)
+                );
+
+            var group = IdiomFileGrouper.GroupFilesBasedOnIdiomMark(binPath, idiomMark);
+            if (group != null && group.Count > 0)
+            {
+                var allCSFiles = Directory.GetFiles(csPath);
+
+                foreach( var fileInfo in group )
+                {
+                    var csFileRootInName = fileInfo.Name.Substring(0, fileInfo.Name.Length - 4);
+                    foreach( var csFile in allCSFiles )
+                    {
+                        var csFileInfo = new FileInfo(csFile);
+                        if(csFileInfo.Name == csFileRootInName)
+                        {
+                            File.Copy(csFileInfo.FullName, Path.Combine(outPath, csFileInfo.Name));
+                        }
+                    }
+                }
+            }
         }
     }
 }

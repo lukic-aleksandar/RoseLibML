@@ -31,9 +31,25 @@ public class Program
         ProjectAnalyser analyser = new ProjectAnalyser();
 
         var componentGroups = analyser.AnalyseProject(inputPath);
-        var multiMemberGroups = analyser.GetComponentGroupsWithoutBaseAndNonRepetative(3);
 
-        WriteButRemoveCommentsAndUsings(outputPath, multiMemberGroups);
+
+        Dictionary<string, List<Tuple<FileInfo, string>>>? groupsForOutput = null;
+        if (shouldGroup)
+        {
+            groupsForOutput = analyser.GetComponentGroupsWithoutBaseAndNonRepetative(2);
+        }
+        else
+        {
+            List<Tuple<FileInfo, string>> allGroupsCombined = new List<Tuple<FileInfo, string>>();
+            foreach (var group in componentGroups)
+            {
+                allGroupsCombined.AddRange(group.Value);
+            }
+            groupsForOutput = new Dictionary<string, List<Tuple<FileInfo, string>>>();
+            groupsForOutput.Add("all", allGroupsCombined);
+        }
+
+        WriteButRemoveCommentsAndUsings(outputPath, groupsForOutput);
 
         Console.WriteLine("Grouped, cleansed, and wrote all the files :)");
         Console.ReadKey();
