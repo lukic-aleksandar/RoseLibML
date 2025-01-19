@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,6 +14,12 @@ namespace RoseLibML.Util
         public Paths? Paths { get; set; }
         public RunParams? RunParams { get; set; }
         public FixedNodeKinds? FixedNodeKinds { get; set; }
+        
+        public Config Clone()
+        {
+            var serialized = JsonConvert.SerializeObject(this);
+            return JsonConvert.DeserializeObject<Config>(serialized)!;
+        }
     }
 
     public class ModelParams
@@ -35,7 +42,6 @@ namespace RoseLibML.Util
         public string? InData { get; set; }
         public string? InModel { get; set; }
         public string? OutModel { get; set; }
-        [Required(AllowEmptyStrings = false)]
         public string? OutIdioms { get; set; }
     }
 

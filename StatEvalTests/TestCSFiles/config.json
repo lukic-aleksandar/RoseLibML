@@ -1,0 +1,30 @@
+{
+    "modelParams": {
+        "defaultAlpha": 5,
+        "nodeSpecificAlphas": {
+            "8805": 100
+        },
+        "cutProbability": 0.85,
+        "p": 0.025,
+        "excludeLeafsFromGeometric": true
+    },
+
+  "paths": {
+    "inData": ".\\TestCSFiles\\Training",
+    "outModel": ".\\TestCSFiles\\Training\\out\\model"
+  },
+
+    "runParams":{
+        "justWriteTheFragments": false,
+        "startIteration": 91,
+        "burnIn": 90,
+        "totalIterations": 92,
+        "threshold": 1,
+        "idiomLengthThreshold": 5
+    },
+
+    "fixedNodeKinds": {
+        "fixedCutNodeKinds": ["8842", "8855", "8875", "8873", "8878", "8892"],
+        "fixedNonCutNodeKinds": ["8906", "B_8875", "8792", "8826", "8847", "8895", "8827", "8636", "8619", "8850"]
+    }
+}

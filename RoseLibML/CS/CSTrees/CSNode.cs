@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace RoseLibML.CS.CSTrees
@@ -58,6 +59,95 @@ namespace RoseLibML.CS.CSTrees
             simpleDuplicate.IsFixed = IsFixed;
 
             return simpleDuplicate;
+        }
+
+        // Creates a subtree from an idiom written in a treebank notation
+        // The subtree does not contain all the info, just the info possible to discern from and idiom
+        // This means position and other possible things are not filled in, or are filled based on some assumptions
+        // Assumptions:
+        // - Strings do not end with whitespaces (these get trimmed)
+        // - Strings do not contain unescaped parenthesis ( ( and ) ), remove those in the preprocessing step
+        // Cannot (at the moment):
+        // - Discern whether a node is a leaf node
+        public static CSNode CreateSubtreeFromIdiom(string idiom)
+        {
+            var sanitizedIdiom = idiom
+                .Trim()
+                .Replace("(()", "(%op%)")
+                .Replace("())", "(%cp%)");
+
+            var level = 0;
+            var currentWord = "";
+
+            var idiomReadyForDeserialization = sanitizedIdiom
+                .Substring(1, sanitizedIdiom.Length - 2)
+                .Trim();
+
+            var currentNode = new CSNode();
+
+            foreach (var ch in idiomReadyForDeserialization)
+            {
+                if (ch == '(')
+                {
+                    level++;
+                    if (currentNode.STInfo == null || currentNode.STInfo.Length == 0)
+                    {
+                        currentNode.STInfo = currentWord.Trim();
+                        if (currentNode.STInfo == "%op%") currentNode.STInfo = "(";
+                        if (currentNode.STInfo == "%cp%") currentNode.STInfo = ")";
+                    }
+                    currentWord = "";
+
+                    var newChildNode = new CSNode();
+
+                    newChildNode.Parent = currentNode;
+                    currentNode.Children.Add(newChildNode);
+
+                    currentNode = newChildNode;
+                    continue;
+                }
+                if (ch == ')')
+                {
+                    level--;
+
+                    if (currentNode.STInfo == null || currentNode.STInfo.Length == 0)
+                    {
+                        currentNode.STInfo = currentWord.Trim();
+                        if (currentNode.STInfo == "%op%") currentNode.STInfo = "(";
+                        if (currentNode.STInfo == "%cp%") currentNode.STInfo = ")";
+                    }
+                    currentWord = "";
+
+                    currentNode = (CSNode)currentNode.Parent;
+                    continue;
+                }
+
+                currentWord += ch;
+            }
+
+            if (level != 0)
+            {
+                throw new Exception("Level when deserializing not 0!");
+            }
+
+            currentNode.IsFragmentRoot = true;
+            currentNode.IsTreeLeaf = false;
+            Stack<LabeledNode> hierarchyNodesStack = new Stack<LabeledNode>(currentNode.Children);
+            while (hierarchyNodesStack.Count > 0)
+            {
+                LabeledNode node = hierarchyNodesStack.Pop();
+
+                if (node.Children.Count == 0)
+                {
+                    node.IsFragmentRoot = true;
+                }
+                else
+                {
+                    node.Children.ForEach(cn => hierarchyNodesStack.Push(cn));
+                }
+            }
+
+            return currentNode;
         }
 
     }

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RoseLibML.Util
 {
-    class ConfigReader
+    public class ConfigReader
     {
         public static Config ReadValidateConfig(string path, List<ValidationResult> validationResults)
         {

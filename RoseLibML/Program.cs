@@ -13,7 +13,7 @@ using RoseLibML.Core.PCFG;
 
 namespace RoseLibML
 {
-    class Program
+    public class Program
     {
         static void Main(string[] args)
         {
@@ -106,7 +106,7 @@ namespace RoseLibML
             return config;
         }
 
-        static LabeledTree[] CreateLabeledTrees(Config config)
+        public static LabeledTree[] CreateLabeledTrees(Config config)
         {
             var inputModelPresent = !string.IsNullOrEmpty(config?.Paths?.InModel);
             var directoryInfo = new DirectoryInfo(config?.Paths?.InData);
