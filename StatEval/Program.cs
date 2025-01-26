@@ -47,14 +47,17 @@ namespace StatEval
 
                     Console.WriteLine("Press Y to continue sampling.");
                 } while (Console.ReadLine()!.ToLower().StartsWith('y'));
-
+                Console.Clear();
 
                 ReadTestFiles(trainingConfig, args[1]);
-
+                Console.WriteLine($"Alpha: {trainingConfig.ModelParams!.DefaultAlpha}");
+                Console.WriteLine($"Size threshold: {trainingConfig.RunParams.IdiomLengthThreshold}, count threshold: {trainingConfig.RunParams.Threshold}");
                 // Not really optimized, it happens only once, at the end of the testing.
                 var recall = idiomHandler.CalculateRecall(testLabeledTrees);
                 Console.WriteLine($"The recall was: {recall}");
                 var coverage = idiomHandler.CalculateCoverage(testLabeledTrees);
+                Console.WriteLine($"The coverage was: {coverage}");
+                Console.ReadKey();
             }
             catch (Exception e)
             {
