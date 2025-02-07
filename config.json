@@ -25,7 +25,7 @@
     },
 
     "fixedNodeKinds": {
-        "fixedCutNodeKinds": ["8842", "8855", "8875", "8873", "8878", "8892"],
+        "fixedCutNodeKinds": [],
         "fixedNonCutNodeKinds": ["8906", "B_8875", "8792", "8826", "8847", "8895", "8827", "8636", "8619", "8850"]
     }
 }

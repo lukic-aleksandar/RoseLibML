@@ -30,21 +30,30 @@ public class Program
 
         ProjectAnalyser analyser = new ProjectAnalyser();
 
-        var componentGroups = analyser.AnalyseProject(inputPath);
-
-
         Dictionary<string, List<Tuple<FileInfo, string>>>? groupsForOutput = null;
         if (shouldGroup)
         {
+            var componentGroups = analyser.AnalyseProject(inputPath);
             groupsForOutput = analyser.GetComponentGroupsWithoutBaseAndNonRepetative(2);
         }
         else
         {
             List<Tuple<FileInfo, string>> allGroupsCombined = new List<Tuple<FileInfo, string>>();
-            foreach (var group in componentGroups)
+            
+            //Expects a flat structure...
+            var filePaths = Directory.GetFiles(inputPath);
+            foreach (var filePath in filePaths)
             {
-                allGroupsCombined.AddRange(group.Value);
+                var fi = new FileInfo(filePath);
+                string text = "";
+                using (var reader = new StreamReader(filePath))
+                {
+                    text = reader.ReadToEnd();
+                }
+
+                allGroupsCombined.Add(new Tuple<FileInfo, string>(fi, text));
             }
+            
             groupsForOutput = new Dictionary<string, List<Tuple<FileInfo, string>>>();
             groupsForOutput.Add("all", allGroupsCombined);
         }
