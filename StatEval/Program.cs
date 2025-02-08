@@ -50,7 +50,7 @@ namespace StatEval
                 // Not really optimized, it happens only once, at the end of the testing.
                 var precision = idiomHandler.CalculatePrecision(testLabeledTrees);
                 Console.WriteLine($"The precision was: {precision}");
-                var coverage = idiomHandler.CalculateCoverage(testLabeledTrees);
+                var coverage = idiomHandler.CalculateCoverage(testLabeledTrees, out int totalMarked);
                 Console.WriteLine($"The coverage was: {coverage}");
 
                 var avgIdiomLength = idiomHandler.CalcualteAverageIdiomLength();
@@ -189,7 +189,6 @@ namespace StatEval
             LabeledTree[] labeledTrees = new LabeledTree[files.Length];
 
             Parallel.For(0, files.Length, (index) =>
-            //for(int index = 0; index < files.Length;index++)
             {
                 if (!inputModelPresent)
                 {

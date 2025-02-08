@@ -81,5 +81,170 @@ namespace StatEvalTests
 
             Assert.Pass();
         }
+
+        [Test]
+        public void TestCalculatingStatistics1()
+        {
+            // Create training bin files, sort out idioms using idiom handler 
+
+            // - Prepare config
+            var config = StatEval.Program.ExtractConfig(new string[] {".\\TestFiles\\config.json"});
+
+            config.Paths.InData = ".\\TestFiles\\Training";
+            config.Paths.InModel = null;
+
+            // - Creates labeled trees, with cut nodes based on the config!
+            var trainingLabeledTrees = StatEval.Program.CreateLabeledTrees(config);
+
+            // - Sort out idioms, thresholds 1, 1
+            var idiomHandler = IdiomHandler.CreateEmptyIdiomHandler();
+            idiomHandler.TrainingLabeledTrees = trainingLabeledTrees.Cast<LabeledTree>().ToList();
+            idiomHandler.SortOutIdiomsInTrainingSet(1, 1);
+
+            // Create test config, calculate the statistics
+            var testConfig = config.Clone();
+            config.Paths!.InData = ".\\TestFiles\\Test";
+            config.Paths!.OutModel = ".\\TestFiles\\Test\\out\\model";
+
+            var testLabeledTrees = StatEval.Program.CreateLabeledTrees(config).ToList();
+
+            var precision = idiomHandler.CalculatePrecision(testLabeledTrees);
+            Assert.That(precision, Is.EqualTo(0.1));
+            var coverage = idiomHandler.CalculateCoverage(testLabeledTrees, out int totalMarked);
+            Assert.That(totalMarked, Is.EqualTo(3));
+            var avgLength = idiomHandler.CalcualteAverageIdiomLength();
+        }
+
+        [Test]
+        public void TestCalculatingStatistics2()
+        {
+            // Create training bin files, sort out idioms using idiom handler 
+
+            // - Prepare config
+            var config = StatEval.Program.ExtractConfig(new string[] { ".\\TestFiles\\config.json" });
+
+            config.Paths.InData = ".\\TestFiles\\Training";
+            config.Paths.InModel = null;
+
+            // - Creates labeled trees, with cut nodes based on the config!
+            var trainingLabeledTrees = StatEval.Program.CreateLabeledTrees(config);
+
+            // - Sort out idioms, thresholds 1, 1
+            var idiomHandler = IdiomHandler.CreateEmptyIdiomHandler();
+            idiomHandler.TrainingLabeledTrees = trainingLabeledTrees.Cast<LabeledTree>().ToList();
+            idiomHandler.SortOutIdiomsInTrainingSet(1, 1);
+
+            // Create test config, calculate the statistics
+            var testConfig = config.Clone();
+            config.Paths!.InData = ".\\TestFiles\\Test2";
+            config.Paths!.OutModel = ".\\TestFiles\\Test2\\out\\model";
+
+            var testLabeledTrees = StatEval.Program.CreateLabeledTrees(config).ToList();
+
+            var precision = idiomHandler.CalculatePrecision(testLabeledTrees);
+            Assert.That(precision, Is.EqualTo(0.1));
+            var coverage = idiomHandler.CalculateCoverage(testLabeledTrees, out int totalMarked);
+            Assert.That(totalMarked, Is.EqualTo(6));
+            var avgLength = idiomHandler.CalcualteAverageIdiomLength();
+        }
+
+        [Test]
+        public void TestCalculatingStatistics3()
+        {
+            // Create training bin files, sort out idioms using idiom handler 
+
+            // - Prepare config
+            var config = StatEval.Program.ExtractConfig(new string[] { ".\\TestFiles\\config.json" });
+
+            config.Paths.InData = ".\\TestFiles\\Training";
+            config.Paths.InModel = null;
+
+            // - Creates labeled trees, with cut nodes based on the config!
+            var trainingLabeledTrees = StatEval.Program.CreateLabeledTrees(config);
+
+            // - Sort out idioms, thresholds 1, 1
+            var idiomHandler = IdiomHandler.CreateEmptyIdiomHandler();
+            idiomHandler.TrainingLabeledTrees = trainingLabeledTrees.Cast<LabeledTree>().ToList();
+            idiomHandler.SortOutIdiomsInTrainingSet(1, 1);
+
+            // Create test config, calculate the statistics
+            var testConfig = config.Clone();
+            config.Paths!.InData = ".\\TestFiles\\Training";
+            config.Paths!.OutModel = ".\\TestFiles\\Training\\out\\model";
+
+            var testLabeledTrees = StatEval.Program.CreateLabeledTrees(config).ToList();
+
+            var precision = idiomHandler.CalculatePrecision(testLabeledTrees);
+            Assert.That(precision, Is.EqualTo(1));
+            var coverage = idiomHandler.CalculateCoverage(testLabeledTrees, out int totalMarked);
+            Assert.That(coverage, Is.EqualTo(1));
+            var avgLength = idiomHandler.CalcualteAverageIdiomLength();
+        }
+
+        [Test]
+        public void TestCalculatingStatistics4()
+        {
+            // Create training bin files, sort out idioms using idiom handler 
+
+            // - Prepare config
+            var config = StatEval.Program.ExtractConfig(new string[] { ".\\TestFiles\\config.json" });
+
+            config.Paths.InData = ".\\TestFiles\\Training2";
+            config.Paths.InModel = null;
+
+            // - Creates labeled trees, with cut nodes based on the config!
+            var trainingLabeledTrees = StatEval.Program.CreateLabeledTrees(config);
+
+            // - Sort out idioms, thresholds 1, 1
+            var idiomHandler = IdiomHandler.CreateEmptyIdiomHandler();
+            idiomHandler.TrainingLabeledTrees = trainingLabeledTrees.Cast<LabeledTree>().ToList();
+            idiomHandler.SortOutIdiomsInTrainingSet(1, 1);
+
+            // Create test config, calculate the statistics
+            var testConfig = config.Clone();
+            config.Paths!.InData = ".\\TestFiles\\Test";
+            config.Paths!.OutModel = ".\\TestFiles\\Test\\out\\model";
+
+            var testLabeledTrees = StatEval.Program.CreateLabeledTrees(config).ToList();
+
+            var precision = idiomHandler.CalculatePrecision(testLabeledTrees);
+            Assert.That(precision, Is.EqualTo(0.1));
+            var coverage = idiomHandler.CalculateCoverage(testLabeledTrees, out int totalMarked);
+            Assert.That(totalMarked, Is.EqualTo(3));
+            var avgLength = idiomHandler.CalcualteAverageIdiomLength();
+        }
+
+        [Test]
+        public void TestCalculatingStatistics5()
+        {
+            // Create training bin files, sort out idioms using idiom handler 
+
+            // - Prepare config
+            var config = StatEval.Program.ExtractConfig(new string[] { ".\\TestFiles\\config.json" });
+
+            config.Paths.InData = ".\\TestFiles\\Training3";
+            config.Paths.InModel = null;
+
+            // - Creates labeled trees, with cut nodes based on the config!
+            var trainingLabeledTrees = StatEval.Program.CreateLabeledTrees(config);
+
+            // - Sort out idioms, thresholds 1, 1
+            var idiomHandler = IdiomHandler.CreateEmptyIdiomHandler();
+            idiomHandler.TrainingLabeledTrees = trainingLabeledTrees.Cast<LabeledTree>().ToList();
+            idiomHandler.SortOutIdiomsInTrainingSet(1, 1);
+
+            // Create test config, calculate the statistics
+            var testConfig = config.Clone();
+            config.Paths!.InData = ".\\TestFiles\\Test";
+            config.Paths!.OutModel = ".\\TestFiles\\Test\\out\\model";
+
+            var testLabeledTrees = StatEval.Program.CreateLabeledTrees(config).ToList();
+
+            var precision = idiomHandler.CalculatePrecision(testLabeledTrees);
+            Assert.That(precision, Is.InRange(0.65, 0.66));// 17 (idioms found in idiomHandler) div 26 (all idioms)
+            var coverage = idiomHandler.CalculateCoverage(testLabeledTrees, out int totalMarked);
+            Assert.That(coverage, Is.EqualTo(1));
+            var avgLength = idiomHandler.CalcualteAverageIdiomLength();
+        }
     }
 }

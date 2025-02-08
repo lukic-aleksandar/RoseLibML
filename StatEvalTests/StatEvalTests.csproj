@@ -10,15 +10,39 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="TestCSFiles\Test\IdiomHandler.cs" />
-    <Compile Remove="TestCSFiles\Training\Program.cs" />
+    <Compile Remove="TestFiles\Test2\IdiomHandler.cs" />
+    <Compile Remove="TestFiles\Test2\IdiomHandler2.cs" />
+    <Compile Remove="TestFiles\Test\IdiomHandler.cs" />
+    <Compile Remove="TestFiles\Training3\IdiomHandler.cs" />
+    <Compile Remove="TestFiles\Training3\Program.cs" />
+    <Compile Remove="TestFiles\Training2\Program.cs" />
+    <Compile Remove="TestFiles\Training2\Program2.cs" />
+    <Compile Remove="TestFiles\Training\Program.cs" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="TestCSFiles\Test\IdiomHandler.cs">
+    <None Include="TestFiles\Test2\IdiomHandler2.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="TestCSFiles\Training\Program.cs">
+    <None Include="TestFiles\Test2\IdiomHandler.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\Test\IdiomHandler.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\Training3\IdiomHandler.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\Training3\Program.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\Training2\Program2.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\Training2\Program.cs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="TestFiles\Training\Program.cs">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
@@ -42,7 +66,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TestCSFiles\config.json">
+    <None Update="TestFiles\config.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

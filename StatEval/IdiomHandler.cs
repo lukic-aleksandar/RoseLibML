@@ -61,7 +61,7 @@ namespace StatEval
 
         // "We define idiom coverage as the percent of source code AST
         // nodes that can be matched to the mined idioms"
-        public double CalculateCoverage(List<LabeledTree> testLabeledTrees)
+        public double CalculateCoverage(List<LabeledTree> testLabeledTrees, out int totalMarked)
         {
             // Clear any existing marks
             Parallel.ForEach(testLabeledTrees, (tlt) => ClearAnyNodeMarks(tlt.Root));
@@ -83,6 +83,7 @@ namespace StatEval
                 markedCount += CountAllMarkedSubtreeNodes(tlt.Root);
             }
 
+            totalMarked = markedCount;
             return markedCount / (double)totalCount; 
         }
 
