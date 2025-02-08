@@ -16,7 +16,7 @@ namespace StatEval
         public Dictionary<string, List<LabeledNode>> IntermediateTrainingIdiomRoots = new Dictionary<string, List<LabeledNode>>(); // Count (Needs to get pruned at the end of each "cycle")
         public Dictionary<string, int> TrainingIdiomLength = new Dictionary<string, int>(); // Length
         
-        public Dictionary<string, List<LabeledNode>> IntermediateIdenticalTrainingSubtreeTestRoots = new Dictionary<string, List<LabeledNode>>();
+        public Dictionary<string, List<LabeledNode>> IntermediateIdenticalTrainingSubtreeTestRoots = new Dictionary<string, List<LabeledNode>>(); 
         public Dictionary<string, List<LabeledNode>> FinalIdenticalTrainingSubtreeTestRoots = new Dictionary<string, List<LabeledNode>>();
         public List<string> IdiomsFoundInAsIdenticalSubreesInTest = new List<string>();
 
@@ -29,35 +29,8 @@ namespace StatEval
         }
 
         private IdiomHandler() { }
-        
-        public IdiomHandler(List<LabeledTree> trainingLabeledTrees)
-        {
-            this.TrainingLabeledTrees = trainingLabeledTrees;
-        }
 
-        public void SortOutIdiomsInTrainingSet(int countThreshold, int lengthThreshold)
-        {
-            if (TrainingLabeledTrees == null)
-            {
-                throw new Exception("Training labeled trees are not set!");
-            }
-
-            foreach (var labeledTree in TrainingLabeledTrees)
-            {
-                FindTreeIdiomsPopulateIntermediateStructures(labeledTree, labeledTree.Root);
-            }
-
-            foreach (var idiom in IntermediateTrainingIdiomRoots.Keys)
-            {
-                var isCountAboveThreshold = IntermediateTrainingIdiomRoots[idiom].Count >= countThreshold;
-                var isLengthAboveThreshold = TrainingIdiomLength[idiom] >= lengthThreshold;
-
-                if(isCountAboveThreshold && isLengthAboveThreshold)
-                {
-                    FinalTrainingIdioms.Add(idiom);
-                }
-            }
-        }
+        #region Calculating statistics
 
         // "We define idiom set precision as the percentage of
         // the mined idioms found in the test corpus"
@@ -125,16 +98,29 @@ namespace StatEval
             return averageIdiomLength;
         }
 
-        private void ClearAnyNodeMarks(LabeledNode node)
-        {
-            if (node == null) { return; }
-            node.IdiomMark = null;
+        #endregion
 
-            if (node.Children != null)
-            { 
-                foreach(var child in node.Children)
+        #region Sorting training idioms
+        public void SortOutIdiomsInTrainingSet(int countThreshold, int lengthThreshold)
+        {
+            if (TrainingLabeledTrees == null)
+            {
+                throw new Exception("Training labeled trees are not set!");
+            }
+
+            foreach (var labeledTree in TrainingLabeledTrees)
+            {
+                FindTreeIdiomsPopulateIntermediateStructures(labeledTree, labeledTree.Root);
+            }
+
+            foreach (var idiom in IntermediateTrainingIdiomRoots.Keys)
+            {
+                var isCountAboveThreshold = IntermediateTrainingIdiomRoots[idiom].Count >= countThreshold;
+                var isLengthAboveThreshold = TrainingIdiomLength[idiom] >= lengthThreshold;
+
+                if (isCountAboveThreshold && isLengthAboveThreshold)
                 {
-                    ClearAnyNodeMarks(child);
+                    FinalTrainingIdioms.Add(idiom);
                 }
             }
         }
@@ -162,7 +148,22 @@ namespace StatEval
             }
             IntermediateTrainingIdiomRoots[idiomString].Add(node);
         }
+        #endregion
 
+        #region Finding idioms in test files
+        private void ClearAnyNodeMarks(LabeledNode node)
+        {
+            if (node == null) { return; }
+            node.IdiomMark = null;
+
+            if (node.Children != null)
+            {
+                foreach (var child in node.Children)
+                {
+                    ClearAnyNodeMarks(child);
+                }
+            }
+        }
 
         private object _addLock = new object();
         private void FindIdenticalSubtreesPopulateDict(string idiom, LabeledTree labeledTree, bool markIfIdentical = false)
@@ -205,6 +206,7 @@ namespace StatEval
             if (markIfIdentical)
             {
                 // The roots are always the same...
+                // Add the tested node in line for marking...
                 allIdiomMatchingNodes.Add(testedRootNode);
             }
 
@@ -219,15 +221,16 @@ namespace StatEval
                 }
                 else
                 {
-                    // If the STInfos are the same, then we can add them, no need to check the children.
-                    // If the subtrees are not the same, no permanent marks left, regardlessly
+                    // If the STInfos are the same, then we can add them, no need to wait to check the children.
+                    // If the subtrees are not the same, no permanent marks left, regardlessly.
                     if (markIfIdentical)
                     {
                         allIdiomMatchingNodes.Add(testedDescendant);
                     }
                 }
 
-                if ((!exampleDescendant.IsFragmentRoot && !exampleDescendant.IsTreeLeaf))
+                // If the descendant is not a fragment root nor a tree leaf (it's an internal fragment node)
+                if (!exampleDescendant.IsFragmentRoot && !exampleDescendant.IsTreeLeaf)
                 {
                     if (exampleDescendant.Children.Count != testedDescendant.Children.Count)
                     {
@@ -245,7 +248,7 @@ namespace StatEval
             {
                 foreach (var matchingSubtreeNode in allIdiomMatchingNodes) 
                 {
-                    matchingSubtreeNode.IdiomMark = ""; // non null value
+                    matchingSubtreeNode.IdiomMark = ""; //a non-null value
                 }
             }
 
@@ -255,12 +258,12 @@ namespace StatEval
         private List<LabeledNode> FindNodesWithSTInfo(string sTInfo, LabeledTree labeledTree)
         {
             var foundNodes = new List<LabeledNode>();
-            DoSearch(sTInfo, labeledTree.Root, foundNodes);
+            DoSearchForNodesWithSTInfo(sTInfo, labeledTree.Root, foundNodes);
 
             return foundNodes;
         }
 
-        private void DoSearch(string sTIfo, LabeledNode node, List<LabeledNode> foundNodes)
+        private void DoSearchForNodesWithSTInfo(string sTIfo, LabeledNode node, List<LabeledNode> foundNodes)
         {
             if (node.STInfo == sTIfo)
             {
@@ -269,14 +272,14 @@ namespace StatEval
 
             foreach (var childNode in node.Children)
             {
-                DoSearch(sTIfo, childNode, foundNodes);
+                DoSearchForNodesWithSTInfo(sTIfo, childNode, foundNodes);
             }
         }
+        #endregion
 
+        #region Calcuating statistics - util methods
         private int CountAllSubtreeNodes(LabeledNode rootNode)
         {
-            //Regex tempNodeRegex = new Regex("^B_[0-9]{4}$");
-
             Queue<LabeledNode> queue = new Queue<LabeledNode>();
             queue.Enqueue(rootNode);
 
@@ -284,7 +287,6 @@ namespace StatEval
             while (queue.Count > 0)
             {
                 var node = queue.Dequeue();
-                //if (!tempNodeRegex.IsMatch(node.STInfo))
                 {
                     count++;
                 }
@@ -300,8 +302,6 @@ namespace StatEval
 
         private int CountAllMarkedSubtreeNodes(LabeledNode rootNode)
         {
-            //Regex tempNodeRegex = new Regex("^B_[0-9]{4}$");
-
             Queue<LabeledNode> queue = new Queue<LabeledNode>();
             queue.Enqueue(rootNode);
 
@@ -309,9 +309,7 @@ namespace StatEval
             while (queue.Count > 0)
             {
                 var node = queue.Dequeue();
-                //var isNonBinary = !tempNodeRegex.IsMatch(node.STInfo);
                 var isMarked = node.IdiomMark != null;
-                //if (isNonBinary && isMarked)
                 if(isMarked)
                 {
                     count++;
@@ -333,5 +331,6 @@ namespace StatEval
                 .Replace("(()", "(%op%)");
             return sanitizedIdiom.Count(f => f == '('); // Relying on the number of ( parenthesis - each node has on in TB notation
         }
+        #endregion
     }
 }

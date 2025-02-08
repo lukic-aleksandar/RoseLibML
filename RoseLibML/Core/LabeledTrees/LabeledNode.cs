@@ -143,7 +143,7 @@ namespace RoseLibML.Core.LabeledTrees
 
         // Currently used only for HTML Vizualization
         #region HTMLVizualization
-        public string IdiomMark { get; set; }
+        public string? IdiomMark { get; set; }
         #endregion
     }
 }
