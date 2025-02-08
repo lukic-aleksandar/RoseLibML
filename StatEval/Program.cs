@@ -11,11 +11,6 @@ namespace StatEval
     // Problem mogu napraviti samo situacije u kojima stringovi sadrze zagrade.
     // Imam preprocesor, tamo bi to moglo lagano da se resi, sanitizuje. Ovde nemam taj tokenizer, pa nije bas lako.
     // To je problem koji ostavljam za posle :) 
-
-    // Ono sto znam da mi je ostalo:
-    // - ovo iznad
-    // - razresavanje - da li vodim racuna o bin cvorovima prilikom brojanja, ili ne? Mislim da je svejedno...
-    // Ali, takodje, mislim da moram voditi racuna o njima, ako vodim i o cvorovima koji su samo "ubaceni"
     public class Program
     {
         static Dictionary<string, (FileInfo syntaxTreeFI, FileInfo csTreeFI)> counterpartsPaths = new Dictionary<string, (FileInfo syntaxTreeFI, FileInfo CSTreeFI)>();
@@ -53,10 +48,14 @@ namespace StatEval
                 Console.WriteLine($"Alpha: {trainingConfig.ModelParams!.DefaultAlpha}");
                 Console.WriteLine($"Size threshold: {trainingConfig.RunParams.IdiomLengthThreshold}, count threshold: {trainingConfig.RunParams.Threshold}");
                 // Not really optimized, it happens only once, at the end of the testing.
-                var recall = idiomHandler.CalculateRecall(testLabeledTrees);
-                Console.WriteLine($"The recall was: {recall}");
+                var precision = idiomHandler.CalculatePrecision(testLabeledTrees);
+                Console.WriteLine($"The precision was: {precision}");
                 var coverage = idiomHandler.CalculateCoverage(testLabeledTrees);
                 Console.WriteLine($"The coverage was: {coverage}");
+
+                var avgIdiomLength = idiomHandler.CalcualteAverageIdiomLength();
+                Console.WriteLine($"The average idiom length was {avgIdiomLength}");
+
                 Console.ReadKey();
             }
             catch (Exception e)

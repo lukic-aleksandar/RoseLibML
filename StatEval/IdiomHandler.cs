@@ -16,8 +16,10 @@ namespace StatEval
         public Dictionary<string, List<LabeledNode>> IntermediateTrainingIdiomRoots = new Dictionary<string, List<LabeledNode>>(); // Count (Needs to get pruned at the end of each "cycle")
         public Dictionary<string, int> TrainingIdiomLength = new Dictionary<string, int>(); // Length
         
-        public Dictionary<string, List<LabeledNode>> IdenticalTrainingSubtreeTestRoots = new Dictionary<string, List<LabeledNode>>();
+        public Dictionary<string, List<LabeledNode>> IntermediateIdenticalTrainingSubtreeTestRoots = new Dictionary<string, List<LabeledNode>>();
+        public Dictionary<string, List<LabeledNode>> FinalIdenticalTrainingSubtreeTestRoots = new Dictionary<string, List<LabeledNode>>();
         public List<string> IdiomsFoundInAsIdenticalSubreesInTest = new List<string>();
+
 
         public List<LabeledTree>? TrainingLabeledTrees { get; set; } 
         
@@ -42,7 +44,7 @@ namespace StatEval
 
             foreach (var labeledTree in TrainingLabeledTrees)
             {
-                FindTreeIdioms(labeledTree, labeledTree.Root);
+                FindTreeIdiomsPopulateIntermediateStructures(labeledTree, labeledTree.Root);
             }
 
             foreach (var idiom in IntermediateTrainingIdiomRoots.Keys)
@@ -57,29 +59,35 @@ namespace StatEval
             }
         }
 
-        public double CalculateRecall(List<LabeledTree> testLabeledTrees)
+        // "We define idiom set precision as the percentage of
+        // the mined idioms found in the test corpus"
+        public double CalculatePrecision(List<LabeledTree> testLabeledTrees)
         {
             if (FinalTrainingIdioms == null || FinalTrainingIdioms.Count == 0)
             {
                 throw new Exception("Call the function SortOutIdiomsInTrainingSet to populate the structures and be able to compare.");
             }
 
-            IdenticalTrainingSubtreeTestRoots.Clear();
+            IntermediateIdenticalTrainingSubtreeTestRoots.Clear();
+            FinalIdenticalTrainingSubtreeTestRoots.Clear();
 
             foreach (var idiom in FinalTrainingIdioms)
             {
-                Parallel.ForEach(testLabeledTrees, (tlt) => FindIdenticalSubtrees(idiom, tlt));
+                Parallel.ForEach(testLabeledTrees, (tlt) => FindIdenticalSubtreesPopulateDict(idiom, tlt));
 
-                if(IdenticalTrainingSubtreeTestRoots.Count() > 0)
+                if(IntermediateIdenticalTrainingSubtreeTestRoots.Count() > 0)
                 {
                     IdiomsFoundInAsIdenticalSubreesInTest.Add(idiom);
-                    IdenticalTrainingSubtreeTestRoots.Clear();
+                    FinalIdenticalTrainingSubtreeTestRoots.Add(idiom, IntermediateIdenticalTrainingSubtreeTestRoots[idiom]);
+                    IntermediateIdenticalTrainingSubtreeTestRoots.Clear();
                 }
             }
 
             return IdiomsFoundInAsIdenticalSubreesInTest.Count / (double) FinalTrainingIdioms.Count;
         }
 
+        // "We define idiom coverage as the percent of source code AST
+        // nodes that can be matched to the mined idioms"
         public double CalculateCoverage(List<LabeledTree> testLabeledTrees)
         {
             // Clear any existing marks
@@ -88,7 +96,7 @@ namespace StatEval
             // And mark them! Change the method! :D
             foreach (var idiom in FinalTrainingIdioms)
             {
-                Parallel.ForEach(testLabeledTrees, (tlt) => FindIdenticalSubtrees(idiom, tlt, true));
+                Parallel.ForEach(testLabeledTrees, (tlt) => FindIdenticalSubtreesPopulateDict(idiom, tlt, true));
             }
 
             // count all marked nodes (non binary nodes, I guess)
@@ -98,11 +106,23 @@ namespace StatEval
             var markedCount = 0;
             foreach(var tlt in testLabeledTrees)
             {
-                totalCount += CountAllNonBinarySubtreeNodes(tlt.Root);
-                markedCount += CountAllMarkedNonBinarySubtreeNodes(tlt.Root);
+                totalCount += CountAllSubtreeNodes(tlt.Root);
+                markedCount += CountAllMarkedSubtreeNodes(tlt.Root);
             }
 
             return markedCount / (double)totalCount; 
+        }
+
+        public double CalcualteAverageIdiomLength()
+        {
+            var idiomLenths = new List<int>();
+            foreach (var idiom in FinalTrainingIdioms)
+            {
+                idiomLenths.Add(CalculateIdiomLenght(idiom));
+            }
+
+            var averageIdiomLength = idiomLenths.Sum() / (double) FinalTrainingIdioms.Count;
+            return averageIdiomLength;
         }
 
         private void ClearAnyNodeMarks(LabeledNode node)
@@ -119,21 +139,21 @@ namespace StatEval
             }
         }
 
-        private void FindTreeIdioms(LabeledTree tree, LabeledNode node)
+        private void FindTreeIdiomsPopulateIntermediateStructures(LabeledTree tree, LabeledNode node)
         {
             if (node.IsTreeRoot() || (node.IsFragmentRoot && !node.IsTreeLeaf))
             {
                 var idiomString = node.GetFragmentString();
-                AddToIdiomRootsDict(node, idiomString);
+                NoteIdiomRootAndLength(node, idiomString);
             }
 
             foreach (var child in node.Children)
             {
-                FindTreeIdioms(tree, child);
+                FindTreeIdiomsPopulateIntermediateStructures(tree, child);
             }
         }
 
-        private void AddToIdiomRootsDict(LabeledNode node, string idiomString)
+        private void NoteIdiomRootAndLength(LabeledNode node, string idiomString)
         {
             if (!IntermediateTrainingIdiomRoots.ContainsKey(idiomString))
             {
@@ -145,7 +165,7 @@ namespace StatEval
 
 
         private object _addLock = new object();
-        private void FindIdenticalSubtrees(string idiom, LabeledTree labeledTree, bool markIfIdentical = false)
+        private void FindIdenticalSubtreesPopulateDict(string idiom, LabeledTree labeledTree, bool markIfIdentical = false)
         {
             var exampleSubtreeRoot = CSNode.CreateSubtreeFromIdiom(idiom);//TrainingIdiomRoots[idiom].FirstOrDefault();
             if (exampleSubtreeRoot == null)
@@ -160,11 +180,11 @@ namespace StatEval
                 {
                     lock (_addLock)
                     {
-                        if (!IdenticalTrainingSubtreeTestRoots.ContainsKey(idiom))
+                        if (!IntermediateIdenticalTrainingSubtreeTestRoots.ContainsKey(idiom))
                         {
-                            IdenticalTrainingSubtreeTestRoots[idiom] = new List<LabeledNode>();
+                            IntermediateIdenticalTrainingSubtreeTestRoots[idiom] = new List<LabeledNode>();
                         }
-                        IdenticalTrainingSubtreeTestRoots[idiom].Add(node);
+                        IntermediateIdenticalTrainingSubtreeTestRoots[idiom].Add(node);
                     }
                 }
             }
@@ -253,9 +273,9 @@ namespace StatEval
             }
         }
 
-        private int CountAllNonBinarySubtreeNodes(LabeledNode rootNode)
+        private int CountAllSubtreeNodes(LabeledNode rootNode)
         {
-            Regex tempNodeRegex = new Regex("^B_[0-9]{4}$");
+            //Regex tempNodeRegex = new Regex("^B_[0-9]{4}$");
 
             Queue<LabeledNode> queue = new Queue<LabeledNode>();
             queue.Enqueue(rootNode);
@@ -264,7 +284,7 @@ namespace StatEval
             while (queue.Count > 0)
             {
                 var node = queue.Dequeue();
-                if (!tempNodeRegex.IsMatch(node.STInfo))
+                //if (!tempNodeRegex.IsMatch(node.STInfo))
                 {
                     count++;
                 }
@@ -278,9 +298,9 @@ namespace StatEval
             return count;
         }
 
-        private int CountAllMarkedNonBinarySubtreeNodes(LabeledNode rootNode)
+        private int CountAllMarkedSubtreeNodes(LabeledNode rootNode)
         {
-            Regex tempNodeRegex = new Regex("^B_[0-9]{4}$");
+            //Regex tempNodeRegex = new Regex("^B_[0-9]{4}$");
 
             Queue<LabeledNode> queue = new Queue<LabeledNode>();
             queue.Enqueue(rootNode);
@@ -289,9 +309,10 @@ namespace StatEval
             while (queue.Count > 0)
             {
                 var node = queue.Dequeue();
-                var isNonBinary = !tempNodeRegex.IsMatch(node.STInfo);
+                //var isNonBinary = !tempNodeRegex.IsMatch(node.STInfo);
                 var isMarked = node.IdiomMark != null;
-                if (isNonBinary && isMarked)
+                //if (isNonBinary && isMarked)
+                if(isMarked)
                 {
                     count++;
                 }

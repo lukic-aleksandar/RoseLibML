@@ -2,7 +2,7 @@
   "profiles": {
     "StatEval": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\sp-eval\\config.json\" \"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\sp-eval\\test preprocessed all\""
+      "commandLineArgs": "\"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\config.json\" \"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\castleproject-cs-cleansed\\240test\""
     }
   }
 }
