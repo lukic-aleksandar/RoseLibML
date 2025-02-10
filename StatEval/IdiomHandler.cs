@@ -79,8 +79,16 @@ namespace StatEval
             var markedCount = 0;
             foreach(var tlt in testLabeledTrees)
             {
-                totalCount += CountAllSubtreeNodes(tlt.Root);
-                markedCount += CountAllMarkedSubtreeNodes(tlt.Root);
+                using(var reader = new StreamReader(tlt.SourceFilePath))
+                {
+                    var fileContents = reader.ReadToEnd();
+                    
+                    
+                    var totalTreeNodes = CountAllSubtreeNodes(tlt.Root);
+                    totalCount += totalTreeNodes;
+                    var markedTreeNodes = CountAllMarkedSubtreeNodes(tlt.Root);
+                    markedCount += markedTreeNodes;
+                }
             }
 
             totalMarked = markedCount;

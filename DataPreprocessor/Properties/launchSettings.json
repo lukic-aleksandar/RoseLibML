@@ -2,7 +2,7 @@
   "profiles": {
     "DataPreprocessor": {
       "commandName": "Project",
-      "commandLineArgs": "\"Z:\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\castleproject-cs\" \"Z:\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\castleproject-cs-cleansed\""
+      "commandLineArgs": "\"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\apache-logging-log4net-flat-cs\" \"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\apache-logging-log4net-cs-cleansed\""
     }
   }
 }

@@ -41,7 +41,7 @@ public class Program
             List<Tuple<FileInfo, string>> allGroupsCombined = new List<Tuple<FileInfo, string>>();
             
             //Expects a flat structure...
-            var filePaths = Directory.GetFiles(inputPath);
+            var filePaths = Directory.GetFiles(inputPath, "*.cs");
             foreach (var filePath in filePaths)
             {
                 var fi = new FileInfo(filePath);
