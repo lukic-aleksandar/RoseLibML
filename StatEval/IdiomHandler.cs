@@ -100,7 +100,7 @@ namespace StatEval
             var idiomLenths = new List<int>();
             foreach (var idiom in FinalTrainingIdioms)
             {
-                idiomLenths.Add(CalculateIdiomLenght(idiom));
+                idiomLenths.Add(CalculateIdiomLength(idiom));
             }
 
             var averageIdiomLength = idiomLenths.Sum() / (double) FinalTrainingIdioms.Count;
@@ -153,7 +153,7 @@ namespace StatEval
             if (!IntermediateTrainingIdiomRoots.ContainsKey(idiomString))
             {
                 IntermediateTrainingIdiomRoots[idiomString] = new List<LabeledNode>();
-                TrainingIdiomLength.Add(idiomString, CalculateIdiomLenght(idiomString));
+                TrainingIdiomLength.Add(idiomString, CalculateIdiomLength(idiomString));
             }
             IntermediateTrainingIdiomRoots[idiomString].Add(node);
         }
@@ -333,12 +333,101 @@ namespace StatEval
             return count;
         }
 
-        private int CalculateIdiomLenght(string idiom)
+        private int CalculateIdiomNodesCount(string idiom)
         {
             var sanitizedIdiom = idiom
                 .Trim()
                 .Replace("(()", "(%op%)");
+
             return sanitizedIdiom.Count(f => f == '('); // Relying on the number of ( parenthesis - each node has on in TB notation
+        }
+
+
+        public int CalculateIdiomLength(string idiom)
+        {
+            var rootNode = DeserializeTBNIdiom(idiom);
+
+            var queue = new Queue<CSNode>();
+            var leafs = new List<CSNode>();
+
+            queue.Enqueue(rootNode);
+            while (queue.Count > 0)
+            {
+                var currentNode = queue.Dequeue();
+                if (currentNode.Children.Count > 0)
+                {
+                    foreach (var child in currentNode.Children)
+                    {
+                        queue.Enqueue(child as CSNode);
+                    }
+                }
+                else
+                {
+                    leafs.Add(currentNode);
+                }
+            }
+
+            return leafs.Count;
+        }
+
+        private CSNode DeserializeTBNIdiom(string idiom)
+        {
+            var sanitizedIdiom = idiom
+                            .Trim()
+                            .Replace("(()", "(%op%)")
+                            .Replace("())", "(%cp%)");
+
+            var level = 0;
+            var currentWord = "";
+
+            var idiomReadyForDeserialization = sanitizedIdiom
+                .Substring(1, sanitizedIdiom.Length - 2)
+                .Trim();
+
+            var currentNode = new CSNode();
+            var rootNode = currentNode;
+
+            foreach (var ch in idiomReadyForDeserialization)
+            {
+                if (ch == '(')
+                {
+                    level++;
+                    if (currentNode.STInfo == null || currentNode.STInfo.Length == 0)
+                    {
+                        currentNode.STInfo = currentWord.Trim();
+                        if (currentNode.STInfo == "%op%") currentNode.STInfo = "(";
+                        if (currentNode.STInfo == "%cp%") currentNode.STInfo = ")";
+                    }
+                    currentWord = "";
+
+                    var newChildNode = new CSNode();
+
+                    newChildNode.Parent = currentNode;
+                    currentNode.Children.Add(newChildNode);
+
+                    currentNode = newChildNode;
+                    continue;
+                }
+                if (ch == ')')
+                {
+                    level--;
+
+                    if (currentNode.STInfo == null || currentNode.STInfo.Length == 0)
+                    {
+                        currentNode.STInfo = currentWord.Trim();
+                        if (currentNode.STInfo == "%op%") currentNode.STInfo = "(";
+                        if (currentNode.STInfo == "%cp%") currentNode.STInfo = ")";
+                    }
+                    currentWord = "";
+
+                    currentNode = (CSNode)currentNode.Parent;
+                    continue;
+                }
+
+                currentWord += ch;
+            }
+
+            return rootNode;
         }
         #endregion
     }

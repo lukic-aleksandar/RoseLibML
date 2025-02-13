@@ -33,6 +33,7 @@ namespace StatEvalTests
                 .Trim();
 
             var currentNode = new CSNode();
+            var rootNode = currentNode;
 
             foreach(var ch in idiomReadyForDeserialization)
             {
@@ -81,6 +82,23 @@ namespace StatEvalTests
 
             Assert.Pass();
         }
+
+        [Test]
+        public void TestIdiomLengthCalculation()
+        {
+            var idiomHandler = IdiomHandler.CreateEmptyIdiomHandler();
+
+            var idiom1InTBN = "(8842 (namespace) (8616 (StatEvalDemo)  ) ({) (8855) (})  )";
+            var idiom1Length = idiomHandler.CalculateIdiomLength(idiom1InTBN);
+            Assert.True(idiom1Length == 5);
+
+
+            var idiom2InTBN = "(8875 (public) (static) (8621 (void)  ) (B_8875 (IdentifierToken (ReadTrainingFiles)  ) (B_8875 (8906 (() (8908 (8621 (string)  ) (IdentifierToken (inDataDir)  )  ) (,) (8908 (8621 (string)  ) (IdentifierToken (outModelDir)  )  ) ())  ) (8792 ({) (8797 (8634 (8616 (LoadCounterpartsPaths)  ) (8636 (() (8638 (8616 (inDataDir)  )  ) (,) (8638 (8616 (outModelDir)  )  ) ())  )  ) (;)  ) (8797 (8634 (8616 (LoadCounterpartsTrees)  ) (8636 (() ())  )  ) (;)  ) (})  )  )  )  ) ";
+            var idiom2Length = idiomHandler.CalculateIdiomLength(idiom2InTBN);
+            Assert.True(idiom1Length == 24);
+
+        }
+
 
         [Test]
         public void TestCalculatingStatistics1()
