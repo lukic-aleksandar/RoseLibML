@@ -27,6 +27,8 @@ namespace RoseLibML
                 return;
             }
 
+            Console.WriteLine($"In data file: {config.Paths.InData}");
+
             Directory.CreateDirectory(Path.GetDirectoryName(config.Paths.OutIdioms)!);
 
             ConfigWriter.WriteConfig(args[0], config.Paths.OutIdioms);
@@ -120,8 +122,11 @@ namespace RoseLibML
                 if (!inputModelPresent)
                 {
                     var labeledTree = CSTreeCreator.CreateTree(files[index], config.Paths.OutModel, config.FixedNodeKinds);
-                    LabeledTreeTransformations.Binarize(labeledTree.Root, new CSNodeCreator(config.FixedNodeKinds));
-                    labeledTrees[index] = labeledTree;
+                    if(labeledTree != null)
+                    {
+                        LabeledTreeTransformations.Binarize(labeledTree.Root, new CSNodeCreator(config.FixedNodeKinds));
+                        labeledTrees[index] = labeledTree;
+                    }
                 }
                 else
                 {

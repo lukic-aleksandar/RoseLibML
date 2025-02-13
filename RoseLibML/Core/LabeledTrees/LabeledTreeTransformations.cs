@@ -9,7 +9,7 @@ namespace RoseLibML.Core.LabeledTrees
     public class LabeledTreeTransformations
     {
 
-        public static void Binarize(LabeledNode parent, NodeCreator nodeCreator)
+        public static void Binarize(LabeledNode parent, NodeCreator nodeCreator, string path = "")
         {
             if (parent.Children.Count > 2)
             {
@@ -50,7 +50,7 @@ namespace RoseLibML.Core.LabeledTrees
 
             foreach (var child in parent.Children)
             {
-                Binarize(child, nodeCreator);
+                Binarize(child, nodeCreator, path);
             }
 
         }

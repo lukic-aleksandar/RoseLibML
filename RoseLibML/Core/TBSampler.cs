@@ -118,7 +118,7 @@ namespace RoseLibML.Core
 
                 if (burnInIterations - 1 < iteration)
                 {
-                    WriteFragments(fragmentCountTreshold, iteration);
+                    //WriteFragments(fragmentCountTreshold, iteration);
                 }
 
             }

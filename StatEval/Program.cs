@@ -190,20 +190,31 @@ namespace StatEval
 
             Parallel.For(0, files.Length, (index) =>
             {
-                if (!inputModelPresent)
+                try
                 {
-                    var labeledTree = CSTreeCreator.CreateTree(files[index], config.Paths.OutModel, config.FixedNodeKinds);
-                    LabeledTreeTransformations.Binarize(labeledTree.Root, new CSNodeCreator(config.FixedNodeKinds));
-                    labeledTrees[index] = labeledTree;
-                }
-                else
-                {
-                    var labeledTree = CSTreeCreator.Deserialize(files[index], config?.Paths?.InModel, config.Paths.OutModel);
-                    if (labeledTree != null)
+                    if (!inputModelPresent)
                     {
-                        labeledTrees[index] = labeledTree;
+                        var labeledTree = CSTreeCreator.CreateTree(files[index], config.Paths.OutModel, config.FixedNodeKinds);
+                        if (labeledTree != null)
+                        {
+                            LabeledTreeTransformations.Binarize(labeledTree.Root, new CSNodeCreator(config.FixedNodeKinds), files[index].FullName);
+                            labeledTrees[index] = labeledTree;
+                        }
+                    }
+                    else
+                    {
+                        var labeledTree = CSTreeCreator.Deserialize(files[index], config?.Paths?.InModel, config.Paths.OutModel);
+                        if (labeledTree != null)
+                        {
+                            labeledTrees[index] = labeledTree;
+                        }
                     }
                 }
+                catch
+                {
+                    Console.WriteLine($"Was not able to create and binarize the file, or to deserialize it: {files[index].FullName}");
+                }
+                
             });
 
             return labeledTrees.Where(lt => lt != null).ToArray(); ;

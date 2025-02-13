@@ -2,7 +2,7 @@
   "profiles": {
     "RoseLibML": {
       "commandName": "Project",
-      "commandLineArgs": "\"Z:\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\config.json\""
+      "commandLineArgs": "\"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\config.json\""
     }
   }
 }

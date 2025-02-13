@@ -2,7 +2,7 @@
   "profiles": {
     "DataPreprocessor": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\apache-logging-log4net-flat-cs\" \"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\apache-logging-log4net-cs-cleansed\""
+      "commandLineArgs": "\"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\student-repeat\\student-test-cs\" \"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\student-repeat\\student-test-clean\""
     }
   }
 }

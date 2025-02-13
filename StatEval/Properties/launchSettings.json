@@ -2,7 +2,7 @@
   "profiles": {
     "StatEval": {
       "commandName": "Project",
-      "commandLineArgs": "\"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\config.json\" \"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\apache-logging-log4net-cs-cleansed\\97test\""
+      "commandLineArgs": "\"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\external datasets\\config.json\" \"C:\\Mac\\Home\\Desktop\\Doktorske\\statisticka evaluacija\\student-repeat\\student-test-clean\\410all\""
     }
   }
 }

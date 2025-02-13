@@ -97,13 +97,22 @@ namespace StatEval
 
         public double CalcualteAverageIdiomLength()
         {
-            var idiomLenths = new List<int>();
+            var idiomLengths = new List<int>();
             foreach (var idiom in FinalTrainingIdioms)
             {
-                idiomLenths.Add(CalculateIdiomLength(idiom));
+                try
+                {
+                    var idiomLength = CalculateIdiomLength(idiom);
+                    idiomLengths.Add(idiomLength);
+                }
+                catch
+                {
+                    Console.WriteLine("Was not able to calculate idiom lenght.");
+                    Console.WriteLine($"Idiom was {idiom}");
+                }
             }
 
-            var averageIdiomLength = idiomLenths.Sum() / (double) FinalTrainingIdioms.Count;
+            var averageIdiomLength = idiomLengths.Sum() / (double) FinalTrainingIdioms.Count;
             return averageIdiomLength;
         }
 
@@ -125,7 +134,8 @@ namespace StatEval
             foreach (var idiom in IntermediateTrainingIdiomRoots.Keys)
             {
                 var isCountAboveThreshold = IntermediateTrainingIdiomRoots[idiom].Count >= countThreshold;
-                var isLengthAboveThreshold = TrainingIdiomLength[idiom] >= lengthThreshold;
+                
+                var isLengthAboveThreshold = TrainingIdiomLength.ContainsKey(idiom) ? TrainingIdiomLength[idiom] >= lengthThreshold : false;
 
                 if (isCountAboveThreshold && isLengthAboveThreshold)
                 {
@@ -150,12 +160,27 @@ namespace StatEval
 
         private void NoteIdiomRootAndLength(LabeledNode node, string idiomString)
         {
+            bool shouldNote = true;
             if (!IntermediateTrainingIdiomRoots.ContainsKey(idiomString))
             {
                 IntermediateTrainingIdiomRoots[idiomString] = new List<LabeledNode>();
-                TrainingIdiomLength.Add(idiomString, CalculateIdiomLength(idiomString));
+
+                try
+                {
+                    var idiomLength = CalculateIdiomLength(idiomString);
+                    TrainingIdiomLength.Add(idiomString, idiomLength);
+                }
+                catch
+                {
+                    Console.WriteLine("Was not able to calculate idiom lenght.");
+                    Console.WriteLine($"Idiom was {idiomString}");
+                    shouldNote = false;
+                }
             }
-            IntermediateTrainingIdiomRoots[idiomString].Add(node);
+            if (shouldNote)
+            {
+                IntermediateTrainingIdiomRoots[idiomString].Add(node);
+            }
         }
         #endregion
 
@@ -177,27 +202,35 @@ namespace StatEval
         private object _addLock = new object();
         private void FindIdenticalSubtreesPopulateDict(string idiom, LabeledTree labeledTree, bool markIfIdentical = false)
         {
-            var exampleSubtreeRoot = CSNode.CreateSubtreeFromIdiom(idiom);//TrainingIdiomRoots[idiom].FirstOrDefault();
-            if (exampleSubtreeRoot == null)
+            try
             {
-                throw new ArgumentException("Provided with an idiom not present in idiom roots dictionary");
-            }
-
-            var foundNodes = FindNodesWithSTInfo(exampleSubtreeRoot.STInfo, labeledTree);
-            foreach (var node in foundNodes)
-            {
-                if (RootIdenticalSubtrees(exampleSubtreeRoot, node, markIfIdentical))
+                var exampleSubtreeRoot = CSNode.CreateSubtreeFromIdiom(idiom);//TrainingIdiomRoots[idiom].FirstOrDefault();
+                if (exampleSubtreeRoot == null)
                 {
-                    lock (_addLock)
+                    throw new ArgumentException("Provided with an idiom not present in idiom roots dictionary");
+                }
+
+                var foundNodes = FindNodesWithSTInfo(exampleSubtreeRoot.STInfo, labeledTree);
+                foreach (var node in foundNodes)
+                {
+                    if (RootIdenticalSubtrees(exampleSubtreeRoot, node, markIfIdentical))
                     {
-                        if (!IntermediateIdenticalTrainingSubtreeTestRoots.ContainsKey(idiom))
+                        lock (_addLock)
                         {
-                            IntermediateIdenticalTrainingSubtreeTestRoots[idiom] = new List<LabeledNode>();
+                            if (!IntermediateIdenticalTrainingSubtreeTestRoots.ContainsKey(idiom))
+                            {
+                                IntermediateIdenticalTrainingSubtreeTestRoots[idiom] = new List<LabeledNode>();
+                            }
+                            IntermediateIdenticalTrainingSubtreeTestRoots[idiom].Add(node);
                         }
-                        IntermediateIdenticalTrainingSubtreeTestRoots[idiom].Add(node);
                     }
                 }
             }
+            catch
+            {
+                Console.WriteLine($"Skipping idiom, levels were not okay. Idiom ${idiom}");
+            }
+            
         }
 
         private bool RootIdenticalSubtrees(LabeledNode exampleRootNode, LabeledNode testedRootNode, bool markIfIdentical = false)

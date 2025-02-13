@@ -30,11 +30,20 @@ namespace RoseLibML.CS.CSTrees
                     tree.FilePath = $"{outDirectory}/{sourceInfo.Name}.bin";
                 }
 
-                tree.Root = csNodeCreator.CreateNode(syntaxTree.GetRoot());
-                tree.Root.IsFragmentRoot = true;
-                tree.Root.CanHaveType = false;
+                try 
+                {
+                    tree.Root = csNodeCreator.CreateNode(syntaxTree.GetRoot());
+                    tree.Root.IsFragmentRoot = true;
+                    tree.Root.CanHaveType = false;
 
-                return tree;
+                    return tree;
+                }
+                catch 
+                {
+                    Console.WriteLine($"WAS NOT ABLE TO CREATE A LARGE TREE at: {sourceInfo.FullName}");
+                    return null;
+                }
+
             }
         }
 
