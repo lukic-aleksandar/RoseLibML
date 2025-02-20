@@ -10,7 +10,7 @@ using Transformer;
 
 namespace TransformerTests
 {
-    public class CompilationUnitModelGenerationTests
+    public class ModelGenerationTests
     {
 
         [Test]

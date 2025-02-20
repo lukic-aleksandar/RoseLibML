@@ -15,7 +15,7 @@ namespace Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
+    #line 1 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class MemberComposerMethodTemplate : MemberComposerMethodTemplateBase
     {
@@ -27,19 +27,19 @@ namespace Transformer.Templates
         {
             this.Write("\r\n{\r\n    CompositionGuard.NodeOrParentIs(Visitor.CurrentNode, typeof(");
             
-            #line 4 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
+            #line 4 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(composerNode));
             
             #line default
             #line hidden
-            this.Write("));\r\n\r\n    var fragment = $");
+            this.Write("));\r\n\r\n    var fragment = $\"");
             
-            #line 6 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
-Write(ToLiteral(fragment));
+            #line 6 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
+Write(fragment);
             
             #line default
             #line hidden
-            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
+            this.Write(@""".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
             
     var member = SyntaxFactory.ParseMemberDeclaration(fragment);
     if (member!.ContainsDiagnostics)
@@ -50,7 +50,7 @@ Write(ToLiteral(fragment));
     var referenceNode = TryGetReferenceAndPopToPivot();
     var newEnclosingNode = AddMemberToCurrentNode(member!, referenceNode); ");
             
-            #line 15 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
+            #line 15 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
  // Member addition specific 
             
             #line default
@@ -59,21 +59,22 @@ Write(ToLiteral(fragment));
                     "\n\r\n    var navigator = BaseNavigator.CreateTempNavigator<CSRTypeNavigator>(Visit" +
                     "or); ");
             
-            #line 19 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
+            #line 19 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
  // Member addition specific, includes all members 
             
             #line default
             #line hidden
-            this.Write("    navigator.Select");
+            this.Write("    \r\n    var memberName = RoslynHelper.GetMemberName(member);\r\n    navigator.Sel" +
+                    "ect");
             
-            #line 20 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
+            #line 22 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(rootNodeType.Replace("Syntax", "")));
             
             #line default
             #line hidden
-            this.Write("(name); ");
+            this.Write("(memberName); ");
             
-            #line 20 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
+            #line 22 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
  // Convention specific. Always follow the convention for selection of a member by its name. 
             
             #line default

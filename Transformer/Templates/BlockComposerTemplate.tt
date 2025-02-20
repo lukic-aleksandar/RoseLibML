@@ -3,7 +3,7 @@
 {
     CompositionGuard.NodeIs(Visitor.CurrentNode, typeof(BlockSyntax));
             
-    string fragment = $<#Write(ToLiteral(fragment));#>.Replace('\r', ' ').Replace('\n', ' ').Replace("\u200B", "");
+    string fragment = $"<#Write(fragment);#>".Replace('\r', ' ').Replace('\n', ' ').Replace("\u200B", "");
 
     var block = Visitor.CurrentNode as BlockSyntax;
     var currentStatements = block!.Statements;

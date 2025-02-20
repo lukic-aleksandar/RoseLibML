@@ -3,7 +3,7 @@
 {
     CompositionGuard.NodeOrParentIs(Visitor.CurrentNode, typeof(<#=composerNode#>));
 
-    var fragment = $<#Write(ToLiteral(fragment));#>.Replace('\r', ' ').Replace('\n', ' ').Replace("\u200B", "");
+    var fragment = $"<#Write(fragment);#>".Replace('\r', ' ').Replace('\n', ' ').Replace("\u200B", "");
             
     var member = SyntaxFactory.ParseMemberDeclaration(fragment);
     if (member!.ContainsDiagnostics)
@@ -17,7 +17,9 @@
 
 
     var navigator = BaseNavigator.CreateTempNavigator<CSRTypeNavigator>(Visitor); <# // Member addition specific, includes all members #>
-    navigator.Select<#=rootNodeType.Replace("Syntax", "")#>(name); <# // Convention specific. Always follow the convention for selection of a member by its name. #>
+    
+    var memberName = RoslynHelper.GetMemberName(member);
+    navigator.Select<#=rootNodeType.Replace("Syntax", "")#>(memberName); <# // Convention specific. Always follow the convention for selection of a member by its name. #>
 
     return this;
 }

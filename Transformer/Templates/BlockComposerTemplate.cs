@@ -15,7 +15,7 @@ namespace Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\BlockComposerTemplate.tt"
+    #line 1 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\BlockComposerTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class BlockComposerTemplate : BlockComposerTemplateBase
     {
@@ -26,14 +26,14 @@ namespace Transformer.Templates
         public virtual string TransformText()
         {
             this.Write("\r\n{\r\n    CompositionGuard.NodeIs(Visitor.CurrentNode, typeof(BlockSyntax));\r\n    " +
-                    "        \r\n    string fragment = $");
+                    "        \r\n    string fragment = $\"");
             
-            #line 6 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\BlockComposerTemplate.tt"
-Write(ToLiteral(fragment));
+            #line 6 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\BlockComposerTemplate.tt"
+Write(fragment);
             
             #line default
             #line hidden
-            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
+            this.Write(@""".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
 
     var block = Visitor.CurrentNode as BlockSyntax;
     var currentStatements = block!.Statements;

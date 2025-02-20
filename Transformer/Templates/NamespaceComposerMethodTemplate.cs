@@ -15,7 +15,7 @@ namespace Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
+    #line 1 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class NamespaceComposerMethodTemplate : NamespaceComposerMethodTemplateBase
     {
@@ -26,14 +26,14 @@ namespace Transformer.Templates
         public virtual string TransformText()
         {
             this.Write("\r\n{\r\n    CompositionGuard.NodeOrParentIs(Visitor.CurrentNode, typeof(NamespaceDec" +
-                    "larationSyntax));\r\n\r\n    var fragment = $");
+                    "larationSyntax));\r\n\r\n    var fragment = $\"");
             
-            #line 6 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
-Write(ToLiteral(fragment));
+            #line 6 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
+Write(fragment);
             
             #line default
             #line hidden
-            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
+            this.Write(@""".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
 
     var member = SyntaxFactory.ParseMemberDeclaration(fragment);
     if (member!.ContainsDiagnostics)
@@ -50,14 +50,14 @@ Write(ToLiteral(fragment));
     var name = RoslynHelper.GetMemberName(member);
     navigator.Select");
             
-            #line 21 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
+            #line 21 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(rootNodeType.Replace("Syntax", "")));
             
             #line default
             #line hidden
             this.Write("(name); ");
             
-            #line 21 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
+            #line 21 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
  // Convention specific. Always follow the convention for selection of a member by its name. 
             
             #line default
