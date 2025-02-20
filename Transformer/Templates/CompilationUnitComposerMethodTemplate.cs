@@ -15,7 +15,7 @@ namespace Transformer.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\CompilationUnitComposerMethodTemplate.tt"
+    #line 1 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\CompilationUnitComposerMethodTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "17.0.0.0")]
     public partial class CompilationUnitComposerMethodTemplate : CompilationUnitComposerMethodTemplateBase
     {
@@ -28,14 +28,14 @@ namespace Transformer.Templates
             this.Write("\r\n{\r\n    CompositionGuard.NodeOrParentIs(Visitor.CurrentNode, typeof(CompilationU" +
                     "nitSyntax));\r\n\r\n    Visitor.PopUntil(typeof(CompilationUnitSyntax));\r\n    var co" +
                     "mpilationUnit = (Visitor.CurrentNode as CompilationUnitSyntax)!;\r\n\r\n    var frag" +
-                    "ment = $");
+                    "ment = $\"");
             
-            #line 9 "C:\Users\ntodo\Desktop\Doktorske\evaluacija\RoseLibML\Transformer\Templates\CompilationUnitComposerMethodTemplate.tt"
-Write(ToLiteral(fragment));
+            #line 9 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\CompilationUnitComposerMethodTemplate.tt"
+Write(fragment);
             
             #line default
             #line hidden
-            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
+            this.Write(@""".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
 
     var parsedCU = SyntaxFactory.ParseSyntaxTree(fragment).GetRoot();
     if (parsedCU!.ContainsDiagnostics)

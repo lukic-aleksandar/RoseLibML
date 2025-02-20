@@ -132,6 +132,7 @@ namespace Transformer
 
                 var compilationUnit = await CSharpSyntaxTree.ParseText(fileContent).GetRootAsync();
                 resultingCU = AddMethodsToComposer(composer, (compilationUnit as CompilationUnitSyntax)!, methods);
+                resultingCU = resultingCU.NormalizeWhitespace();
             }
             else
             {
@@ -141,6 +142,7 @@ namespace Transformer
                     var st = CSharpSyntaxTree.ParseText(existingCode);
                     var compilationUnit = st.GetRoot();
                     resultingCU = AddMethodsToComposer(composer, (compilationUnit as CompilationUnitSyntax)!, methods);
+                    resultingCU = resultingCU.NormalizeWhitespace();
                 }
             }
 
