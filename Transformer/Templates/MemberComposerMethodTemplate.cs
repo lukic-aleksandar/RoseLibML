@@ -32,14 +32,14 @@ namespace Transformer.Templates
             
             #line default
             #line hidden
-            this.Write("));\r\n\r\n    var fragment = $\"");
+            this.Write("));\r\n\r\n    var fragment = $");
             
             #line 6 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\MemberComposerMethodTemplate.tt"
-Write(fragment);
+Write(ToLiteral(fragment));
             
             #line default
             #line hidden
-            this.Write(@""".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
+            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
             
     var member = SyntaxFactory.ParseMemberDeclaration(fragment);
     if (member!.ContainsDiagnostics)

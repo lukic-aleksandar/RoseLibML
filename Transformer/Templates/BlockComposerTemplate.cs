@@ -26,14 +26,14 @@ namespace Transformer.Templates
         public virtual string TransformText()
         {
             this.Write("\r\n{\r\n    CompositionGuard.NodeIs(Visitor.CurrentNode, typeof(BlockSyntax));\r\n    " +
-                    "        \r\n    string fragment = $\"");
+                    "        \r\n    string fragment = $");
             
             #line 6 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\BlockComposerTemplate.tt"
-Write(fragment);
+Write(ToLiteral(fragment));
             
             #line default
             #line hidden
-            this.Write(@""".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
+            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
 
     var block = Visitor.CurrentNode as BlockSyntax;
     var currentStatements = block!.Statements;

@@ -201,6 +201,8 @@ namespace Transformer
                 // create the body of the method
                 string composerNode = KnowledgeBase.ComposerInformationMapping[snippet.Composer].Node;
                 string methodBody = GetComposerMethodBody(snippet.Composer, transformedFragment, composerNode, snippet.RootNodeType);
+                // remove unnecessary string breakings
+                methodBody = Regex.Replace(methodBody, @"""\s*\+\s*""", "");
 
                 var bodyStatements = SyntaxFactory.ParseStatement(methodBody);
                 method = method.WithBody(bodyStatements as BlockSyntax);

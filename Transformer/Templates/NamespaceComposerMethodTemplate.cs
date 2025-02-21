@@ -26,14 +26,14 @@ namespace Transformer.Templates
         public virtual string TransformText()
         {
             this.Write("\r\n{\r\n    CompositionGuard.NodeOrParentIs(Visitor.CurrentNode, typeof(NamespaceDec" +
-                    "larationSyntax));\r\n\r\n    var fragment = $\"");
+                    "larationSyntax));\r\n\r\n    var fragment = $");
             
             #line 6 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\NamespaceComposerMethodTemplate.tt"
-Write(fragment);
+Write(ToLiteral(fragment));
             
             #line default
             #line hidden
-            this.Write(@""".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
+            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
 
     var member = SyntaxFactory.ParseMemberDeclaration(fragment);
     if (member!.ContainsDiagnostics)

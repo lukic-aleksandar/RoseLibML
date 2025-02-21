@@ -28,14 +28,14 @@ namespace Transformer.Templates
             this.Write("\r\n{\r\n    CompositionGuard.NodeOrParentIs(Visitor.CurrentNode, typeof(CompilationU" +
                     "nitSyntax));\r\n\r\n    Visitor.PopUntil(typeof(CompilationUnitSyntax));\r\n    var co" +
                     "mpilationUnit = (Visitor.CurrentNode as CompilationUnitSyntax)!;\r\n\r\n    var frag" +
-                    "ment = $\"");
+                    "ment = $");
             
             #line 9 "C:\Mac\Home\Desktop\Doktorske\statisticka evaluacija\RoseLibML\Transformer\Templates\CompilationUnitComposerMethodTemplate.tt"
-Write(fragment);
+Write(ToLiteral(fragment));
             
             #line default
             #line hidden
-            this.Write(@""".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
+            this.Write(@".Replace('\r', ' ').Replace('\n', ' ').Replace(""\u200B"", """");
 
     var parsedCU = SyntaxFactory.ParseSyntaxTree(fragment).GetRoot();
     if (parsedCU!.ContainsDiagnostics)

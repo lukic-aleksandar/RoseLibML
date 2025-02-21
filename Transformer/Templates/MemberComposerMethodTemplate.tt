@@ -3,7 +3,7 @@
 {
     CompositionGuard.NodeOrParentIs(Visitor.CurrentNode, typeof(<#=composerNode#>));
 
-    var fragment = $"<#Write(fragment);#>".Replace('\r', ' ').Replace('\n', ' ').Replace("\u200B", "");
+    var fragment = $<#Write(ToLiteral(fragment));#>.Replace('\r', ' ').Replace('\n', ' ').Replace("\u200B", "");
             
     var member = SyntaxFactory.ParseMemberDeclaration(fragment);
     if (member!.ContainsDiagnostics)
